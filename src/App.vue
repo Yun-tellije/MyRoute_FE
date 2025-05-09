@@ -1,71 +1,32 @@
 <template>
-  <RouterView />
+  <div>
+    <!-- 좌우 여백 없이 꽉 차는 헤더 -->
+    <AppHeader />
+
+    <!-- 가운데 정렬되는 본문 영역 -->
+    <main class="page-content">
+      <RouterView />
+    </main>
+  </div>
 </template>
 
 <script setup>
 import { RouterView } from 'vue-router'
+// import AppHeader from '@/components/AppHeader.vue'
 </script>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+<style>
+/* 페이지 본문만 max-width 적용 */
+.page-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+/* 전역 기본 스타일 정리 */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Noto Sans KR', sans-serif;
 }
 </style>
