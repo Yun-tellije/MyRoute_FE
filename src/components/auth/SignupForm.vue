@@ -1,13 +1,11 @@
 <template>
-  <div class="signup-container container mt-5">
+  <div class="input-container container mt-5">
     <!-- 로고 이미지 -->
     <div class="logo-box">
-      <img src="@/assets/logo.png" alt="로고" class="logo-img" />
+      <img src="@/assets/img/logo.png" alt="로고" class="logo-img" />
     </div>
-
     <!-- 회원가입 폼 -->
     <form @submit.prevent="submitForm">
-      <!-- 아이디~인증번호 묶음 -->
       <div class="input-group-box mb-4">
         <div class="input-item">
           <input
@@ -16,7 +14,7 @@
             class="form-control custom-input"
             placeholder="아이디"
             required
-          />
+          />z
         </div>
         <div class="input-item">
           <input
@@ -52,7 +50,6 @@
         </div>
       </div>
 
-      <!-- 이름~전화번호 묶음 -->
       <div class="input-group-box mb-4">
         <div class="input-item">
           <input
@@ -149,8 +146,8 @@ export default {
 </script>
 
 <style scoped>
-.signup-container {
-  max-width: 400px;
+.input-container {
+  max-width: 460px;
   margin: auto;
 }
 
@@ -162,8 +159,8 @@ export default {
 }
 
 .logo-img {
-  /* max-height: 60px; */
-  width: 150px;
+  width: 180px;
+  margin-bottom: 60px;
   object-fit: contain;
 }
 
@@ -176,6 +173,7 @@ export default {
 
 .input-item {
   position: relative;
+  height: 58px;
 }
 
 .input-item:not(:last-child) {

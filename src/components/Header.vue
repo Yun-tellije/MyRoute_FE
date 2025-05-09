@@ -5,7 +5,7 @@
         <!-- 로고 영역 -->
         <div class="logo-area">
           <router-link to="/" class="logo-link">
-            <img src="@/assets/logo_icon.png" alt="사이트 로고" class="logo-img" />
+            <img src="@/assets/img/logo_icon.png" alt="사이트 로고" class="logo-img" />
           </router-link>
         </div>
 
