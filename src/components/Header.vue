@@ -55,21 +55,30 @@
 </template>
 
 <script>
+import { useAuthStore } from '@/stores/auth'
+
 export default {
   name: 'SiteHeader',
   computed: {
     isLoggedIn() {
-      return this.$store?.state?.auth?.isLoggedIn || false
+      const authStore = useAuthStore()
+      return authStore.isLoggedIn
     },
     isAdmin() {
-      return this.$store?.state?.auth?.userRole === 'ADMIN' || false
+      const authStore = useAuthStore()
+      return authStore.userRole === 'ADMIN'
     },
   },
   methods: {
     logout() {
-      this.$store.dispatch('auth/logout')
+      const authStore = useAuthStore()
+      authStore.logout()
       this.$router.push('/login')
     },
+  },
+  created() {
+    const authStore = useAuthStore()
+    authStore.restoreSession()
   },
 }
 </script>
@@ -161,19 +170,6 @@ a.router-link:hover,
 .nav-link.router-link-active {
   color: #aacab8;
   font-weight: 600;
-}
-
-/* 로그아웃 버튼 */
-.logout-btn {
-  background-color: transparent;
-  border: 1px solid #ccc;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 1rem;
-}
-
-.logout-btn:hover {
-  background-color: #f0f0f0;
 }
 
 /* 반응형 */

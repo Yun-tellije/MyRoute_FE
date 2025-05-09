@@ -44,6 +44,7 @@
 
 <script>
 import axios from 'axios'
+import { useAuthStore } from '@/stores/auth'
 
 export default {
   name: 'LoginForm',
@@ -62,11 +63,13 @@ export default {
         const { token } = response.data
 
         if (token) {
-          localStorage.setItem('accessToken', token)
+          const authStore = useAuthStore()
+          authStore.login(token, this.loginForm.id)
+
           alert('로그인 성공!')
           this.$router.push('/')
         } else {
-          alert('로그인 실패: 토큰 없음')
+          alert('로그인 실패')
         }
       } catch (err) {
         alert('로그인 실패: 아이디 또는 비밀번호를 확인해주세요.')

@@ -14,7 +14,7 @@
             class="form-control custom-input"
             placeholder="아이디"
             required
-          />z
+          />
         </div>
         <div class="input-item">
           <input
@@ -78,70 +78,49 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref } from 'vue'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
 
-export default {
-  name: 'SignupForm',
-  data() {
-    return {
-      form: {
-        id: '',
-        password: '',
-        email: '',
-        verificationCode: '',
-        name: '',
-        phone: '',
-      },
-      emailVerified: false,
-    }
-  },
-  methods: {
-    async sendVerificationCode() {
-      try {
-        const response = await axios.post('/api/auth/send-code', { email: this.form.email })
-        alert('인증번호가 이메일로 전송되었습니다.')
-        console.log(response.data)
-      } catch (err) {
-        alert('인증번호 전송 실패')
-        console.error(err)
-      }
-    },
+const router = useRouter()
+const errorMessage = ref('')
 
-    async verifyEmailCode() {
-      try {
-        const response = await axios.post('/api/auth/verify-code', {
-          email: this.form.email,
-          code: this.form.verificationCode,
-        })
-        if (response.data.verified) {
-          this.emailVerified = true
-          alert('이메일 인증 성공')
-        } else {
-          alert('인증번호가 일치하지 않습니다.')
-        }
-      } catch (err) {
-        alert('인증 확인 실패')
-        console.error(err)
-      }
-    },
+// 회원가입 폼 데이터
+const form = ref({
+  id: '',
+  password: '',
+  name: '',
+  email: '',
+  phone: '',
+})
 
-    async submitForm() {
-      if (!this.emailVerified) {
-        alert('이메일 인증을 먼저 완료해주세요.')
-        return
-      }
+const submitForm = async () => {
+  try {
+    await axios.post('/api/auth/signup', {
+      id: form.value.id,
+      password: form.value.password,
+      name: form.value.name,
+      email: form.value.email,
+      pnumber: form.value.phone,
+    })
 
-      try {
-        const response = await axios.post('/api/members', this.form)
-        alert('회원가입이 완료되었습니다.')
-        console.log(response.data)
-      } catch (err) {
-        alert('회원가입 실패')
-        console.error(err)
-      }
-    },
-  },
+    alert('회원가입이 완료되었습니다.')
+    router.push('/login')
+  } catch (err) {
+    errorMessage.value = '회원가입에 실패했습니다. 다시 시도해주세요.'
+    console.error(err)
+  }
+}
+
+// 인증번호 전송
+const sendVerificationCode = () => {
+  alert('구현 예정')
+}
+
+// 인증번호 확인
+const verifyEmailCode = () => {
+  alert('구현 예정')
 }
 </script>
 
