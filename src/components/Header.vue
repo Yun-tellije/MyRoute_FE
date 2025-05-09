@@ -122,6 +122,7 @@ a.router-link:hover,
 /* 로고 */
 .logo-area {
   display: flex;
+  padding: 5px;
   align-items: center;
 }
 
