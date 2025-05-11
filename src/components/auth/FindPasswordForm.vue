@@ -2,7 +2,7 @@
   <div class="input-container container mt-5">
     <!-- 로고 -->
     <div class="logo-box">
-      <img src="@/assets/img/logo.png" alt="로고" class="logo-img" />
+      <img src="@/assets/img/logo.png" alt="로고" class="logo-name-img" />
     </div>
 
     <!-- 비밀번호 찾기 폼 -->
@@ -105,103 +105,4 @@ export default {
 }
 </script>
 
-<style scoped>
-.input-container {
-  max-width: 460px;
-  margin: auto;
-}
-
-.logo-box {
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-}
-
-.logo-img {
-  width: 180px;
-  margin-bottom: 60px;
-  object-fit: contain;
-}
-
-.input-group-box {
-  border: 1px solid #ced4da;
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.input-item {
-  position: relative;
-  height: 58px;
-}
-
-.input-item:not(:last-child) {
-  border-bottom: 1px solid #eeeeee;
-}
-
-.custom-input {
-  border: none;
-  border-radius: 0;
-  padding: 12px 15px;
-}
-
-.custom-input:focus {
-  box-shadow: none;
-  outline: none;
-  background-color: #f8f9fa;
-}
-
-.custom-input::placeholder {
-  color: #aaa;
-}
-
-.custom-input.with-button {
-  padding-right: 110px;
-}
-
-/* 인증 버튼 */
-.verify-btn {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  padding: 5px 10px;
-  font-size: 0.9rem;
-  background-color: #badbc8;
-  border: none;
-  color: #222222;
-  z-index: 2;
-}
-
-/* 하단 버튼 */
-.btn-success {
-  background-color: #badbc8;
-  color: #222222;
-  border: none;
-  height: 45px;
-  margin-top: 10px;
-  font-weight: 500;
-}
-
-.btn-success:hover {
-  background-color: #aacab8;
-  color: white;
-}
-
-/* 하단 링크 */
-.extra-links {
-  text-align: center;
-  margin-top: 15px;
-  font-size: 0.9rem;
-  color: #555;
-}
-
-.extra-links a {
-  text-decoration: none;
-  color: #555;
-  margin: 0 5px;
-}
-
-.extra-links a:hover {
-  text-decoration: underline;
-}
-</style>
+<style src="@/assets/styles/common.css"></style>

@@ -2,7 +2,7 @@
   <div class="input-container container mt-5">
     <!-- 로고 이미지 -->
     <div class="logo-box">
-      <img src="@/assets/img/logo.png" alt="로고" class="logo-img" />
+      <img src="@/assets/img/logo.png" alt="로고" class="logo-name-img" />
     </div>
     <!-- 회원가입 폼 -->
     <form @submit.prevent="submitForm">
@@ -123,94 +123,4 @@ const verifyEmailCode = () => {
   alert('구현 예정')
 }
 </script>
-
-<style scoped>
-.input-container {
-  max-width: 460px;
-  margin: auto;
-}
-
-/* 로고 */
-.logo-box {
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-}
-
-.logo-img {
-  width: 180px;
-  margin-bottom: 60px;
-  object-fit: contain;
-}
-
-/* 인풋 스타일링 */
-.input-group-box {
-  border: 1px solid #ced4da;
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.input-item {
-  position: relative;
-  height: 58px;
-}
-
-.input-item:not(:last-child) {
-  border-bottom: 1px solid #eeeeee;
-}
-
-.custom-input {
-  border: none;
-  border-radius: 0;
-  padding: 12px 15px;
-}
-
-.custom-input:focus {
-  box-shadow: none;
-  outline: none;
-  background-color: #f8f9fa;
-}
-
-.custom-input.with-button {
-  padding-right: 110px;
-}
-
-/* placeholder */
-.custom-input::placeholder {
-  color: #aaa;
-}
-
-/* 인증버튼 */
-.verify-btn {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  padding: 5px 10px;
-  font-size: 0.9rem;
-  background-color: #badbc8;
-  border: none;
-  color: #222222;
-  z-index: 2;
-}
-
-.verify-btn:hover {
-  background-color: #aacab8;
-  color: white;
-}
-
-/* 가입버튼 */
-.btn-success {
-  background-color: #badbc8;
-  color: #222222;
-  border: none;
-  height: 45px;
-  margin-top: 10px;
-  font-weight: 500;
-}
-
-.btn-success:hover {
-  background-color: #aacab8;
-  color: white;
-}
-</style>
+<style src="@/assets/styles/common.css"></style>
