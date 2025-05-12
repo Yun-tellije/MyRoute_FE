@@ -32,12 +32,12 @@
                 </button>
               </div>
             </div>
-            <!-- 상세정보 영역 -->
             <div v-if="isDetailVisible(place.no)" class="detail-popup shadow-lg">
               <p><strong>개요:</strong></p>
               <div class="overview-box">
                 {{ place.overview || '설명이 없습니다.' }}
-              </div><br>
+              </div>
+              <br />
               <p class="mt-2"><strong>주차장:</strong></p>
               <ul class="parking-list" v-if="Array.isArray(place.parking)">
                 <li v-for="(name, idx) in place.parking.slice(0, 10)" :key="idx">{{ name }}</li>
@@ -157,7 +157,7 @@ export default {
 
 .detail-popup {
   position: absolute;
-  top: 20px;
+  top: 2px;
   left: 20px;
   right: 20px;
   z-index: 9999;
@@ -166,7 +166,7 @@ export default {
   border-radius: 12px;
   padding: 15px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  max-height: 300px; 
+  max-height: 300px;
   overflow-y: auto;
 }
 
