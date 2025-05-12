@@ -13,8 +13,9 @@
 </template>
 
 <script>
-import RegionForm from '@/components/RegionForm.vue'
-import KoreaMap from '@/components/KoreaMap.vue'
+import RegionForm from '@/components/home/RegionForm.vue'
+import KoreaMap from '@/components/home/KoreaMap.vue'
+import axios from 'axios'
 
 export default {
   components: { RegionForm, KoreaMap },
@@ -22,6 +23,7 @@ export default {
     return {
       sido: '',
       gugun: '',
+      attId: 0,
       areaData: {
         서울: [
           '강남구',
@@ -52,7 +54,7 @@ export default {
         ],
         인천: [
           '계양구',
-          '남구',
+          '미추홀구',
           '남동구',
           '동구',
           '부평구',
@@ -63,7 +65,7 @@ export default {
           '옹진군',
         ],
         대전: ['대덕구', '동구', '서구', '유성구', '중구'],
-        대구: ['남구', '달서구', '동구', '북구', '서구', '수성구', '중구', '달성군'],
+        대구: ['남구', '달서구', '동구', '북구', '서구', '수성구', '중구', '달성군', '군위군'],
         광주: ['광산구', '남구', '동구', '북구', '서구'],
         부산: [
           '강서구',
@@ -115,7 +117,7 @@ export default {
           '화성시',
           '가평군',
           '양평군',
-          '여주군',
+          '여주시',
           '연천군',
         ],
         강원특별자치도: [
@@ -161,7 +163,7 @@ export default {
           '아산시',
           '천안시',
           '금산군',
-          '당진군',
+          '당진시',
           '부여군',
           '서천군',
           '연기군',
@@ -264,7 +266,7 @@ export default {
   methods: {
     handleSidoChange(newSido) {
       this.sido = newSido
-      this.gugun = '' // 시도 바뀌면 시군구 초기화
+      this.gugun = ''
     },
     submitForm() {
       if (!this.sido || !this.gugun) {
@@ -272,28 +274,42 @@ export default {
         return
       }
 
-      // axios로 백엔드에 전송
-      this.$axios
-        .post('http://localhost:8080/api/att/attplan', {
+      axios
+        .post('/api/att/attplan', {
           sido: this.sido,
           gugun: this.gugun,
-          att_id: 0,
+          att_id: this.attId,
         })
-        .then(() => alert('계획 생성 완료'))
+        .then((res) => {
+          const places = res.data
+
+          this.$router.push({
+            name: 'MyPlanPage',
+            query: {
+              sido: this.sido,
+              gugun: this.gugun,
+              att_id: this.attId,
+            },
+            state: {
+              places: places, // ✅ 데이터를 상태로 전달
+            },
+          })
+        })
+        .catch((err) => {
+          alert('관광지 조회 실패')
+          console.error(err)
+        })
     },
   },
   mounted() {
-    const currentPath = window.location.pathname
-
-    // "attplan" 페이지가 아니면 localStorage 삭제
-    if (!currentPath.includes('/attplan')) {
+    if (!window.location.pathname.includes('/attplan')) {
       localStorage.removeItem('planItems')
     }
   },
 }
 </script>
 
-<style >
+<style>
 .main-container {
   max-width: 100%;
   margin: 60px auto;

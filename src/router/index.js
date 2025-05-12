@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,7 +6,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: import('@/views/home/HomeView.vue'),
     },
     {
       path: '/signup',
@@ -23,6 +22,11 @@ const router = createRouter({
       path: '/find-password',
       name: 'FindPassword',
       component: () => import('@/views/auth/FindPasswordView.vue'),
+    },
+    {
+      path: '/attplan',
+      name: 'MyPlanPage',
+      component: () => import('@/views/plan/MyPlanPage.vue'),
     },
   ],
 })
