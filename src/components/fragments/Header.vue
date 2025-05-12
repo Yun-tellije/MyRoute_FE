@@ -84,13 +84,6 @@ export default {
 </script>
 
 <style scoped>
-/* 기본 리셋 */
-body {
-  margin: 0;
-  padding: 0;
-}
-
-/* hover 시 배경색 제거 */
 a.router-link-active:hover,
 a.router-link-exact-active:hover,
 a.router-link:hover,
@@ -98,7 +91,6 @@ a.router-link:hover,
   background-color: transparent !important;
 }
 
-/* 헤더 고정 */
 .site-header {
   position: sticky;
   top: 0;
@@ -110,14 +102,12 @@ a.router-link:hover,
   padding: 0;
 }
 
-/* 내부 wrapper */
 .full-width-container {
   width: 100%;
   padding: 0;
   margin: 0;
 }
 
-/* 컨텐츠 가운데 정렬 */
 .header-content {
   max-width: 1400px;
   margin: 0 auto;
@@ -128,7 +118,6 @@ a.router-link:hover,
   align-items: center;
 }
 
-/* 로고 */
 .logo-area {
   display: flex;
   padding: 5px;
@@ -140,7 +129,6 @@ a.router-link:hover,
   object-fit: contain;
 }
 
-/* 네비게이션 */
 .main-nav {
   display: flex;
   align-items: center;
@@ -166,13 +154,11 @@ a.router-link:hover,
   font-weight: 500;
 }
 
-/* 활성화 링크 강조 */
 .nav-link.router-link-active {
   color: #aacab8;
   font-weight: 600;
 }
 
-/* 반응형 */
 @media (max-width: 768px) {
   .header-content {
     flex-direction: column;

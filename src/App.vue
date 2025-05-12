@@ -1,32 +1,38 @@
 <template>
-  <div>
-    <!-- 좌우 여백 없이 꽉 차는 헤더 -->
+  <div class="app-container">
     <AppHeader />
-
-    <!-- 가운데 정렬되는 본문 영역 -->
     <main class="page-content">
       <RouterView />
     </main>
+    <AppFooter />
   </div>
 </template>
 
 <script setup>
 import { RouterView } from 'vue-router'
-// import AppHeader from '@/components/AppHeader.vue'
 </script>
 
 <style>
-/* 페이지 본문만 max-width 적용 */
-.page-content {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-/* 전역 기본 스타일 정리 */
+html,
 body {
+  height: 100%;
   margin: 0;
   padding: 0;
   font-family: 'Noto Sans KR', sans-serif;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.page-content {
+  flex: 1;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  width: 100%;
+  margin-bottom: 100px;
 }
 </style>
