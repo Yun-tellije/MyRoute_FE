@@ -2,7 +2,7 @@
   <div class="result-container">
     <h1>나만의 계획 세우기</h1>
     <RegionSelector :selectedSido="sido" :selectedGugun="gugun" @update-region="onSearch" />
-    <PlanMap :markers="places" :areaName="`${sido} ${gugun}`" />
+    <PlanMap :markers="places" :planMarkers="planItems" :areaName="`${sido} ${gugun}`" />
     <div class="row">
       <div class="col-md-8">
         <RecommendedList
@@ -57,8 +57,10 @@ export default {
       }
     },
     updatePlanItems(newPlan) {
-      this.planItems = newPlan
-      localStorage.setItem('planItems', JSON.stringify(newPlan))
+      this.planItems = [] // 일단 완전히 비우고
+      this.$nextTick(() => {
+        this.planItems = [...newPlan] // 새 배열로 재할당
+      })
     },
     changeAtt(attId) {
       this.attId = attId

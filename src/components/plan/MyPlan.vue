@@ -3,15 +3,16 @@
     <h4 class="mb-4">🗓️ 나의 계획</h4>
     <div id="planList" class="card shadow-sm p-3">
       <div v-if="plans.length === 0" class="text-muted">아직 추가된 관광지가 없습니다.</div>
-      <draggable v-model="plans" item-key="no" @end="updateLocalStorage">
+      <draggable v-model="plans" item-key="no" @end="updateLocalStorage" @change="updateLocalStorage">
         <template #item="{ element }">
           <div class="card mb-2 plan-item">
             <div class="card-body p-2 d-flex align-items-center">
-              <img :src="element.image" class="me-2" style="width: 50px; height: 50px" />
+              <img :src="element.first_image1 || '/resource/tripimage.png'" class="me-2" style="width: 50px; height: 50px" />
               <div>
                 <strong>{{ element.title }}</strong
                 ><br />
-                <small>{{ element.addr }}</small>
+                <small>{{ element.addr1 }}</small><br>
+                <small>{{ element.content_type_name }}</small>
               </div>
               <button @click="remove(element.no)" class="btn btn-sm btn-outline-danger ms-auto">
                 ✖
@@ -32,30 +33,40 @@ import draggable from 'vuedraggable'
 
 export default {
   components: { draggable },
-  props: ['initialPlans'],
+  props: ['planItems'],
   data() {
-    return { plans: this.initialPlans || [] }
+    return { plans: this.planItems || [] }
+  },
+  watch: {
+    planItems: {
+      handler(newVal) {
+        this.plans = [...newVal]
+      },
+      deep: true,
+    },
   },
   methods: {
     remove(no) {
       this.plans = this.plans.filter((item) => item.no !== no)
-      this.updateLocalStorage()
+      this.$emit('update-plan', [...this.plans]);
+      localStorage.setItem('planItems', JSON.stringify(this.plans));
     },
     updateLocalStorage() {
+      console.log('updateLocalStorage', this.plans)
       localStorage.setItem('planItems', JSON.stringify(this.plans))
       this.$emit('update-plans', this.plans)
+      
     },
     savePlans() {
       if (this.plans.length === 0) return alert('관광지가 없습니다!')
 
-      fetch('/att/savePlan', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(this.plans),
-      }).then(() => {
-        alert('계획이 저장되었습니다.')
-        this.plans = []
-        this.updateLocalStorage()
+      localStorage.setItem('planItems', JSON.stringify(this.plans)) // 임시 저장
+      
+      this.$router.push({
+        path: '/plan/confirm',
+        query: {
+          sido: this.$route.query.sido,
+        }
       })
     },
   },

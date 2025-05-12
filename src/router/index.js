@@ -28,6 +28,11 @@ const router = createRouter({
       name: 'MyPlanPage',
       component: () => import('@/views/plan/MyPlanPage.vue'),
     },
+    {
+      path: '/plan/confirm',
+      name: 'PlanConfirm',
+      component: () => import('@/views/plan/PlanConfirm.vue'),
+    },
   ],
 })
 
