@@ -16,18 +16,14 @@
             <li class="nav-item">
               <router-link to="/attractions" class="nav-link">전체 명소 조회</router-link>
             </li>
-
-            <!-- 로그인한 사용자에게만 보이는 메뉴 -->
-            <li v-if="isLoggedIn" class="nav-item">
-              <router-link to="/my-travel-plans" class="nav-link">나의 여행 계획</router-link>
-            </li>
-
-            <!-- 모든 사용자에게 보이는 메뉴 -->
             <li class="nav-item">
               <router-link to="/hotplaces" class="nav-link">핫플 자랑하기</router-link>
             </li>
 
             <!-- 로그인한 사용자에게만 보이는 메뉴 -->
+            <li v-if="isLoggedIn" class="nav-item">
+              <router-link to="/my-travel-plans" class="nav-link">나의 여행 계획</router-link>
+            </li>
             <li v-if="isLoggedIn" class="nav-item">
               <router-link to="/my-profile" class="nav-link">내 정보</router-link>
             </li>

@@ -275,11 +275,19 @@ export default {
       }
 
       axios
-        .post('/api/att/attplan', {
-          sido: this.sido,
-          gugun: this.gugun,
-          att_id: this.attId,
-        })
+        .post(
+          '/api/att/attplan',
+          {
+            sido: this.sido,
+            gugun: this.gugun,
+            att_id: this.attId,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+            },
+          },
+        )
         .then((res) => {
           const places = res.data
 
