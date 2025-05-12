@@ -57,9 +57,9 @@ export default {
       }
     },
     updatePlanItems(newPlan) {
-      this.planItems = [] // 일단 완전히 비우고
+      this.planItems = []
       this.$nextTick(() => {
-        this.planItems = [...newPlan] // 새 배열로 재할당
+        this.planItems = [...newPlan]
       })
     },
     changeAtt(attId) {
@@ -89,23 +89,6 @@ export default {
         })
         .catch((err) => {
           console.error('Failed to fetch places:', err)
-        })
-    },
-    savePlan() {
-      if (this.planItems.length === 0) {
-        alert('계획에 담긴 관광지가 없습니다!')
-        return
-      }
-
-      fetch('/api/att/savePlan', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(this.planItems),
-      })
-        .then((res) => (res.ok ? alert('계획이 저장되었습니다!') : alert('오류 발생')))
-        .then(() => {
-          localStorage.removeItem('planItems')
-          this.updatePlanItems([])
         })
     },
   },

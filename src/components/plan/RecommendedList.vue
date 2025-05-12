@@ -25,7 +25,24 @@
               <h5>{{ place.title }}</h5>
               <p>{{ place.content_type_name }}</p>
               <p>{{ place.addr1 }}</p>
-              <button @click="add(place)" class="btn btn-sm btn-outline-success">➕ 추가</button>
+              <div class="d-flex gap-2">
+                <button @click="add(place)" class="btn btn-sm btn-outline-success">➕ 추가</button>
+                <button @click="toggleDetail(place.no)" class="btn btn-sm btn-outline-primary">
+                  🔍 상세보기
+                </button>
+              </div>
+            </div>
+            <!-- 상세정보 영역 -->
+            <div v-if="isDetailVisible(place.no)" class="detail-popup shadow-lg">
+              <p><strong>개요:</strong></p>
+              <div class="overview-box">
+                {{ place.overview || '설명이 없습니다.' }}
+              </div><br>
+              <p class="mt-2"><strong>주차장:</strong></p>
+              <ul class="parking-list" v-if="Array.isArray(place.parking)">
+                <li v-for="(name, idx) in place.parking.slice(0, 10)" :key="idx">{{ name }}</li>
+              </ul>
+              <p v-else>{{ place.parking || '주차장 정보 없음' }}</p>
             </div>
           </div>
         </div>
@@ -41,6 +58,7 @@ export default {
   data() {
     return {
       localAttId: this.selectedAttId,
+      visibleDetails: new Set(),
     }
   },
   watch: {
@@ -55,6 +73,43 @@ export default {
     onAttChange() {
       this.$emit('change-att', Number(this.localAttId))
     },
+    async toggleDetail(no) {
+      if (this.visibleDetails.has(no)) {
+        this.visibleDetails.delete(no)
+        return
+      }
+
+      const place = this.places.find((p) => p.no === no)
+
+      // 💡 lat, lon을 기반으로 주차장 요청
+      if (place && place.latitude && place.longitude) {
+        try {
+          const res = await fetch(`/api/att/search-parking`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+              lat: place.latitude,
+              lon: place.longitude,
+            }),
+          })
+
+          if (res.ok) {
+            const data = await res.json()
+            place.parking = data.length > 0 ? data.map((p) => p.prkplceNm) : []
+          } else {
+            place.parking = ['주차장 정보 요청 실패']
+          }
+        } catch (err) {
+          console.error('주차장 정보 요청 중 오류 발생:', err)
+          place.parking = '오류 발생'
+        }
+      }
+
+      this.visibleDetails.add(no)
+    },
+    isDetailVisible(no) {
+      return this.visibleDetails.has(no)
+    },
   },
 }
 </script>
@@ -67,6 +122,7 @@ export default {
 }
 
 .place-card {
+  position: relative;
   border-radius: 16px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
   overflow: hidden;
@@ -97,5 +153,37 @@ export default {
 .place-info p {
   font-size: 14px;
   color: #555;
+}
+
+.detail-popup {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  z-index: 9999;
+  background: #fff;
+  border: 2px solid #007bff;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  max-height: 300px; 
+  overflow-y: auto;
+}
+
+.overview-box {
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  background: #f9f9f9;
+  font-size: 14px;
+  border-radius: 8px;
+}
+
+.parking-list {
+  padding-left: 20px;
+  margin-top: 5px;
+  font-size: 14px;
+  color: #444;
 }
 </style>
