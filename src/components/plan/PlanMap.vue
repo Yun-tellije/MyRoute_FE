@@ -137,7 +137,7 @@ export default {
       let latitudes = 0
       let longitudes = 0
 
-      markerDataList.forEach((data) => {
+      markerDataList.forEach((data, index) => {
         const latitude = data.latitude
         const longitude = data.longitude
         const position = new window.kakao.maps.LatLng(latitude, longitude)
@@ -175,6 +175,26 @@ export default {
 
         marker.setVisible(true)
 
+        const overlayContent = `
+          <div style="
+            background: white;
+            padding: 2px 6px;
+            border: 1px solid #666;
+            border-radius: 4px;
+            font-size: 13px;
+            white-space: nowrap;
+          ">
+            ${index + 1}. ${data.title}
+          </div>
+        `
+
+        const overlay = new window.kakao.maps.CustomOverlay({
+          content: overlayContent,
+          map: this.map,
+          position: position,
+          yAnchor: 1.4,
+        })
+
         const imageSrc = data.first_image1 ? data.first_image1 : '/resource/tripimage.png'
 
         const infowindow = new window.kakao.maps.InfoWindow({
@@ -200,7 +220,7 @@ export default {
           infowindow.open(this.map, marker)
           this.currentInfowindow = infowindow
         })
-        this.mapMarkers.push({ marker, infowindow })
+        this.mapMarkers.push({ marker, infowindow, overlay })
       })
 
       if (this.mapMarkers.length > 0) {

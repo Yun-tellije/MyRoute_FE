@@ -54,8 +54,8 @@ export default {
     },
     updateLocalStorage() {
       console.log('updateLocalStorage', this.plans)
+      this.$emit('update-plan', [...this.plans]);
       localStorage.setItem('planItems', JSON.stringify(this.plans))
-      this.$emit('update-plans', this.plans)
       
     },
     savePlans() {

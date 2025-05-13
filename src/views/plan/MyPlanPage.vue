@@ -13,7 +13,7 @@
         />
       </div>
       <div class="col-md-4 place-list-scroll">
-        <MyPlan :planItems="planItems" @update-plan="updatePlanItems" @save-plan="savePlan" />
+        <MyPlan :planItems="planItems" @update-plan="updatePlanItems"/>
       </div>
     </div>
   </div>
