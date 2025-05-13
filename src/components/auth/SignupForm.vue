@@ -93,9 +93,17 @@ const form = ref({
   name: '',
   email: '',
   phone: '',
+  verificationCode: '',
 })
 
+const isEmailVerified = ref(false)
+
 const submitForm = async () => {
+  if (!isEmailVerified.value) {
+    alert('이메일 인증을 완료해주세요.')
+    return
+  }
+
   try {
     await axios.post('/api/auth/signup', {
       id: form.value.id,
@@ -113,14 +121,39 @@ const submitForm = async () => {
   }
 }
 
-// 인증번호 전송
-const sendVerificationCode = () => {
-  alert('구현 예정')
+const sendVerificationCode = async () => {
+  if (!form.value.email) {
+    alert('이메일을 입력해주세요.')
+    return
+  }
+
+  try {
+    await axios.post('/api/auth/send-code', {
+      email: form.value.email,
+    })
+    alert('인증번호가 이메일로 전송되었습니다.')
+  } catch (error) {
+    alert('인증번호 전송 실패: ' + error.response?.data || error.message)
+  }
 }
 
-// 인증번호 확인
-const verifyEmailCode = () => {
-  alert('구현 예정')
+const verifyEmailCode = async () => {
+  if (!form.value.verificationCode) {
+    alert('인증번호를 입력해주세요.')
+    return
+  }
+
+  try {
+    await axios.post('/api/auth/verify-code', {
+      email: form.value.email,
+      code: form.value.verificationCode,
+    })
+    isEmailVerified.value = true
+    alert('이메일 인증 성공!')
+  } catch (error) {
+    isEmailVerified.value = false
+    alert('인증 실패: ' + (error.response?.data || error.message))
+  }
 }
 </script>
 <style src="@/assets/styles/common.css"></style>
