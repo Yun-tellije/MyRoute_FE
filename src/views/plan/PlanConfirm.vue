@@ -1,14 +1,12 @@
 <template>
   <div class="container mt-4">
-    <h2>📝 {{ sido }} 최종 여행 계획 확인</h2>
+    <h2>최종 {{ sido }} 여행 계획 확인</h2>
 
     <div class="row mt-4">
-      <!-- 지도 영역 -->
       <div class="col-md-7">
         <PlanMap :markers="[]" :planMarkers="planItems" :areaName="'여행 지도'" />
       </div>
 
-      <!-- 우측 정보 영역 -->
       <div class="col-md-5">
         <div class="mb-3">
           <label class="form-label"><h3>여행 계획 이름</h3></label>
@@ -77,16 +75,27 @@ export default {
       if (this.planItems.length === 0) {
         return alert('계획이 비어있습니다.')
       }
+      if (!this.title.trim()) {
+        return alert('여행 제목을 입력해주세요.')
+      }
       if (!this.days || !this.budget) {
         return alert('일정과 경비를 입력해주세요.')
       }
 
       const payload = {
         title: this.title,
-        plans: this.planItems,
         days: this.days,
         budget: this.budget,
         sido: this.sido,
+        places: this.planItems.map((item, index) => ({
+          attractionNo: item.no,
+          latitude: item.latitude,
+          longitude: item.longitude,
+          placeName: item.title,
+          addr1: item.addr1,
+          first_image1: item.first_image1,
+          visitOrder: index + 1,
+        })),
       }
 
       fetch('/api/att/savePlan', {
