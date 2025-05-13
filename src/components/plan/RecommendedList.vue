@@ -34,22 +34,44 @@
     </div>
   </div>
 
-<div v-if="selectedDetail" class="modal-backdrop" @click.self="selectedDetail = null">
-  <div class="modal-content-box">
-    <h5>{{ selectedDetail.title }}</h5>
-    <div class="overview-box">
-      {{ selectedDetail.overview || '설명이 없습니다.' }}
-    </div> <br>
-    <p><strong><img src="/resource/pin.svg" alt="주소" style="width: 16px; height: 16px" /> 주소:</strong> {{ selectedDetail.addr1 }}</p>
-    <p class="mt-3"><strong><img src="/resource/parking.svg" alt="주차장" style="width: 16px; height: 16px" /> 주변 주차장 정보</strong></p>
-    <ul v-if="Array.isArray(selectedDetail.parking)">
-      <li v-for="(name, idx) in selectedDetail.parking" :key="idx">{{ name }}</li>
-    </ul>
-    <p v-else>{{ selectedDetail.parking || '주차장 정보 없음' }}</p>
-    <button class="btn-close-modal" @click="selectedDetail = null">닫기</button>
-  </div>
-</div>
+  <div v-if="selectedDetail" class="modal-backdrop" @click.self="selectedDetail = null">
+    <div class="modal-content-box">
+      <h5>{{ selectedDetail.title }}</h5>
+      <div class="overview-box">
+        {{ selectedDetail.overview || '설명이 없습니다.' }}
+      </div>
+      <br />
+      <div>
+        <p>
+          <strong
+            ><img src="/resource/pin.svg" alt="주소" style="width: 16px; height: 16px" />
+            주소</strong
+          >
+        </p>
+        <p style="margin-left: 16px">{{ selectedDetail.addr1 }}</p>
+      </div>
+      <div>
+        <p class="mt-3">
+          <strong
+            ><img src="/resource/parking.svg" alt="주차장" style="width: 16px; height: 16px" /> 주변
+            주차장 정보</strong
+          >
+        </p>
+        <ul v-if="Array.isArray(selectedDetail.parking)">
+          <li
+            v-for="(name, idx) in selectedDetail.parking"
+            :key="idx"
+            style="margin-left: 16px; margin-bottom: 2px"
+          >
+            {{ name }}
+          </li>
+        </ul>
+        <p v-else>{{ selectedDetail.parking || '주차장 정보 없음' }}</p>
+      </div>
 
+      <button class="btn-close-modal" @click="selectedDetail = null">닫기</button>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -114,6 +136,16 @@ export default {
 </script>
 
 <style scoped>
+p,
+ul {
+  margin: 0;
+  padding: 3px;
+}
+
+li {
+  list-style: none;
+}
+
 .place-list-scroll {
   max-height: 600px;
   overflow-y: auto;

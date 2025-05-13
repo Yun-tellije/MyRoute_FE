@@ -180,9 +180,9 @@ export default {
             background: white;
             padding: 2px 6px;
             border: 1px solid #666;
-            border-radius: 4px;
-            font-size: 13px;
-            white-space: nowrap;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
           ">
             ${index + 1}. ${data.title}
           </div>
