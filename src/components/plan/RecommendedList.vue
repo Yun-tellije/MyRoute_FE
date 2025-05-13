@@ -123,7 +123,7 @@ export default {
 
 .place-card {
   position: relative;
-  border-radius: 16px;
+  border-radius: 6px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
   overflow: hidden;
   transition: transform 0.2s ease;
@@ -177,7 +177,7 @@ export default {
   padding: 10px;
   background: #f9f9f9;
   font-size: 14px;
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 .parking-list {

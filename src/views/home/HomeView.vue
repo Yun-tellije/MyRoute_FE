@@ -322,7 +322,7 @@ export default {
   max-width: 100%;
   margin: 60px auto;
   background-color: #fff;
-  border-radius: 16px;
+  border-radius: 6px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   display: flex;
   overflow: hidden;

@@ -216,7 +216,7 @@ export default {
 <style scoped>
 .map-box {
   background-color: #fff;
-  border-radius: 16px;
+  border-radius: 6px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   padding: 20px;
   margin-bottom: 40px;

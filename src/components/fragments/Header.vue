@@ -146,7 +146,7 @@ a.router-link:hover,
   color: #333;
   text-decoration: none;
   padding: 8px 12px;
-  border-radius: 4px;
+  border-radius: 6px;
   font-weight: 500;
 }
 

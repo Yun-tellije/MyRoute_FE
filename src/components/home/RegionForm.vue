@@ -61,7 +61,7 @@ export default {
 
 .form-select,
 .btn {
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 10px;
   margin-bottom: 20px;
   width: 100%;
