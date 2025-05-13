@@ -1,6 +1,6 @@
 <template>
   <div class="map-section">
-    <object id="koreaMap" type="image/svg+xml" data="/img/kr.svg" @load="onSvgLoad"></object>
+    <object id="koreaMap" type="image/svg+xml" data="/resource/kr.svg" @load="onSvgLoad"></object>
   </div>
 </template>
 

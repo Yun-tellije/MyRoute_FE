@@ -15,7 +15,6 @@
       </select>
     </div>
 
-    <!-- 목록 -->
     <div class="place-list-scroll">
       <div class="row g-4">
         <div v-for="place in places" :key="place.no" class="col-md-6">
@@ -24,31 +23,35 @@
             <div class="place-info">
               <h5>{{ place.title }}</h5>
               <p>{{ place.content_type_name }}</p>
-              <p>{{ place.addr1 }}</p>
               <div class="d-flex gap-2">
-                <button @click="add(place)" class="btn btn-sm btn-outline-success">➕ 추가</button>
-                <button @click="toggleDetail(place.no)" class="btn btn-sm btn-outline-primary">
-                  🔍 상세보기
-                </button>
+                <button @click="add(place)" class="btn btn-sm">추가</button>
+                <button @click="toggleDetail(place.no)" class="btn2 btn2-sm">상세보기</button>
               </div>
-            </div>
-            <div v-if="isDetailVisible(place.no)" class="detail-popup shadow-lg">
-              <p><strong>개요:</strong></p>
-              <div class="overview-box">
-                {{ place.overview || '설명이 없습니다.' }}
-              </div>
-              <br />
-              <p class="mt-2"><strong>주차장:</strong></p>
-              <ul class="parking-list" v-if="Array.isArray(place.parking)">
-                <li v-for="(name, idx) in place.parking.slice(0, 10)" :key="idx">{{ name }}</li>
-              </ul>
-              <p v-else>{{ place.parking || '주차장 정보 없음' }}</p>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+<div v-if="selectedDetail" class="modal-backdrop" @click.self="selectedDetail = null">
+  <div class="modal-content-box">
+    <h5>{{ selectedDetail.title }}</h5>
+    <p><strong><img src="/resource/pin.svg" alt="주소" style="width: 16px; height: 16px" /> 주소:</strong> {{ selectedDetail.addr1 }}</p>
+    <p><strong>📄 개요:</strong></p>
+    <div class="overview-box">
+      {{ selectedDetail.overview || '설명이 없습니다.' }}
+    </div>
+    <p class="mt-3"><strong><img src="/resource/parking.svg" alt="주차장" style="width: 16px; height: 16px" /> 주변 주차장 정보</strong></p>
+    <ul v-if="Array.isArray(selectedDetail.parking)">
+      <li v-for="(name, idx) in selectedDetail.parking" :key="idx">{{ name }}</li>
+    </ul>
+    <p v-else>{{ selectedDetail.parking || '주차장 정보 없음' }}</p>
+
+    <button class="btn-close-modal" @click="selectedDetail = null">닫기</button>
+  </div>
+</div>
+
 </template>
 
 <script>
@@ -59,6 +62,7 @@ export default {
     return {
       localAttId: this.selectedAttId,
       visibleDetails: new Set(),
+      selectedDetail: null,
     }
   },
   watch: {
@@ -80,8 +84,8 @@ export default {
       }
 
       const place = this.places.find((p) => p.no === no)
+      if (!place) return
 
-      // 💡 lat, lon을 기반으로 주차장 요청
       if (place && place.latitude && place.longitude) {
         try {
           const res = await fetch(`/api/att/search-parking`, {
@@ -105,10 +109,7 @@ export default {
         }
       }
 
-      this.visibleDetails.add(no)
-    },
-    isDetailVisible(no) {
-      return this.visibleDetails.has(no)
+      this.selectedDetail = place
     },
   },
 }
@@ -155,20 +156,44 @@ export default {
   color: #555;
 }
 
-.detail-popup {
-  position: absolute;
-  top: 2px;
-  left: 20px;
-  right: 20px;
-  z-index: 9999;
-  background: #fff;
-  border: 2px solid #007bff;
-  border-radius: 12px;
-  padding: 15px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  max-height: 300px;
-  overflow-y: auto;
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.modal-content-box {
+  background: #fff;
+  padding: 30px;
+  border-radius: 6px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.btn-close-modal {
+  margin-top: 20px;
+  padding: 6px 12px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-close-modal:hover {
+  background-color: #5c636a;
+}
+
 
 .overview-box {
   max-height: 150px;
@@ -185,5 +210,31 @@ export default {
   margin-top: 5px;
   font-size: 14px;
   color: #444;
+}
+
+.btn,
+.btn2 {
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.btn {
+  background-color: #9dbbaa;
+}
+
+.btn:hover {
+  background-color: #aacab8;
+}
+
+.btn2 {
+  background-color: #adb5bd;
+}
+
+.btn2:hover {
+  background-color: #868e96;
 }
 </style>

@@ -74,17 +74,17 @@ export default {
 .form-select:focus,
 .btn:focus {
   outline: none;
-  border-color: #50b3ff;
+  border-color: #9DBBAA;
 }
 
 .btn {
-  background-color: #50b3ff;
+  background-color: #9DBBAA;
   color: white;
   cursor: pointer;
 }
 
 .btn:hover {
-  background-color: #3399cc;
+  background-color: #aacab8;
 }
 
 .form-select {
