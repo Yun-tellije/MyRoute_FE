@@ -37,17 +37,15 @@
 <div v-if="selectedDetail" class="modal-backdrop" @click.self="selectedDetail = null">
   <div class="modal-content-box">
     <h5>{{ selectedDetail.title }}</h5>
-    <p><strong><img src="/resource/pin.svg" alt="주소" style="width: 16px; height: 16px" /> 주소:</strong> {{ selectedDetail.addr1 }}</p>
-    <p><strong>📄 개요:</strong></p>
     <div class="overview-box">
       {{ selectedDetail.overview || '설명이 없습니다.' }}
-    </div>
+    </div> <br>
+    <p><strong><img src="/resource/pin.svg" alt="주소" style="width: 16px; height: 16px" /> 주소:</strong> {{ selectedDetail.addr1 }}</p>
     <p class="mt-3"><strong><img src="/resource/parking.svg" alt="주차장" style="width: 16px; height: 16px" /> 주변 주차장 정보</strong></p>
     <ul v-if="Array.isArray(selectedDetail.parking)">
       <li v-for="(name, idx) in selectedDetail.parking" :key="idx">{{ name }}</li>
     </ul>
     <p v-else>{{ selectedDetail.parking || '주차장 정보 없음' }}</p>
-
     <button class="btn-close-modal" @click="selectedDetail = null">닫기</button>
   </div>
 </div>
@@ -170,6 +168,7 @@ export default {
 }
 
 .modal-content-box {
+  position: relative;
   background: #fff;
   padding: 30px;
   border-radius: 6px;
@@ -181,9 +180,11 @@ export default {
 }
 
 .btn-close-modal {
-  margin-top: 20px;
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
   padding: 6px 12px;
-  background-color: #6c757d;
+  background-color: #adb5bd;
   color: white;
   border: none;
   border-radius: 6px;
@@ -191,9 +192,8 @@ export default {
 }
 
 .btn-close-modal:hover {
-  background-color: #5c636a;
+  background-color: #868e96;
 }
-
 
 .overview-box {
   max-height: 150px;

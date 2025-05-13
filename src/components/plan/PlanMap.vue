@@ -61,23 +61,23 @@ export default {
       this.decideAndRenderMarkers()
     },
     decideAndRenderMarkers() {
-      if (!this.map) return;
+      if (!this.map) return
 
       // 기존 마커 제거
       this.mapMarkers.forEach(({ marker, infowindow }) => {
-        if (infowindow) infowindow.close();
-        marker.setMap(null);
-      });
-      this.mapMarkers = [];
+        if (infowindow) infowindow.close()
+        marker.setMap(null)
+      })
+      this.mapMarkers = []
 
       if (this.planMarkers && this.planMarkers.length > 0) {
-        this.renderPlanMarkers(this.planMarkers);
+        this.renderPlanMarkers(this.planMarkers)
       } else {
-        this.renderMarkers(this.markers);
+        this.renderMarkers(this.markers)
       }
     },
     renderMarkers(markerDataList) {
-      this.mapMarkers.forEach(({marker}) => marker.setMap(null))
+      this.mapMarkers.forEach(({ marker }) => marker.setMap(null))
       this.mapMarkers = []
 
       const bounds = new window.kakao.maps.LatLngBounds()
@@ -121,7 +121,7 @@ export default {
         })
 
         marker.setVisible(false)
-        this.mapMarkers.push({marker})
+        this.mapMarkers.push({ marker })
       })
 
       if (this.mapMarkers.length > 0) {
@@ -188,7 +188,6 @@ export default {
 
         window.kakao.maps.event.addListener(marker, 'click', () => {
           if (this.currentInfowindow) {
-
             if (this.currentInfowindow.getContent() === infowindow.getContent()) {
               this.currentInfowindow.close()
               this.currentInfowindow = null
@@ -196,13 +195,12 @@ export default {
             }
 
             this.currentInfowindow.close()
-
           }
 
           infowindow.open(this.map, marker)
           this.currentInfowindow = infowindow
         })
-        this.mapMarkers.push({ marker, infowindow }) 
+        this.mapMarkers.push({ marker, infowindow })
       })
 
       if (this.mapMarkers.length > 0) {
