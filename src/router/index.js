@@ -33,6 +33,16 @@ const router = createRouter({
       name: 'PlanConfirm',
       component: () => import('@/views/plan/PlanConfirm.vue'),
     },
+    {
+      path: '/my-travel-plans',
+      name: 'MyPlanList',
+      component: () => import('@/views/plan/MyPlanList.vue'),
+    },
+    {
+      path: '/my-plan-detail/:planId',
+      name: 'MyPlanDetail',
+      component: () => import('@/views/plan/MyPlanDetail.vue'),
+    },
   ],
 })
 
