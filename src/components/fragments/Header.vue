@@ -25,7 +25,7 @@
               <router-link to="/my-travel-plans" class="nav-link">나의 여행 계획</router-link>
             </li>
             <li v-if="isLoggedIn" class="nav-item">
-              <router-link to="/my-profile" class="nav-link">내 정보</router-link>
+              <router-link to="/member/me" class="nav-link">{{ userName }}님 정보</router-link>
             </li>
 
             <!-- 관리자에게만 보이는 메뉴 -->
@@ -63,6 +63,10 @@ export default {
     isAdmin() {
       const authStore = useAuthStore()
       return authStore.userRole === 'ADMIN'
+    },
+    userName() {
+      const authStore = useAuthStore()
+      return authStore.userName
     },
   },
   methods: {

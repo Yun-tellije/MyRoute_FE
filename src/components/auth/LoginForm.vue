@@ -60,11 +60,11 @@ export default {
     async submitLogin() {
       try {
         const response = await axios.post('/api/auth/login', this.loginForm)
-        const { token, id, role } = response.data
+        const { token, name, role } = response.data
 
         if (token) {
           const authStore = useAuthStore()
-          authStore.login(token, id, role)
+          authStore.login(token, name, role)
 
           alert('로그인 성공!')
           this.$router.push('/')
