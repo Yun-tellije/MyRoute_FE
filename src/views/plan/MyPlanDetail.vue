@@ -10,7 +10,7 @@
     <div id="map" style="width: 100%; height: 400px"></div>
 
     <div class="mt-4">
-      <h5>📍 여행 장소 목록</h5>
+      <h5>여행 장소 목록</h5>
       <div
         v-for="place in places"
         :key="place.placeId"
@@ -29,6 +29,8 @@
     </div>
 
     <div class="text-center mt-4">
+      <button @click="onEdit" class="btn btn-outline-primary">수정</button>
+      <button @click="onDelete" class="btn btn-outline-danger">삭제</button>
       <button @click="$router.back()" class="btn btn-outline-secondary">돌아가기</button>
     </div>
   </div>
@@ -68,6 +70,11 @@ export default {
         alert('해당 계획을 불러오는 데 실패했습니다.')
         this.$router.push('/my-plan-list')
       })
+
+    if (!window.location.pathname.includes('/attplan')) {
+      localStorage.removeItem('planItems')
+      localStorage.removeItem('editItems')
+    }
   },
   methods: {
     initMap() {
@@ -93,8 +100,6 @@ export default {
 
       const bounds = new window.kakao.maps.LatLngBounds()
       const path = []
-
-      const sortedPlaces = [...this.places].sort((a, b) => a.visitOrder - b.visitOrder)
 
       this.places.forEach((place) => {
         if (!place.latitude || !place.longitude) return
@@ -177,6 +182,46 @@ export default {
       if (this.places.length > 0) {
         this.map.setBounds(bounds)
       }
+    },
+    onEdit() {
+      const editPlan = {
+        ...this.plan,
+        places: this.places.map((p) => ({
+          no: p.attractionNo,
+          title: p.placeName,
+          latitude: p.latitude,
+          longitude: p.longitude,
+          first_image1: p.first_image1,
+          content_type_name: p.content_type_name,
+          addr1: p.addr1,
+        })),
+      }
+      localStorage.setItem('editPlan', JSON.stringify(editPlan))
+      this.$router.push({
+        path: '/attplan',
+        query: {
+          sido: this.plan.areaName.split(' ')[0],
+          gugun: this.plan.areaName.split(' ')[1] || '',
+        },
+      })
+    },
+    onDelete() {
+      if (!confirm('삭제하시겠습니까?')) return
+
+      fetch(`/api/att/deletePlan/${this.plan.planId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error('삭제 실패')
+          alert('계획이 삭제되었습니다.')
+          this.$router.push('/my-travel-plans')
+        })
+        .catch(() => {
+          alert('계획 삭제 중 오류가 발생했습니다.')
+        })
     },
   },
 }

@@ -16,6 +16,9 @@
     </div>
 
     <div class="place-list-scroll">
+      <div v-if="places.length === 0" class="text-center text-muted py-4">
+        군/구를 선택해주세요.
+      </div>
       <div class="row g-4">
         <div v-for="place in places" :key="place.no" class="col-md-6">
           <div class="place-card">

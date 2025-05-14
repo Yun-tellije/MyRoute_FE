@@ -34,18 +34,31 @@ export default {
       attId: 0,
       places: history.state.places || [],
       planItems: JSON.parse(localStorage.getItem('planItems')) || [],
+      editPlan: JSON.parse(localStorage.getItem('editPlan')),
+      isEditMode: !!localStorage.getItem('editPlan'),
     }
   },
   mounted() {
     if (this.sido && this.gugun) {
       this.fetchPlaces()
     }
+    if (this.editPlan) {
+      this.planItems = this.editPlan.places || []
+    } else {
+    this.planItems = JSON.parse(localStorage.getItem('planItems')) || []
+    }
   },
   watch: {
     planItems: {
       deep: true,
       handler(newVal) {
-        localStorage.setItem('planItems', JSON.stringify(newVal))
+        if (this.isEditMode) {
+          const edit = JSON.parse(localStorage.getItem('editPlan'))
+          edit.places = newVal
+          localStorage.setItem('editPlan', JSON.stringify(edit))
+        } else {
+          localStorage.setItem('planItems', JSON.stringify(newVal))
+        }
       },
     },
   },

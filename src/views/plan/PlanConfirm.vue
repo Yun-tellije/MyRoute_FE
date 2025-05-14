@@ -62,11 +62,20 @@ export default {
       days: 1,
       budget: 0,
       sido: this.$route.query.sido || '',
+      editPlanId: null,
     }
   },
   mounted() {
     const storedPlans = localStorage.getItem('planItems')
-    if (storedPlans) {
+    const editPlan = JSON.parse(localStorage.getItem('editPlan'))
+
+    if (editPlan) {
+      this.planItems = editPlan.places || []
+      this.title = editPlan.planName
+      this.days = editPlan.days
+      this.budget = editPlan.budget
+      this.editPlanId = editPlan.planId
+    } else if (storedPlans) {
       this.planItems = JSON.parse(storedPlans)
     }
   },
@@ -98,8 +107,10 @@ export default {
         })),
       }
 
-      fetch('/api/att/savePlan', {
-        method: 'POST',
+      const url = this.editPlanId ? `/api/att/updatePlan/${this.editPlanId}` : `/api/att/savePlan`
+
+      fetch(url, {
+        method: this.editPlanId ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
@@ -108,9 +119,14 @@ export default {
       })
         .then((res) => {
           if (res.ok) {
-            alert('여행 계획이 저장되었습니다!')
+            alert(`여행 계획이 ${this.editPlanId ? '수정' : '저장'}되었습니다!`)
             localStorage.removeItem('planItems')
-            this.$router.push('/')
+            localStorage.removeItem('editItems')
+            if (this.editPlanId) {
+              this.$router.push(`/my-plan-detail/${this.editPlanId}`)
+            } else {
+              this.$router.push('/my-travel-plans')
+            }
           } else {
             alert('저장 중 오류 발생')
           }

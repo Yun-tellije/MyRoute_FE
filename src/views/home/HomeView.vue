@@ -299,7 +299,7 @@ export default {
               att_id: this.attId,
             },
             state: {
-              places: places, // ✅ 데이터를 상태로 전달
+              places: places,
             },
           })
         })
@@ -312,6 +312,7 @@ export default {
   mounted() {
     if (!window.location.pathname.includes('/attplan')) {
       localStorage.removeItem('planItems')
+      localStorage.removeItem('editItems')
     }
   },
 }
