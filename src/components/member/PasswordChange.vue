@@ -40,6 +40,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: 'PasswordChange',
   data() {
@@ -52,15 +54,36 @@ export default {
     }
   },
   methods: {
-    changePassword() {
+    async changePassword() {
       // 비밀번호 변경 로직
       if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
         alert('새 비밀번호와 확인이 일치하지 않습니다.')
         return
       }
 
-      console.log('비밀번호 변경 요청')
-      // API 호출 등의 로직 구현
+      try {
+        await axios.put(
+          '/api/members/me/password',
+          {
+            currentPassword: this.passwordData.currentPassword,
+            newPassword: this.passwordData.newPassword,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+            },
+          },
+        )
+
+        alert('비밀번호가 성공적으로 변경되었습니다.')
+
+        this.passwordData.currentPassword = ''
+        this.passwordData.newPassword = ''
+        this.passwordData.confirmPassword = ''
+      } catch (error) {
+        console.error('비밀번호 변경 실패:', error)
+        alert('비밀번호 변경 중 오류가 발생했습니다.')
+      }
     },
   },
 }

@@ -35,13 +35,14 @@
       </div>
 
       <div class="button-group">
-        <button class="btn btn-submit">저장</button>
+        <button class="btn btn-submit" @click="updateProfile">저장</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 import { watch } from 'vue'
 
@@ -79,8 +80,29 @@ export default {
     )
   },
   methods: {
-    saveProfile() {
-      console.log('프로필 저장:', this.userProfile)
+    async updateProfile() {
+      try {
+        await axios.put(
+          '/api/members/me',
+          {
+            id: this.userProfile.id,
+            name: this.userProfile.name,
+            email: this.userProfile.email,
+            pnumber: this.userProfile.phone,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+            },
+          },
+        )
+        alert('프로필 정보가 저장되었습니다.')
+        const store = useAuthStore()
+        store.userName = this.userProfile.name
+      } catch (err) {
+        console.error(err)
+        alert('프로필 정보 저장에 실패했습니다.')
+      }
     },
   },
 }
