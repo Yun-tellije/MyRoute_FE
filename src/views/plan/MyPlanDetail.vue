@@ -74,7 +74,7 @@ export default {
 
     if (!window.location.pathname.includes('/attplan')) {
       localStorage.removeItem('planItems')
-      localStorage.removeItem('editItems')
+      localStorage.removeItem('editPlan')
     }
   },
   methods: {

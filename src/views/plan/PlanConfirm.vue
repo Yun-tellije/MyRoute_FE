@@ -149,7 +149,7 @@ export default {
           if (res.ok) {
             alert(`여행 계획이 ${this.editPlanId ? '수정' : '저장'}되었습니다!`)
             localStorage.removeItem('planItems')
-            localStorage.removeItem('editItems')
+            localStorage.removeItem('editPlan')
             if (this.editPlanId) {
               this.$router.push(`/my-plan-detail/${this.editPlanId}`)
             } else {
