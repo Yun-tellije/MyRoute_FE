@@ -2,7 +2,7 @@
   <div class="container mt-5" v-if="plan && plan.budget != null">
     <div class="card shadow-sm p-4 mb-4">
       <h4>{{ plan.planName }}</h4>
-      <p class="card-text">- 작성자: {{ plan.memberId }}</p>
+      <p class="card-text">작성자: {{ plan.memberId }}</p>
       <p>지역: {{ plan.areaName }}</p>
       <p>예산: {{ plan.budget.toLocaleString() }}원</p>
       <p>여행일수: {{ plan.days }}일</p>
@@ -32,7 +32,7 @@
 
     <div class="text-center mt-4">
       <button @click="onEdit" class="btn btn-outline-primary">좋아요</button>
-      <button @click="onDelete" class="btn btn-outline-danger">싫어요요</button>
+      <button @click="onDelete" class="btn btn-outline-danger">싫어요</button>
       <button @click="$router.back()" class="btn btn-outline-secondary">돌아가기</button>
     </div>
   </div>
@@ -51,11 +51,9 @@ export default {
   mounted() {
     const planId = this.$route.params.planId
 
-    fetch(`/api/att/plan/${planId}`, {
+    fetch(`/api/att/publicplan/${planId}`, {
       method: 'GET',
-      credentials: 'include',
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         'Content-Type': 'application/json',
       },
     })
@@ -70,7 +68,6 @@ export default {
       })
       .catch(() => {
         alert('해당 계획을 불러오는 데 실패했습니다.')
-        this.$router.push('/my-plan-list')
       })
 
     if (!window.location.pathname.includes('/attplan')) {
@@ -184,46 +181,6 @@ export default {
       if (this.places.length > 0) {
         this.map.setBounds(bounds)
       }
-    },
-    onEdit() {
-      const editPlan = {
-        ...this.plan,
-        places: this.places.map((p) => ({
-          no: p.attractionNo,
-          title: p.placeName,
-          latitude: p.latitude,
-          longitude: p.longitude,
-          first_image1: p.first_image1,
-          content_type_name: p.content_type_name,
-          addr1: p.addr1,
-        })),
-      }
-      localStorage.setItem('editPlan', JSON.stringify(editPlan))
-      this.$router.push({
-        path: '/attplan',
-        query: {
-          sido: this.plan.areaName.split(' ')[0],
-          gugun: this.plan.areaName.split(' ')[1] || '',
-        },
-      })
-    },
-    onDelete() {
-      if (!confirm('삭제하시겠습니까?')) return
-
-      fetch(`/api/att/deletePlan/${this.plan.planId}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error('삭제 실패')
-          alert('계획이 삭제되었습니다.')
-          this.$router.push('/my-travel-plans')
-        })
-        .catch(() => {
-          alert('계획 삭제 중 오류가 발생했습니다.')
-        })
     },
   },
 }
