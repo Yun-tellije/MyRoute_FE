@@ -6,7 +6,6 @@
       <p>지역: {{ plan.areaName }}</p>
       <p>예산: {{ plan.budget.toLocaleString() }}원</p>
       <p>여행일수: {{ plan.days }}일</p>
-      <p class="card-text">공개여부: {{ plan.isPublic === 1 ? '공개' : '비공개' }}</p>
     </div>
 
     <div id="map" style="width: 100%; height: 400px"></div>
@@ -31,8 +30,13 @@
     </div>
 
     <div class="text-center mt-4">
-      <button @click="onEdit" class="btn btn-outline-primary">좋아요</button>
-      <button @click="onDelete" class="btn btn-outline-danger">싫어요</button>
+      <button
+        @click="toggleLike"
+        class="btn"
+        :class="{ 'btn-danger': likedByUser, 'btn-outline-danger': !likedByUser }"
+      >
+        ❤️ 추천 ({{ plan.likeCount }})
+      </button>
       <button @click="$router.back()" class="btn btn-outline-secondary">돌아가기</button>
     </div>
   </div>
@@ -46,15 +50,18 @@ export default {
       plan: null,
       places: [],
       map: null,
+      likedByUser: false,
     }
   },
   mounted() {
     const planId = this.$route.params.planId
+    const token = localStorage.getItem('accessToken')
 
     fetch(`/api/att/publicplan/${planId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
       },
     })
       .then((res) => {
@@ -64,6 +71,7 @@ export default {
       .then((data) => {
         this.plan = data.plan
         this.places = data.places
+        this.likedByUser = data.likedByUser || false
         this.$nextTick(() => this.initMap())
       })
       .catch(() => {
@@ -181,6 +189,34 @@ export default {
       if (this.places.length > 0) {
         this.map.setBounds(bounds)
       }
+    },
+    toggleLike() {
+      const token = localStorage.getItem('accessToken')
+      if (!token) {
+        alert('로그인이 필요한 서비스입니다.')
+        this.$router.push('/login')
+        return
+      }
+
+      const url = this.likedByUser
+        ? `/api/att/planlike/cancel/${this.plan.planId}`
+        : `/api/att/planlike/${this.plan.planId}`
+
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error('처리 실패')
+          this.likedByUser = !this.likedByUser
+          this.plan.likeCount += this.likedByUser ? 1 : -1
+        })
+        .catch(() => {
+          alert('처리 중 오류가 발생했습니다.')
+        })
     },
   },
 }
