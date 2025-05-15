@@ -19,6 +19,7 @@
               <p class="card-text">- 지역: {{ plan.areaName }}</p>
               <p class="card-text">- 예산: {{ plan.budget.toLocaleString() }}원</p>
               <p class="card-text">- 여행일수: {{ plan.days }}일</p>
+              <p class="card-text">- 공개여부: {{ plan.isPublic === 1 ? '공개' : '비공개' }}</p>
             </div>
           </div>
         </div>

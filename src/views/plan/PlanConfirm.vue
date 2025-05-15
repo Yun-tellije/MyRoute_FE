@@ -42,6 +42,32 @@
           />
         </div>
 
+        <div class="mb-3">
+          <label class="form-label"><h5>공개 여부</h5></label>
+          <div>
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                id="public"
+                :value="1"
+                v-model="isPublic"
+              />
+              <label class="form-check-label" for="public">공개</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                id="private"
+                :value="0"
+                v-model="isPublic"
+              />
+              <label class="form-check-label" for="private">비공개</label>
+            </div>
+          </div>
+        </div>
+
         <div class="d-grid gap-2">
           <button class="btn btn-primary" @click="submitPlan">✅ 최종 저장</button>
         </div>
@@ -63,6 +89,7 @@ export default {
       budget: 0,
       sido: this.$route.query.sido || '',
       editPlanId: null,
+      isPublic: '1',
     }
   },
   mounted() {
@@ -96,6 +123,7 @@ export default {
         days: this.days,
         budget: this.budget,
         sido: this.sido,
+        isPublic: this.isPublic,
         places: this.planItems.map((item, index) => ({
           attractionNo: item.no,
           latitude: item.latitude,
