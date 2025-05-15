@@ -13,7 +13,7 @@
         />
       </div>
       <div class="col-md-4 place-list-scroll">
-        <MyPlan :planItems="planItems" @update-plan="updatePlanItems"/>
+        <MyPlan :planItems="planItems" @update-plan="updatePlanItems" />
       </div>
     </div>
   </div>
@@ -39,13 +39,20 @@ export default {
     }
   },
   mounted() {
+    const token = localStorage.getItem('accessToken')
+
+    if (!token) {
+      alert('로그인이 필요한 서비스입니다.')
+      this.$router.push('/login')
+      return
+    }
     if (this.sido && this.gugun) {
       this.fetchPlaces()
     }
     if (this.editPlan) {
       this.planItems = this.editPlan.places || []
     } else {
-    this.planItems = JSON.parse(localStorage.getItem('planItems')) || []
+      this.planItems = JSON.parse(localStorage.getItem('planItems')) || []
     }
   },
   watch: {

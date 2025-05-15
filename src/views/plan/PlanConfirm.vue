@@ -93,6 +93,14 @@ export default {
     }
   },
   mounted() {
+    const token = localStorage.getItem('accessToken')
+
+    if (!token) {
+      alert('로그인이 필요한 서비스입니다.')
+      this.$router.push('/login')
+      return
+    }
+
     const storedPlans = localStorage.getItem('planItems')
     const editPlan = JSON.parse(localStorage.getItem('editPlan'))
 

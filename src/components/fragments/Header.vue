@@ -14,7 +14,7 @@
           <ul class="nav-list">
             <!-- 모든 사용자에게 보이는 메뉴 -->
             <li class="nav-item">
-              <router-link to="/attractions" class="nav-link">전체 명소 조회</router-link>
+              <router-link to="/planboard" class="nav-link">계획 게시판</router-link>
             </li>
             <li class="nav-item">
               <router-link to="/hotplaces" class="nav-link">핫플 자랑하기</router-link>

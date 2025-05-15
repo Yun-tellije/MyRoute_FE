@@ -48,6 +48,16 @@ const router = createRouter({
       name: 'MyInfo',
       component: () => import('@/views/member/MyInfoView.vue'),
     },
+    {
+      path: '/planboard',
+      name: 'PublicPlanBoard',
+      component: () => import('@/views/plan/PublicPlanBoard.vue'),
+    },
+    {
+      path: '/public-plan-detail/:planId',
+      name: 'PublicPlanDetail',
+      component: () => import('@/views/plan/PublicPlanDetail.vue'),
+    },
   ],
 })
 
