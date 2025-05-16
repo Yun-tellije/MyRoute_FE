@@ -20,7 +20,7 @@
               <router-link to="/planboard" class="nav-link">계획 게시판</router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/hotplaces" class="nav-link">핫플 자랑하기</router-link>
+              <router-link to="/hotplacelist" class="nav-link">핫플 자랑하기</router-link>
             </li>
 
             <!-- 로그인한 사용자에게만 보이는 메뉴 -->

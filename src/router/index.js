@@ -68,6 +68,26 @@ const router = createRouter({
       name: 'NoticeDetail',
       component: () => import('@/views/notice/NoticeDetailView.vue'),
     },
+    {
+      path: '/hotplacelist',
+      name: 'HotPlaceList',
+      component: () => import('@/views/hotplace/HotPlaceList.vue'),
+    },
+    {
+      path: '/hotplacecreate',
+      name: 'HotPlaceForm',
+      component: () => import('@/views/hotplace/HotPlaceForm.vue'),
+    },
+    {
+      path: '/hotplaceupdate/:id',
+      name: 'HotPlaceEdit',
+      component: () => import('@/views/hotplace/HotPlaceForm.vue'),
+    },
+    {
+      path: '/hotplaceDetail/:id',
+      name: 'HotPlaceDetail',
+      component: () => import('@/views/hotplace/HotPlaceDetail.vue'),
+    },
   ],
 })
 
