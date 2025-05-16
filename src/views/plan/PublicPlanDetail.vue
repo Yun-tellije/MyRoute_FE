@@ -43,6 +43,8 @@
 </template>
 
 <script>
+import { useAuthStore } from '@/stores/auth'
+
 export default {
   name: 'MyPlanDetail',
   data() {
@@ -54,8 +56,9 @@ export default {
     }
   },
   mounted() {
+    const authStore = useAuthStore()
     const planId = this.$route.params.planId
-    const token = localStorage.getItem('accessToken')
+    const token = authStore.token
 
     fetch(`/api/att/publicplan/${planId}`, {
       method: 'GET',
@@ -126,26 +129,6 @@ export default {
 
         marker.setVisible(true)
 
-        const overlayContent = `
-            <div style="
-              background: white;
-              padding: 2px 6px;
-              border: 1px solid #666;
-              border-radius: 6px;
-              font-size: 14px;
-              font-weight: bold;
-            ">
-              ${place.visitOrder}. ${place.placeName}
-            </div>
-          `
-
-        const overlay = new window.kakao.maps.CustomOverlay({
-          content: overlayContent,
-          map: this.map,
-          position: position,
-          yAnchor: 1.4,
-        })
-
         const imageSrc = place.first_image1 ? place.first_image1 : '/resource/tripimage.png'
 
         const infowindow = new window.kakao.maps.InfoWindow({
@@ -191,7 +174,9 @@ export default {
       }
     },
     toggleLike() {
-      const token = localStorage.getItem('accessToken')
+      const authStore = useAuthStore()
+      const token = authStore.token
+
       if (!token) {
         alert('로그인이 필요한 서비스입니다.')
         this.$router.push('/login')

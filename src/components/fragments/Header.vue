@@ -14,6 +14,9 @@
           <ul class="nav-list">
             <!-- 모든 사용자에게 보이는 메뉴 -->
             <li class="nav-item">
+              <router-link to="/notices" class="nav-link">공지사항</router-link>
+            </li>
+            <li class="nav-item">
               <router-link to="/planboard" class="nav-link">계획 게시판</router-link>
             </li>
             <li class="nav-item">

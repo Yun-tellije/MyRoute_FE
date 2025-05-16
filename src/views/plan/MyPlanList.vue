@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import { useAuthStore } from '@/stores/auth'
+
 export default {
   name: 'MyPlanList',
   data() {
@@ -40,11 +42,13 @@ export default {
     }
   },
   mounted() {
+    const authStore = useAuthStore()
+
     fetch('/api/att/planlist', {
       method: 'GET',
       credentials: 'include',
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        Authorization: `Bearer ${authStore.token}`,
         'Content-Type': 'application/json',
       },
     })

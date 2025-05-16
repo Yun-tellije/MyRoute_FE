@@ -44,7 +44,6 @@
 <script>
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
-import { watch } from 'vue'
 
 export default {
   name: 'ProfileInfo',
@@ -58,30 +57,29 @@ export default {
       },
     }
   },
-  created() {
-    const store = useAuthStore()
+  async created() {
+    try {
+      const authStore = useAuthStore()
 
-    if (store.userId) {
-      this.userProfile.id = store.userId
-      this.userProfile.name = store.userName
-      this.userProfile.email = store.userEmail
-      this.userProfile.phone = store.userPhone
+      const res = await axios.get('/api/members/me', {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+        },
+      })
+      this.userProfile.id = res.data.id
+      this.userProfile.name = res.data.name
+      this.userProfile.email = res.data.email
+      this.userProfile.phone = res.data.pnumber
+    } catch (err) {
+      console.error(err)
+      alert('회원 정보를 불러오지 못했습니다.')
     }
-
-    watch(
-      () => [store.userId, store.userName, store.userEmail, store.userPhone],
-      ([id, name, email, phone]) => {
-        this.userProfile.id = id
-        this.userProfile.name = name
-        this.userProfile.email = email
-        this.userProfile.phone = phone
-      },
-      { immediate: true },
-    )
   },
   methods: {
     async updateProfile() {
       try {
+        const authStore = useAuthStore()
+
         await axios.put(
           '/api/members/me',
           {
@@ -92,13 +90,11 @@ export default {
           },
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+              Authorization: `Bearer ${authStore.token}`,
             },
           },
         )
         alert('프로필 정보가 저장되었습니다.')
-        const store = useAuthStore()
-        store.userName = this.userProfile.name
       } catch (err) {
         console.error(err)
         alert('프로필 정보 저장에 실패했습니다.')

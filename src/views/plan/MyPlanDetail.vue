@@ -38,6 +38,8 @@
 </template>
 
 <script>
+import { useAuthStore } from '@/stores/auth'
+
 export default {
   name: 'MyPlanDetail',
   data() {
@@ -49,12 +51,13 @@ export default {
   },
   mounted() {
     const planId = this.$route.params.planId
+    const authStore = useAuthStore()
 
     fetch(`/api/att/plan/${planId}`, {
       method: 'GET',
       credentials: 'include',
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        Authorization: `Bearer ${authStore.token}`,
         'Content-Type': 'application/json',
       },
     })
@@ -119,26 +122,6 @@ export default {
         })
 
         marker.setVisible(true)
-
-        const overlayContent = `
-          <div style="
-            background: white;
-            padding: 2px 6px;
-            border: 1px solid #666;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: bold;
-          ">
-            ${place.visitOrder}. ${place.placeName}
-          </div>
-        `
-
-        const overlay = new window.kakao.maps.CustomOverlay({
-          content: overlayContent,
-          map: this.map,
-          position: position,
-          yAnchor: 1.4,
-        })
 
         const imageSrc = place.first_image1 ? place.first_image1 : '/resource/tripimage.png'
 
@@ -208,11 +191,12 @@ export default {
     },
     onDelete() {
       if (!confirm('삭제하시겠습니까?')) return
+      const authStore = useAuthStore()
 
       fetch(`/api/att/deletePlan/${this.plan.planId}`, {
         method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${authStore.token}`,
         },
       })
         .then((res) => {

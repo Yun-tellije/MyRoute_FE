@@ -41,6 +41,7 @@
 
 <script>
 import axios from 'axios'
+import { useAuthStore } from '@/stores/auth'
 
 export default {
   name: 'PasswordChange',
@@ -62,6 +63,8 @@ export default {
       }
 
       try {
+        const authStore = useAuthStore()
+
         await axios.put(
           '/api/members/me/password',
           {
@@ -70,7 +73,7 @@ export default {
           },
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+              Authorization: `Bearer ${authStore.token}`,
             },
           },
         )

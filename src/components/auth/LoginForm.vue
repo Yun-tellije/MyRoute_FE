@@ -1,11 +1,9 @@
 <template>
   <div class="input-container container mt-5">
-    <!-- 로고 -->
     <div class="logo-box">
       <img src="@/assets/img/logo.png" alt="로고" class="logo-name-img" />
     </div>
 
-    <!-- 로그인 폼 -->
     <form @submit.prevent="submitLogin">
       <div class="input-group-box mb-4">
         <div class="input-item">
@@ -32,7 +30,6 @@
         <button type="submit" class="btn btn-success">로그인</button>
       </div>
 
-      <!-- 하단 링크 -->
       <div class="extra-links">
         <router-link to="/find-password">비밀번호 찾기</router-link>
         <span>|</span>

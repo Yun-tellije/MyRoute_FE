@@ -9,13 +9,17 @@ import 'bootstrap'
 import AppHeader from '@/components/fragments/Header.vue'
 import AppFooter from '@/components/fragments/Footer.vue'
 import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
 
 const app = createApp(App)
 
 app.config.globalProperties.$axios = axios
 
 app.use(router)
-app.use(createPinia())
+app.use(pinia)
 app.component('AppHeader', AppHeader)
 app.component('AppFooter', AppFooter)
 app.mount('#app')

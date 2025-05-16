@@ -16,6 +16,7 @@
 import RegionForm from '@/components/home/RegionForm.vue'
 import KoreaMap from '@/components/home/KoreaMap.vue'
 import axios from 'axios'
+import { useAuthStore } from '@/stores/auth'
 
 export default {
   components: { RegionForm, KoreaMap },
@@ -273,6 +274,7 @@ export default {
         alert('모두 선택해주세요')
         return
       }
+      const authStore = useAuthStore()
 
       axios
         .post(
@@ -284,7 +286,7 @@ export default {
           },
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+              Authorization: `Bearer ${authStore.token}`,
             },
           },
         )

@@ -24,6 +24,7 @@ import RegionSelector from '@/components/plan/RegionSelector.vue'
 import RecommendedList from '@/components/plan/RecommendedList.vue'
 import PlanMap from '@/components/plan/PlanMap.vue'
 import MyPlan from '@/components/plan/MyPlan.vue'
+import { useAuthStore } from '@/stores/auth'
 
 export default {
   components: { RegionSelector, RecommendedList, PlanMap, MyPlan },
@@ -39,7 +40,8 @@ export default {
     }
   },
   mounted() {
-    const token = localStorage.getItem('accessToken')
+    const authStore = useAuthStore()
+    const token = authStore.token
 
     if (!token) {
       alert('로그인이 필요한 서비스입니다.')
@@ -92,11 +94,13 @@ export default {
       this.fetchPlaces()
     },
     fetchPlaces() {
+      const authStore = useAuthStore()
+
       fetch('/api/att/attplan', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${authStore.token}`,
         },
         body: JSON.stringify({
           sido: this.sido,
