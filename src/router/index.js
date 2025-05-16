@@ -58,6 +58,16 @@ const router = createRouter({
       name: 'PublicPlanDetail',
       component: () => import('@/views/plan/PublicPlanDetail.vue'),
     },
+    {
+      path: '/notices',
+      name: 'Notices',
+      component: () => import('@/views/notice/NoticeListView.vue'),
+    },
+    {
+      path: '/notices/:noticeId',
+      name: 'NoticeDetail',
+      component: () => import('@/views/notice/NoticeDetailView.vue'),
+    },
   ],
 })
 
