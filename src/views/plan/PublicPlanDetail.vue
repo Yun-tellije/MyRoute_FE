@@ -46,7 +46,7 @@
 import { useAuthStore } from '@/stores/auth'
 
 export default {
-  name: 'MyPlanDetail',
+  name: 'PublicPlanDetail',
   data() {
     return {
       plan: null,

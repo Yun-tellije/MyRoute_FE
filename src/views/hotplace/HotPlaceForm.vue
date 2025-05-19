@@ -205,9 +205,23 @@ export default {
         return
       }
 
+      if (!this.form.title.trim()) {
+        alert('제목을 입력해주세요.')
+        return
+      }
+
       if (!this.selectedAttraction || !this.selectedAttraction.no) {
-        console.log('selectedAttraction ', this.selectedAttraction)
         alert('장소를 선택해주세요.')
+        return
+      }
+
+      if (!this.selectedStarNum || this.selectedStarNum <= 0) {
+        alert('별점을 선택해주세요.')
+        return
+      }
+
+      if (!this.form.content.trim()) {
+        alert('내용을 입력해주세요.')
         return
       }
 
@@ -237,7 +251,8 @@ export default {
           })
         }
 
-        this.$router.push('/hotplace')
+        alert('저장이 완료되었습니다')
+        this.$router.push('/hotplacelist')
       } catch (err) {
         alert('등록 실패: ' + err.message)
       }
@@ -290,7 +305,7 @@ export default {
       if (el) this.starElements.push(el)
     },
     onSelectPlace(place) {
-      if (place.addr1) {
+      if (place.no) {
         this.selectedPlace = place
         this.selectedAttraction = place
         this.query = place.title

@@ -26,8 +26,9 @@
       >
         <div class="card-body">
           <h5 class="card-title">{{ post.title }}</h5>
+          <h5 class="card-title">{{ post.attractionName }}</h5>
           <p class="card-text text-muted">
-            - ★{{ post.starPoint }} , 작성자: {{ post.memberId }} , 추천 수: {{ post.likes }}
+            - ★{{ post.starPoint }} , 작성자: {{ post.memberId }} , 추천 수: {{ post.likeCount }}
           </p>
         </div>
       </div>
