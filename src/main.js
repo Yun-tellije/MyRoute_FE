@@ -10,6 +10,7 @@ import AppHeader from '@/components/fragments/Header.vue'
 import AppFooter from '@/components/fragments/Footer.vue'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import '@fortawesome/fontawesome-free/js/all.js'
 
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
