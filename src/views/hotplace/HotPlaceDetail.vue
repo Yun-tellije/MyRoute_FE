@@ -36,7 +36,11 @@ export default {
     const id = this.$route.params.id
     fetch(`/api/hotplace/detail/${id}`)
       .then((r) => r.json())
-      .then((data) => (this.post = data))
+      .then((data) => {
+        console.log('받은 데이터:', data) // <- 이 부분으로 콘솔에 출력 확인
+        this.post = data
+      })
+
     this.loadComments()
   },
   methods: {
