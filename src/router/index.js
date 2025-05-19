@@ -88,6 +88,16 @@ const router = createRouter({
       name: 'HotPlaceDetail',
       component: () => import('@/views/hotplace/HotPlaceDetail.vue'),
     },
+    {
+      path: '/notices/write',
+      name: 'NoticeWrite',
+      component: () => import('@/views/notice/NoticeWriteView.vue'),
+    },
+    {
+      path: '/notices/edit/:noticeId',
+      name: 'NoticeEdit',
+      component: () => import('@/views/notice/NoticeEditView.vue'),
+    },
   ],
 })
 

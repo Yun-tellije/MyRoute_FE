@@ -1,6 +1,9 @@
 <template>
   <div class="notice-container">
-    <h1 class="page-title">공지사항</h1>
+    <h1 class="page-title">
+      공지사항
+      <router-link v-if="isAdmin" to="/notices/write" class="btn-add"> + 등록 </router-link>
+    </h1>
 
     <ul class="notice-list">
       <li
@@ -18,6 +21,7 @@
 
 <script>
 import axios from 'axios'
+import { useAuthStore } from '@/stores/auth'
 
 export default {
   name: 'NoticeListView',
@@ -25,6 +29,12 @@ export default {
     return {
       notices: [],
     }
+  },
+  computed: {
+    isAdmin() {
+      const store = useAuthStore()
+      return store.userRole === 'ADMIN'
+    },
   },
   created() {
     this.fetchNotices()
