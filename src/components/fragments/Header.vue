@@ -12,7 +12,6 @@
         <!-- 네비게이션 영역 -->
         <nav class="main-nav">
           <ul class="nav-list">
-            <!-- 모든 사용자에게 보이는 메뉴 -->
             <li class="nav-item">
               <router-link to="/notices" class="nav-link">공지사항</router-link>
             </li>
@@ -23,25 +22,40 @@
               <router-link to="/hotplacelist" class="nav-link">핫플 자랑하기</router-link>
             </li>
 
-            <!-- 로그인한 사용자에게만 보이는 메뉴 -->
-            <li v-if="isLoggedIn" class="nav-item">
-              <router-link to="/my-travel-plans" class="nav-link">나의 여행 계획</router-link>
-            </li>
-            <li v-if="isLoggedIn" class="nav-item">
-              <router-link to="/member/me" class="nav-link">{{ userName }}님 정보</router-link>
+            <!-- 드롭다운 사용자 메뉴 -->
+            <li
+              v-if="isLoggedIn"
+              class="nav-item dropdown-container"
+              @click="toggleDropdown"
+              @blur="closeDropdown"
+              tabindex="0"
+            >
+              <span class="nav-link user-name">{{ userName }} 님 ▾</span>
+              <ul v-show="showDropdown" class="dropdown-menu-list">
+                <li>
+                  <router-link to="/member/me" class="dropdown-item">
+                    <div class="icon-box"><i class="fa fa-user"></i></div>
+                    내 정보
+                  </router-link>
+                </li>
+                <li>
+                  <router-link to="/member/posts" class="dropdown-item">
+                    <div class="icon-box"><i class="fa fa-list-ul"></i></div>
+                    내 작성글
+                  </router-link>
+                </li>
+                <li>
+                  <button @click.stop="logout" class="dropdown-item logout">
+                    <div class="icon-box"><i class="fa fa-sign-out-alt"></i></div>
+                    로그아웃
+                  </button>
+                </li>
+              </ul>
             </li>
 
-            <!-- 관리자에게만 보이는 메뉴 -->
-            <li v-if="isAdmin" class="nav-item">
-              <router-link to="/admin/members" class="nav-link">회원 목록 조회</router-link>
-            </li>
-
-            <!-- 로그인 상태에 따라 다른 메뉴 -->
+            <!-- 비로그인 메뉴 -->
             <li v-if="!isLoggedIn" class="nav-item">
               <router-link to="/login" class="nav-link">로그인</router-link>
-            </li>
-            <li v-else class="nav-item">
-              <button @click="logout" class="nav-link logout-btn">로그아웃</button>
             </li>
             <li v-if="!isLoggedIn" class="nav-item">
               <router-link to="/signup" class="nav-link">회원가입</router-link>
@@ -58,6 +72,11 @@ import { useAuthStore } from '@/stores/auth'
 
 export default {
   name: 'SiteHeader',
+  data() {
+    return {
+      showDropdown: false,
+    }
+  },
   computed: {
     isLoggedIn() {
       const authStore = useAuthStore()
@@ -73,6 +92,12 @@ export default {
     },
   },
   methods: {
+    toggleDropdown() {
+      this.showDropdown = !this.showDropdown
+    },
+    closeDropdown() {
+      setTimeout(() => (this.showDropdown = false), 100)
+    },
     logout() {
       const authStore = useAuthStore()
       authStore.logout()
@@ -115,7 +140,6 @@ a.router-link:hover,
   max-width: 1400px;
   margin: 0 auto;
   padding: 15px 20px;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -160,6 +184,63 @@ a.router-link:hover,
 .nav-link.router-link-active {
   color: #aacab8;
   font-weight: 600;
+}
+
+.dropdown-container {
+  position: relative;
+  cursor: pointer;
+}
+
+.user-name {
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: #333;
+  font-weight: 500;
+}
+
+.dropdown-menu-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  list-style: none;
+  text-align: left;
+  padding: 4px 8px;
+  margin: 6px 0 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 160px;
+  z-index: 2000;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px 16px;
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+  gap: 22px;
+}
+
+.icon-box {
+  width: 14px;
+}
+
+.dropdown-item:hover {
+  color: #aacab8;
+  font-weight: bold;
+}
+
+.dropdown-item.logout {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 @media (max-width: 768px) {
