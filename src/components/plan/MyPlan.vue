@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h4 class="mb-4">🗓️ 나의 계획</h4>
+    <h4 class="mb-4"><i class="fa-solid fa-list-ul"></i> 나의 계획</h4>
     <div id="planList" class="card shadow-sm p-3">
       <div v-if="plans.length === 0" class="text-muted">아직 추가된 관광지가 없습니다.</div>
       <draggable

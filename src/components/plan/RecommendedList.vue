@@ -2,7 +2,9 @@
   <div>
     <!-- 타이틀 + attId 선택 -->
     <div class="d-flex justify-content-between align-items-center mb-4" style="gap: 10px">
-      <h4 class="mb-0">🌟 추천 관광지 목록</h4>
+      <h4 class="mb-0">
+        <i class="fa-solid fa-signs-post" style="color: #ffc107"></i> 추천 관광지 목록
+      </h4>
       <select
         v-model="localAttId"
         class="form-select"
@@ -187,6 +189,7 @@ li {
 .place-info p {
   font-size: 14px;
   color: #555;
+  margin-bottom: 4px;
 }
 
 .modal-backdrop {
@@ -251,7 +254,7 @@ li {
 .btn2 {
   font-size: 13px;
   padding: 4px 10px;
-  border-radius: 6px;
+  border-radius: 4px;
   border: none;
   color: white;
   cursor: pointer;

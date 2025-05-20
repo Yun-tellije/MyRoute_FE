@@ -7,7 +7,7 @@
       <option v-for="g in areaData[sido]" :key="g">{{ g }}</option>
     </select>
 
-    <button class="btn btn-primary">조회</button>
+    <button class="search-btn">조회</button>
   </form>
 </template>
 
@@ -270,6 +270,15 @@ export default {
 </script>
 
 <style scoped>
+.search-btn {
+  background-color: #696969;
+  color: white;
+  border-radius: 6px;
+  border: none;
+  padding: 2px 12px;
+  cursor: pointer;
+}
+
 .select-short {
   max-width: 200px;
 }

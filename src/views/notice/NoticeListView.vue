@@ -236,7 +236,7 @@ export default {
   font-weight: bold;
   border: none;
   border-radius: 4px;
-  padding: 10px 24px;
+  padding: 6px 20px;
   text-decoration: none;
 }
 .btn-add:hover {

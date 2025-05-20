@@ -1,6 +1,9 @@
 <template>
   <div class="map-box">
-    <h4>📊 {{ areaName }}</h4>
+    <div class="map-header">
+      <img src="/resource/map.svg" style="width: 24px; height: 24px" />
+      <h4>{{ areaName }}</h4>
+    </div>
     <div ref="mapContainer" style="width: 100%; height: 480px"></div>
   </div>
 </template>
@@ -233,15 +236,16 @@ export default {
 
 <style scoped>
 .map-box {
-  background-color: #fff;
   border-radius: 6px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04); /* 더 연하게 변경 */
   padding: 20px;
   margin-bottom: 40px;
 }
 
-.map-box h4 {
-  margin-bottom: 20px;
-  font-weight: 700;
+.map-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 </style>
