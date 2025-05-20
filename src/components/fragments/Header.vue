@@ -201,7 +201,7 @@ a.router-link:hover,
 .dropdown-menu-list {
   position: absolute;
   top: 100%;
-  left: 0;
+  right: 0;
   background-color: white;
   border: 1px solid #ccc;
   border-radius: 6px;

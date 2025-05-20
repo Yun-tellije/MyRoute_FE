@@ -98,6 +98,11 @@ const router = createRouter({
       name: 'NoticeEdit',
       component: () => import('@/views/notice/NoticeEditView.vue'),
     },
+    {
+      path: '/member/posts',
+      name: 'MyPosts',
+      component: () => import('@/views/member/MyPostsView.vue'),
+    },
   ],
 })
 
