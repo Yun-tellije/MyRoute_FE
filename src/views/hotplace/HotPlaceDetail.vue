@@ -35,14 +35,27 @@
     <div class="card shadow-sm border-0 mb-4">
       <div class="card-body">
         <h5 class="mb-3">💬 댓글</h5>
-        <comment-form :postId="post.id" @new-comment="loadComments" />
+        <comment-form :postId="post.hotplaceId" @new-comment="loadComments" />
 
         <div v-if="comments.length === 0" class="text-muted text-center py-3">
           아직 댓글이 없습니다.
         </div>
         <ul class="list-group list-group-flush">
-          <li v-for="c in comments" :key="c.commentId" class="list-group-item">
-            <strong>{{ c.author }}</strong> • {{ c.content }}
+          <li
+            v-for="c in comments"
+            :key="c.commentId"
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            <span
+              ><strong>{{ c.memberId }}</strong> : {{ c.content }}</span
+            >
+            <button
+              v-if="c.editable"
+              @click="deleteComment(c.commentId)"
+              class="btn btn-sm btn-outline-danger"
+            >
+              삭제
+            </button>
           </li>
         </ul>
       </div>
@@ -85,10 +98,31 @@ export default {
   methods: {
     loadComments() {
       const id = this.$route.params.id
-      fetch(`/api/hotplace/posts/${id}/comments`)
-        .then((r) => r.json())
-        .then((data) => (this.comments = data))
+      const authStore = useAuthStore()
+      const token = authStore.token
+
+      fetch(`/api/hotplace/posts/${id}/comments`, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+      })
+        .then((r) => {
+          if (!r.ok) {
+            if (r.status === 401) throw new Error('로그인이 필요합니다.')
+            throw new Error('댓글 불러오기 실패')
+          }
+          return r.json()
+        })
+        .then((data) => {
+          this.comments = data
+        })
+        .catch((err) => {
+          console.error(err.message)
+          alert(err.message)
+        })
     },
+
     toggleLike() {
       const authStore = useAuthStore()
       const token = authStore.token
@@ -118,6 +152,34 @@ export default {
         .catch(() => {
           alert('처리 중 오류가 발생했습니다.')
         })
+    },
+    async deleteComment(commentId) {
+      const authStore = useAuthStore()
+      const token = authStore.token
+
+      if (!token) {
+        alert('로그인이 필요한 서비스입니다.')
+        this.$router.push('/login')
+        return
+      }
+
+      const ok = confirm('댓글을 삭제하시겠습니까?')
+      if (!ok) return
+
+      try {
+        const res = await fetch(`/api/hotplace/commentdelete/${commentId}`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+
+        if (!res.ok) throw new Error('삭제 실패')
+
+        this.loadComments()
+      } catch (err) {
+        alert('댓글 삭제 중 오류가 발생했습니다.', err)
+      }
     },
   },
 }
