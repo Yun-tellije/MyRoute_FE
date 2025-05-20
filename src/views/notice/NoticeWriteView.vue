@@ -1,10 +1,9 @@
 <template>
   <div class="notice-write-container">
     <h1 class="page-title">공지사항 등록</h1>
-
-    <form @submit.prevent="submitNotice">
+    <form @submit.prevent="submitNotice" class="notice-form">
       <div class="form-group">
-        <label for="title">제목</label>
+        <label for="title" class="form-label">제목</label>
         <input
           type="text"
           id="title"
@@ -14,20 +13,20 @@
           placeholder="제목을 입력하세요"
         />
       </div>
-
       <div class="form-group">
-        <label for="content">내용</label>
+        <label for="content" class="form-label">내용</label>
         <textarea
           id="content"
           v-model="notice.content"
-          class="form-control"
+          class="form-control textarea"
           rows="10"
           required
           placeholder="내용을 입력하세요"
         ></textarea>
       </div>
-
-      <button type="submit" class="btn-submit">등록</button>
+      <div class="btn-wrap">
+        <button type="submit" class="btn-submit">등록</button>
+      </div>
     </form>
   </div>
 </template>
@@ -50,7 +49,6 @@ export default {
     async submitNotice() {
       try {
         const authStore = useAuthStore()
-
         await axios.post(
           '/api/notices',
           { title: this.notice.title, content: this.notice.content },
@@ -73,39 +71,82 @@ export default {
 
 <style scoped>
 .notice-write-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+  max-width: 1200px;
+  margin: 48px auto 0 auto;
+  padding: 40px 32px 32px 32px;
 }
 
 .page-title {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 20px;
+  font-size: 2.2rem;
+  color: #111;
+  margin-bottom: 32px;
+  letter-spacing: -1px;
+}
+
+.notice-form {
+  display: flex;
+  border-top: 2px solid #696969;
+  padding-top: 20px;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-label {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 2px;
 }
 
 .form-control {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
+  padding: 12px 14px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border 0.18s;
+  resize: none;
+}
+.form-control:focus {
+  border-color: #8cae99;
+  outline: none;
+  background: #fff;
+}
+.textarea {
+  min-height: 180px;
+  font-family: inherit;
+}
+
+.btn-wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
 }
 
 .btn-submit {
   background-color: #9dbbaa;
-  color: white;
+  color: #fff;
   border: none;
-  padding: 10px 20px;
+  padding: 8px 16px;
   border-radius: 6px;
-  font-size: 14px;
   cursor: pointer;
 }
 .btn-submit:hover {
-  background-color: #8cae99;
+  background-color: #aacab8;
+}
+
+@media (max-width: 600px) {
+  .notice-write-container {
+    padding: 18px 4px;
+  }
+  .page-title {
+    font-size: 1.3rem;
+  }
 }
 </style>
