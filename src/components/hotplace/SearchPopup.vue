@@ -12,7 +12,7 @@
         조회
       </button>
 
-      <ul v-if="results.length" class="list-group mt-3">
+      <ul v-if="isSearched && results.length" class="list-group mt-3">
         <li
           v-for="place in results"
           :key="place.attractionNo"
@@ -23,7 +23,9 @@
         </li>
       </ul>
 
-      <p v-else-if="search.length >= 2" class="text-muted text-center mt-3">결과가 없습니다.</p>
+      <p v-else-if="isSearched && search.length >= 2" class="text-muted text-center mt-3">
+        결과가 없습니다.
+      </p>
     </div>
   </div>
 </template>
@@ -37,6 +39,7 @@ export default {
     return {
       search: '',
       results: [],
+      isSearched: false,
       trie: new Trie(),
     }
   },
@@ -66,6 +69,7 @@ export default {
   },
   methods: {
     onSearch() {
+      this.isSearched = true
       if (this.search.length < 2) {
         this.results = []
         return
