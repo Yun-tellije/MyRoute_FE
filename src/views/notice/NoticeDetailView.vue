@@ -1,15 +1,24 @@
 <template>
   <div class="notice-detail-container" v-if="notice">
-    <h1>{{ notice.title }}</h1>
-    <p class="date">{{ formatDate(notice.createdAt) }}</p>
-    <div class="content" v-html="notice.content"></div>
-
-    <div v-if="isAdmin" class="admin-buttons">
-      <router-link :to="`/notices/edit/${notice.noticeId}`" class="btn-edit">수정</router-link>
-      <button class="btn-delete" @click="deleteNotice">삭제</button>
+    <div class="notice-header-box">
+      <div class="notice-meta-row">
+        <span class="notice-title">{{ notice.title }}</span>
+      </div>
+      <div class="notice-info-row">
+        <span class="notice-writer">{{ notice.writer || '운영자' }}</span>
+        <span class="notice-date">{{ formatDate(notice.createAt) }}</span>
+      </div>
     </div>
+    <hr class="notice-divider" />
+    <div class="notice-content" v-html="notice.content"></div>
 
-    <router-link to="/notices" class="btn-back">← 목록으로 돌아가기</router-link>
+    <div class="notice-buttons">
+      <div v-if="isAdmin" class="admin-buttons">
+        <router-link :to="`/notices/edit/${notice.noticeId}`" class="btn-edit">수정</router-link>
+        <button class="btn-delete" @click="deleteNotice">삭제</button>
+      </div>
+      <router-link to="/notices" class="btn-back"> 목록으로 돌아가기 </router-link>
+    </div>
   </div>
 </template>
 
@@ -45,7 +54,8 @@ export default {
   },
   methods: {
     formatDate(dateStr) {
-      return new Date(dateStr).toLocaleDateString('ko-KR')
+      const d = new Date(dateStr)
+      return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
     },
     async deleteNotice() {
       if (!confirm('정말로 삭제하시겠습니까?')) return
@@ -69,34 +79,72 @@ export default {
 
 <style scoped>
 .notice-detail-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+  max-width: 1200px;
+  margin: 40px auto 0 auto;
+  padding: 40px 32px 32px 32px;
 }
-.date {
-  font-size: 13px;
+
+.notice-header-box {
+  border-top: 2px solid #696969;
+  padding-top: 20px;
+  margin-bottom: 12px;
+}
+
+.notice-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 8px;
+}
+
+.notice-title {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #222;
+  letter-spacing: -1px;
+}
+
+.notice-info-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
   color: #888;
-  margin-bottom: 10px;
+  font-size: 1rem;
+  margin-bottom: 2px;
 }
-.content {
-  white-space: pre-wrap;
-  margin-bottom: 30px;
+
+.notice-writer {
+  font-size: 1rem;
+  padding-right: 18px;
+  border-right: 1.5px solid #d0d0d0;
 }
-.btn-back {
-  display: inline-block;
-  background-color: #9dbbaa;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 4px;
-  text-decoration: none;
+
+.notice-date {
+  font-size: 1rem;
 }
+.notice-divider {
+  border: none;
+  border-top: 1px solid #d0d0d0;
+  margin: 18px 0 28px 0;
+}
+
+.notice-content {
+  margin-bottom: 36px;
+  padding-bottom: 60px;
+  font-size: 1.08rem;
+  color: #222;
+  line-height: 1.7;
+  min-height: 360px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
 .admin-buttons {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 14px;
+  margin-right: 50px;
 }
 .btn-edit {
-  background-color: #4f88c6;
+  background-color: #696969;
   color: white;
   padding: 8px 14px;
   border: none;
@@ -104,11 +152,34 @@ export default {
   text-decoration: none;
 }
 .btn-delete {
-  background-color: #d9534f;
-  color: white;
-  padding: 8px 14px;
-  border: none;
+  background-color: #fff;
+  padding: 6px 14px;
+  color: #696969;
+  border: 1px solid #999999;
   border-radius: 4px;
   cursor: pointer;
+}
+.btn-back {
+  display: inline-block;
+  color: #696969;
+  border: 1px solid #999999;
+  padding: 6px 10px;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.notice-buttons {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+}
+
+@media (max-width: 700px) {
+  .notice-detail-container {
+    padding: 18px 4px;
+  }
+  .notice-title {
+    font-size: 1.05rem;
+  }
 }
 </style>
