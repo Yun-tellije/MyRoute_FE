@@ -73,7 +73,7 @@ export default {
       if (this.sortOption === 'likes') {
         return posts.sort((a, b) => b.likes - a.likes)
       }
-      return posts.sort((a, b) => b.id - a.id)
+      return posts.sort((a, b) => b.hotplaceId - a.hotplaceId)
     },
     paginatedPosts() {
       const start = (this.currentPage - 1) * this.perPage

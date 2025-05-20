@@ -37,8 +37,14 @@
       >
         ❤️ 추천 ({{ plan.likeCount }})
       </button>
+
       <button @click="$router.back()" class="btn btn-outline-secondary">돌아가기</button>
     </div>
+  </div>
+
+  <div class="text-center mt-4" v-if="myPost">
+    <button @click="onEdit" class="btn btn-outline-primary">수정</button>
+    <button @click="onDelete" class="btn btn-outline-danger">삭제</button>
   </div>
 </template>
 
@@ -46,13 +52,14 @@
 import { useAuthStore } from '@/stores/auth'
 
 export default {
-  name: 'PublicPlanDetail',
+  name: 'PlanDetail',
   data() {
     return {
       plan: null,
       places: [],
       map: null,
       likedByUser: false,
+      myPost: false,
     }
   },
   mounted() {
@@ -60,7 +67,7 @@ export default {
     const planId = this.$route.params.planId
     const token = authStore.token
 
-    fetch(`/api/att/publicplan/${planId}`, {
+    fetch(`/api/att/plan/${planId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -72,9 +79,12 @@ export default {
         return res.json()
       })
       .then((data) => {
+        console.log('API 응답:', data)
         this.plan = data.plan
         this.places = data.places
         this.likedByUser = data.likedByUser || false
+        this.myPost = data.myPost
+        console.log(this.myPost)
         this.$nextTick(() => this.initMap())
       })
       .catch(() => {

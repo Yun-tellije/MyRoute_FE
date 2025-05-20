@@ -74,7 +74,7 @@ export default {
       this.$router.push('/')
     },
     goDetail(planId) {
-      this.$router.push(`/my-plan-detail/${planId}`)
+      this.$router.push(`/plan-detail/${planId}`)
     },
   },
 }

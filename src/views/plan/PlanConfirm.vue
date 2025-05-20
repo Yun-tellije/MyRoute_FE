@@ -69,7 +69,7 @@
         </div>
 
         <div class="d-grid gap-2">
-          <button class="btn btn-primary" @click="submitPlan">✅ 최종 저장</button>
+          <button class="btn btn-primary" @click="submitPlan">최종 저장</button>
         </div>
       </div>
     </div>
@@ -160,7 +160,7 @@ export default {
             localStorage.removeItem('planItems')
             localStorage.removeItem('editPlan')
             if (this.editPlanId) {
-              this.$router.push(`/my-plan-detail/${this.editPlanId}`)
+              this.$router.push(`/plan-detail/${this.editPlanId}`)
             } else {
               this.$router.push('/my-travel-plans')
             }

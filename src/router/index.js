@@ -39,11 +39,6 @@ const router = createRouter({
       component: () => import('@/views/plan/MyPlanList.vue'),
     },
     {
-      path: '/my-plan-detail/:planId',
-      name: 'MyPlanDetail',
-      component: () => import('@/views/plan/MyPlanDetail.vue'),
-    },
-    {
       path: '/member/me',
       name: 'MyInfo',
       component: () => import('@/views/member/MyInfoView.vue'),
@@ -54,9 +49,9 @@ const router = createRouter({
       component: () => import('@/views/plan/PublicPlanBoard.vue'),
     },
     {
-      path: '/public-plan-detail/:planId',
-      name: 'PublicPlanDetail',
-      component: () => import('@/views/plan/PublicPlanDetail.vue'),
+      path: '/plan-detail/:planId',
+      name: 'PlanDetail',
+      component: () => import('@/views/plan/PlanDetail.vue'),
     },
     {
       path: '/notices',
