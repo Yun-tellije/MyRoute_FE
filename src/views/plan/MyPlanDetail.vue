@@ -123,6 +123,20 @@ export default {
 
         marker.setVisible(true)
 
+        const overlayContent = `
+    <div style="padding:2px 5px; background:white; border:1px solid #888; border-radius:4px; font-size:13px;">
+      ${place.visitOrder}. ${place.placeName}
+    </div>
+  `
+
+        const customOverlay = new window.kakao.maps.CustomOverlay({
+          content: overlayContent,
+          position: position,
+          yAnchor: 1.5,
+        })
+
+        customOverlay.setMap(this.map)
+
         const imageSrc = place.first_image1 ? place.first_image1 : '/resource/tripimage.png'
 
         const infowindow = new window.kakao.maps.InfoWindow({
