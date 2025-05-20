@@ -7,7 +7,6 @@
         <select class="form-select" style="width: 180px" v-model="sortOption">
           <option value="latest">최신 순</option>
           <option value="likes">추천 많은 순</option>
-          <option value="mine">내가 쓴 게시물</option>
         </select>
         <button class="btn btn-outline-secondary" @click="sortPosts">조회</button>
       </div>
@@ -68,6 +67,7 @@ import { useAuthStore } from '@/stores/auth'
 export default {
   data() {
     return {
+      originalPosts: [],
       posts: [],
       currentPage: 1,
       perPage: 10,
@@ -78,21 +78,11 @@ export default {
   },
   computed: {
     filteredPosts() {
-      if (this.sortOption === 'mine') {
-        return this.posts.filter((p) => p.author === this.userId)
-      }
       return [...this.posts]
-    },
-    sortedPosts() {
-      const posts = [...this.filteredPosts]
-      if (this.sortOption === 'likes') {
-        return posts.sort((a, b) => b.likes - a.likes)
-      }
-      return posts.sort((a, b) => b.id - a.id)
     },
     paginatedPosts() {
       const start = (this.currentPage - 1) * this.perPage
-      return this.sortedPosts.slice(start, start + this.perPage)
+      return this.filteredPosts.slice(start, start + this.perPage)
     },
     totalPages() {
       return Math.ceil(this.filteredPosts.length / this.perPage)
@@ -118,7 +108,9 @@ export default {
     async fetchPosts() {
       try {
         const res = await axios.get('/api/hotplace/posts')
-        this.posts = res.data
+        this.originalPosts = res.data
+        this.posts = [...this.originalPosts]
+        this.sortPosts()
       } catch (err) {
         console.error('게시글 불러오기 실패', err)
       }
@@ -130,6 +122,16 @@ export default {
     },
     sortPosts() {
       this.currentPage = 1
+      if (this.sortOption === 'likes') {
+        this.posts = [...this.originalPosts].sort((a, b) => {
+          if (b.likeCount === a.likeCount) {
+            return b.hotplaceId - a.hotplaceId
+          }
+          return b.likeCount - a.likeCount
+        })
+      } else {
+        this.posts = [...this.originalPosts].sort((a, b) => b.hotplaceId - a.hotplaceId)
+      }
     },
     goDetail(id) {
       this.$router.push(`/hotplaceDetail/${id}`)
