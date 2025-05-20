@@ -1,34 +1,56 @@
 <template>
-  <div class="mb-4">
-    <h5>댓글 쓰기</h5>
-    <textarea v-model="content" class="form-control mb-2" rows="2" />
-    <button class="btn btn-primary" @click="submit">등록</button>
-  </div>
+  <form @submit.prevent="submitComment" class="d-flex gap-2 mb-3">
+    <input
+      v-model="content"
+      type="text"
+      class="form-control"
+      placeholder="댓글을 입력하세요"
+      required
+    />
+    <button class="btn btn-primary">작성</button>
+  </form>
 </template>
 
 <script>
+import { useAuthStore } from '@/stores/auth'
+
 export default {
   props: ['postId'],
   data() {
-    return { content: '' }
+    return {
+      content: '',
+    }
   },
   methods: {
-    submit() {
-      if (!this.content.trim()) return
-      fetch(`/api/hotplace/posts/${this.postId}/comments`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-        body: JSON.stringify({ content: this.content }),
-      })
-        .then((r) => {
-          if (!r.ok) throw new Error()
-          this.content = ''
-          this.$emit('new-comment')
+    async submitComment() {
+      const authStore = useAuthStore()
+      const token = authStore.token
+
+      if (!token) {
+        alert('로그인이 필요한 기능입니다.')
+        this.$router.push('/login')
+        return
+      }
+
+      try {
+        const res = await fetch(`/api/hotplace/posts/${this.postId}/comments`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            content: this.content,
+          }),
         })
-        .catch(() => alert('댓글 등록 실패'))
+
+        if (!res.ok) throw new Error('댓글 작성 실패')
+
+        this.content = ''
+        this.$emit('new-comment')
+      } catch (err) {
+        alert('댓글 작성 중 오류가 발생했습니다.', err)
+      }
     },
   },
 }
