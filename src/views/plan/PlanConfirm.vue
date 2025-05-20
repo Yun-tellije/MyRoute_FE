@@ -78,6 +78,7 @@
 
 <script>
 import PlanMap from '@/components/plan/PlanMap.vue'
+import { useAuthStore } from '@/stores/auth'
 
 export default {
   components: { PlanMap },
@@ -93,7 +94,7 @@ export default {
     }
   },
   mounted() {
-    const token = localStorage.getItem('accessToken')
+    const token = useAuthStore().token
 
     if (!token) {
       alert('로그인이 필요한 서비스입니다.')
@@ -149,7 +150,7 @@ export default {
         method: this.editPlanId ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${useAuthStore().token}`,
         },
         body: JSON.stringify(payload),
       })
