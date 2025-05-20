@@ -2,6 +2,11 @@
   <div class="container mt-5" v-if="plan && plan.budget != null">
     <div class="card shadow-sm p-4 mb-4">
       <h4>{{ plan.planName }}</h4>
+      <div class="d-flex align-items-center">
+        <p class="mb-0">작성일: {{ formatDate(plan.createdAt) }}</p>
+        <small v-if="plan.updatedAt !== plan.createdAt" class="text-muted ms-2">(수정됨)</small>
+      </div>
+      <br />
       <p class="card-text">작성자: {{ plan.memberId }}</p>
       <p>지역: {{ plan.areaName }}</p>
       <p>예산: {{ plan.budget.toLocaleString() }}원</p>
@@ -226,6 +231,17 @@ export default {
         .catch(() => {
           alert('처리 중 오류가 발생했습니다.')
         })
+    },
+    formatDate(dateStr) {
+      if (!dateStr) return ''
+      const date = new Date(dateStr)
+      return date.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
     },
   },
 }

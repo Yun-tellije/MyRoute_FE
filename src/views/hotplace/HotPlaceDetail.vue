@@ -5,6 +5,11 @@
     <div class="card shadow-sm border-0 mb-5">
       <div class="card-body">
         <h2 class="mb-3">{{ post.title }}</h2>
+        <div class="d-flex align-items-center">
+          <p class="mb-0">작성일: {{ formatDate(post.createdAt) }}</p>
+          <small v-if="post.updatedAt !== post.createdAt" class="text-muted ms-2">(수정됨)</small>
+        </div>
+        <br />
         <p class="text-muted mb-1"><strong>작성자:</strong> {{ post.memberId }}</p>
         <p class="text-muted mb-1"><strong>관광지:</strong> {{ post.attractionName }}</p>
         <p class="text-warning mb-3">⭐ {{ post.starPoint }}</p>
@@ -28,6 +33,11 @@
           >
             ❤️ 추천 ({{ post.likeCount }})
           </button>
+          <button @click="$router.back()" class="btn btn-outline-secondary">돌아가기</button>
+        </div>
+        <div class="text-center mt-4" v-if="myPost">
+          <button @click="onEdit" class="btn btn-outline-primary">수정</button>
+          <button @click="onDelete" class="btn btn-outline-danger">삭제</button>
         </div>
       </div>
     </div>
@@ -70,7 +80,7 @@ import { useAuthStore } from '@/stores/auth'
 export default {
   components: { CommentForm },
   data() {
-    return { post: {}, comments: [], likedByUser: true }
+    return { post: {}, comments: [], likedByUser: true, myPost: false }
   },
   mounted() {
     const id = this.$route.params.id
@@ -91,6 +101,7 @@ export default {
           imageBase64: data.imageBase64,
         }
         this.likedByUser = data.likedByUser || false
+        this.myPost = data.myPost || false
       })
 
     this.loadComments()
@@ -180,6 +191,17 @@ export default {
       } catch (err) {
         alert('댓글 삭제 중 오류가 발생했습니다.', err)
       }
+    },
+    formatDate(dateStr) {
+      if (!dateStr) return ''
+      const date = new Date(dateStr)
+      return date.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
     },
   },
 }
