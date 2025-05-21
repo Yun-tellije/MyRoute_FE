@@ -42,7 +42,7 @@
       <button
         v-for="page in pageNumbers"
         :key="page"
-        class="page-btn"
+        class="page-btn page-btn-num"
         :class="{ active: currentPage === page }"
         @click="changePage(page)"
       >
@@ -226,6 +226,10 @@ export default {
   color: #aaa;
   cursor: not-allowed;
 }
+.page-btn-num:not(.active):hover {
+  background: #f0f0f0;
+}
+
 .btn-add-wrap {
   display: flex;
   justify-content: center;
@@ -233,10 +237,9 @@ export default {
 .btn-add {
   background: #9dbbaa;
   color: #fff;
-  font-weight: bold;
   border: none;
   border-radius: 4px;
-  padding: 6px 20px;
+  padding: 6px 14px;
   text-decoration: none;
 }
 .btn-add:hover {
