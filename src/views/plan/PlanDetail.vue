@@ -30,7 +30,72 @@
         <div>
           <h6 class="mb-1">{{ place.visitOrder }}. {{ place.placeName }}</h6>
           <p class="text-muted mb-0">{{ place.addr1 || '주소 정보 없음' }}</p>
+          ⭐ {{ typeof place.avgRating === 'number' ? place.avgRating.toFixed(1) : '0.0' }}
+          <div class="d-flex gap-2 mt-2">
+            <button class="btn btn-sm btn-outline-secondary" @click="toggleDetail(place)">
+              상세보기
+            </button>
+            <button class="btn btn-sm btn-outline-warning" @click="onStarClick(place, $event)">
+              ⭐ 리뷰 보기
+            </button>
+          </div>
         </div>
+      </div>
+    </div>
+
+    <div v-if="showPopup" class="rating-popup" :style="{ top: popupY + 'px', left: popupX + 'px' }">
+      <div class="popup-inner">
+        <h6>리뷰</h6>
+        <ul class="popup-list">
+          <li v-for="post in relatedHotplaces" :key="post.hotplaceId">
+            <strong>{{ post.title }}</strong> ({{ post.starPoint.toFixed(1) }}점)<br />
+            <small class="text-muted">{{ post.content }}</small>
+          </li>
+        </ul>
+        <button class="popup-close" @click="showPopup = false">닫기</button>
+      </div>
+    </div>
+
+    <div v-if="selectedPlaceDetail" class="modal-backdrop" @click.self="selectedPlaceDetail = null">
+      <div class="modal-content-box">
+        <h5>{{ selectedPlaceDetail.title }}</h5>
+        <img
+          :src="selectedPlaceDetail.first_image1 || '/resource/tripimage.png'"
+          class="w-100 mb-3"
+        />
+        <div class="overview-box">
+          {{ selectedPlaceDetail.overview || '설명이 없습니다.' }}
+        </div>
+        <br />
+        <div>
+          <p>
+            <strong
+              ><img src="/resource/pin.svg" alt="주소" style="width: 16px; height: 16px" />
+              주소</strong
+            >
+          </p>
+          <p style="margin-left: 16px">{{ selectedPlaceDetail.addr1 }}</p>
+        </div>
+        <div>
+          <p class="mt-3">
+            <strong
+              ><img src="/resource/parking.svg" alt="주차장" style="width: 16px; height: 16px" />
+              주변 주차장 정보</strong
+            >
+          </p>
+          <ul v-if="Array.isArray(selectedPlaceDetail.parking)">
+            <li
+              v-for="(name, idx) in selectedPlaceDetail.parking"
+              :key="idx"
+              style="margin-left: 16px; margin-bottom: 2px"
+            >
+              {{ name }}
+            </li>
+          </ul>
+          <p v-else>{{ selectedPlaceDetail.parking || '주차장 정보 없음' }}</p>
+        </div>
+
+        <button class="btn-close-modal" @click="selectedPlaceDetail = null">닫기</button>
       </div>
     </div>
 
@@ -65,6 +130,11 @@ export default {
       map: null,
       likedByUser: false,
       myPost: false,
+      selectedPlaceDetail: null,
+      relatedHotplaces: [],
+      showPopup: false,
+      popupX: 0,
+      popupY: 0,
     }
   },
   mounted() {
@@ -284,6 +354,63 @@ export default {
           alert('계획 삭제 중 오류가 발생했습니다.')
         })
     },
+    async toggleDetail(place) {
+      if (!place || !place.latitude || !place.longitude) {
+        this.selectedPlaceDetail = place
+        return
+      }
+
+      try {
+        const res = await fetch(`/api/att/search-parking`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            lat: place.latitude,
+            lon: place.longitude,
+          }),
+        })
+
+        if (res.ok) {
+          const data = await res.json()
+          place.parking = data.length > 0 ? data.map((p) => p.prkplceNm) : []
+        } else {
+          place.parking = ['주차장 정보 요청 실패']
+        }
+      } catch (err) {
+        console.error('주차장 정보 요청 중 오류 발생:', err)
+        place.parking = ['오류 발생']
+      }
+
+      if (!place.overview && place.no) {
+        try {
+          const overviewRes = await fetch(`/api/att/overview/${place.no}`)
+          if (overviewRes.ok) {
+            const overviewData = await overviewRes.json()
+            place.overview = overviewData.overview || '설명 없음'
+          }
+        } catch (err) {
+          console.error('설명 정보 요청 실패:', err)
+          place.overview = '설명 없음'
+        }
+      }
+
+      this.selectedPlaceDetail = place
+    },
+
+    async onStarClick(place, event) {
+      const rect = event.target.getBoundingClientRect()
+      this.popupX = rect.left
+      this.popupY = rect.bottom + window.scrollY
+
+      try {
+        const res = await fetch('/api/hotplace/posts')
+        const posts = await res.json()
+        this.relatedHotplaces = posts.filter((p) => p.attractionNo === place.attractionNo)
+        this.showPopup = true
+      } catch (err) {
+        console.error('핫플레이스 리뷰 로딩 실패:', err)
+      }
+    },
   },
 }
 </script>
@@ -291,5 +418,52 @@ export default {
 <style scoped>
 .card {
   font-size: 18px;
+}
+
+.rating-popup {
+  position: absolute;
+  z-index: 3000;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+  min-width: 300px;
+  max-width: 400px;
+  padding: 16px;
+}
+
+.popup-inner {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.popup-close {
+  margin-top: 10px;
+  background: #adb5bd;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-content-box {
+  background: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 100%;
 }
 </style>
