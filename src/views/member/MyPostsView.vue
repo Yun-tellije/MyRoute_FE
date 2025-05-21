@@ -15,7 +15,7 @@
         :class="{ active: activeTab === 'hotplace' }"
         @click="activeTab = 'hotplace'"
       >
-        핫플 게시물
+        나의 핫플
       </button>
     </div>
 
@@ -67,11 +67,9 @@ export default {
 
 <style scoped>
 .my-posts-container {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 40px auto 0 auto;
   padding: 40px 32px 32px 32px;
-  background: #fff;
-  border-radius: 10px;
 }
 
 .page-title {
@@ -85,9 +83,8 @@ export default {
   display: flex;
   border-bottom: 2px solid #ededed;
   background: #ededed;
-  border-radius: 6px 6px 0 0;
   overflow: hidden;
-  margin-bottom: 24px;
+  margin-bottom: 40px;
 }
 
 .tab-button {
