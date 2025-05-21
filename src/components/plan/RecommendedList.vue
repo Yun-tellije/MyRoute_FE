@@ -5,16 +5,28 @@
       <h4 class="mb-0">
         <i class="fa-solid fa-signs-post" style="color: #ffc107"></i> 추천 관광지 목록
       </h4>
-      <select
-        v-model="localAttId"
-        class="form-select"
-        style="max-width: 200px"
-        @change="onAttChange"
-      >
-        <option value="0">놀거리</option>
-        <option value="39">음식점</option>
-        <option value="32">숙박</option>
-      </select>
+
+      <div class="d-flex gap-2">
+        <input
+          type="text"
+          class="form-control"
+          style="width: 200px"
+          v-model="searchInput"
+          placeholder="장소 이름 검색"
+          @keyup.enter="applySearch"
+        />
+
+        <select
+          v-model="localAttId"
+          class="form-select"
+          style="max-width: 200px"
+          @change="onAttChange"
+        >
+          <option value="0">놀거리</option>
+          <option value="39">음식점</option>
+          <option value="32">숙박</option>
+        </select>
+      </div>
     </div>
 
     <div class="place-list-scroll">
@@ -22,12 +34,16 @@
         군/구를 선택해주세요.
       </div>
       <div class="row g-4">
-        <div v-for="place in places" :key="place.no" class="col-md-6">
+        <div v-for="place in filteredPlaces" :key="place.no" class="col-md-6">
           <div class="place-card">
             <img :src="place.first_image1 || '/resource/tripimage.png'" :alt="place.title" />
             <div class="place-info">
               <h5>{{ place.title }}</h5>
               <p>{{ place.content_type_name }}</p>
+              <p @click="onStarClick(place, $event)" style="cursor: pointer; color: #f5c518">
+                ⭐ {{ typeof place.avgRating === 'number' ? place.avgRating.toFixed(1) : '0.0' }}
+              </p>
+
               <div class="d-flex gap-2">
                 <button @click="add(place)" class="btn btn-sm">추가</button>
                 <button @click="toggleDetail(place.no)" class="btn2 btn2-sm">상세보기</button>
@@ -36,6 +52,19 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div v-if="showPopup" class="rating-popup" :style="{ top: popupY + 'px', left: popupX + 'px' }">
+    <div class="popup-inner">
+      <h6>리뷰</h6>
+      <ul class="popup-list">
+        <li v-for="post in relatedHotplaces" :key="post.hotplaceId">
+          <strong>{{ post.title }}</strong> ({{ post.starPoint.toFixed(1) }}점)<br />
+          <small class="text-muted">{{ post.content }}</small>
+        </li>
+      </ul>
+      <button @click="showPopup = false" class="popup-close">닫기</button>
     </div>
   </div>
 
@@ -88,8 +117,28 @@ export default {
       localAttId: this.selectedAttId,
       visibleDetails: new Set(),
       selectedDetail: null,
+
+      relatedHotplaces: [],
+      showPopup: false,
+      popupX: 0,
+      popupY: 0,
+      searchInput: '',
+      searchKeyword: '',
     }
   },
+  computed: {
+    filteredPlaces() {
+      const keyword = this.searchKeyword.trim().toLowerCase()
+      const attId = Number(this.localAttId)
+
+      return this.places.filter((place) => {
+        const matchesAtt = attId === 0 || place.content_type_id === attId
+        const matchesTitle = !keyword || place.title.toLowerCase().includes(keyword)
+        return matchesAtt && matchesTitle
+      })
+    },
+  },
+
   watch: {
     selectedAttId(newVal) {
       this.localAttId = newVal
@@ -135,6 +184,23 @@ export default {
       }
 
       this.selectedDetail = place
+    },
+    async onStarClick(place, event) {
+      const rect = event.target.getBoundingClientRect()
+      this.popupX = rect.left
+      this.popupY = rect.bottom + window.scrollY
+
+      try {
+        const res = await fetch('/api/hotplace/posts')
+        const posts = await res.json()
+        this.relatedHotplaces = posts.filter((p) => p.attractionNo === place.no)
+        this.showPopup = true
+      } catch (err) {
+        console.error('핫플레이스 데이터 로딩 실패', err)
+      }
+    },
+    applySearch(event) {
+      this.searchKeyword = event.target.value.trim()
     },
   },
 }
@@ -274,5 +340,53 @@ li {
 
 .btn2:hover {
   background-color: #868e96;
+}
+
+.rating-popup {
+  position: absolute;
+  z-index: 3000;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+  animation: fade-in 0.3s ease-out;
+  min-width: 300px;
+  max-width: 400px;
+  padding: 16px;
+}
+
+.popup-inner {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.popup-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.popup-list li {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.popup-close {
+  margin-top: 10px;
+  background: #adb5bd;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+@keyframes fade-in {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 </style>
