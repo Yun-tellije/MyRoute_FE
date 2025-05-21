@@ -1,9 +1,15 @@
 <template>
   <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
       <h2>핫플 게시판</h2>
 
       <div class="d-flex align-items-center gap-2">
+        <input
+          v-model="searchKeyword"
+          class="form-control"
+          style="width: 200px"
+          placeholder="장소 또는 제목"
+        />
         <select class="form-select" style="width: 180px" v-model="sortOption">
           <option value="latest">최신 순</option>
           <option value="likes">추천 많은 순</option>
@@ -72,6 +78,7 @@ export default {
       currentPage: 1,
       perPage: 10,
       sortOption: 'latest',
+      searchKeyword: '',
       userId: '',
       isLoggedIn: false,
     }
@@ -122,17 +129,31 @@ export default {
     },
     sortPosts() {
       this.currentPage = 1
+
+      let sorted = [...this.originalPosts]
       if (this.sortOption === 'likes') {
-        this.posts = [...this.originalPosts].sort((a, b) => {
+        sorted.sort((a, b) => {
           if (b.likeCount === a.likeCount) {
             return b.hotplaceId - a.hotplaceId
           }
           return b.likeCount - a.likeCount
         })
       } else {
-        this.posts = [...this.originalPosts].sort((a, b) => b.hotplaceId - a.hotplaceId)
+        sorted.sort((a, b) => b.hotplaceId - a.hotplaceId)
+      }
+
+      const keyword = this.searchKeyword.trim().toLowerCase()
+      if (keyword.length >= 2) {
+        this.posts = sorted.filter(
+          (post) =>
+            post.title.toLowerCase().includes(keyword) ||
+            post.attractionName?.toLowerCase().includes(keyword),
+        )
+      } else {
+        this.posts = sorted
       }
     },
+
     goDetail(id) {
       this.$router.push(`/hotplaceDetail/${id}`)
     },
