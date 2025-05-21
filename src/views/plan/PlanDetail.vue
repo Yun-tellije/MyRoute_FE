@@ -466,4 +466,14 @@ export default {
   max-width: 500px;
   width: 100%;
 }
-</style>
+
+.overview-box {
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  background: #f9f9f9;
+  font-size: 14px;
+  border-radius: 6px;
+}
+ </style>
