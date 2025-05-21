@@ -47,9 +47,13 @@
       <div class="popup-inner">
         <h6>리뷰</h6>
         <ul class="popup-list">
-          <li v-for="post in relatedHotplaces" :key="post.hotplaceId">
+          <li
+            v-for="post in relatedHotplaces"
+            :key="post.hotplaceId"
+            @click="goDetail(post.hotplaceId)"
+          >
             <strong>{{ post.title }}</strong> ({{ post.starPoint.toFixed(1) }}점)<br />
-            <small class="text-muted">{{ post.content }}</small>
+            <small class="text-muted review-text">{{ post.content }}</small>
           </li>
         </ul>
         <button class="popup-close" @click="showPopup = false">닫기</button>
@@ -411,6 +415,9 @@ export default {
         console.error('핫플레이스 리뷰 로딩 실패:', err)
       }
     },
+    goDetail(id) {
+      window.open(`/hotplaceDetail/${id}`, '_blank')
+    },
   },
 }
 </script>
@@ -434,6 +441,7 @@ export default {
 .popup-inner {
   max-height: 300px;
   overflow-y: auto;
+  padding-right: 6px;
 }
 
 .popup-close {
@@ -476,4 +484,32 @@ export default {
   font-size: 14px;
   border-radius: 6px;
 }
- </style>
+
+.popup-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.popup-list li {
+  margin-bottom: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.popup-list li:hover {
+  background-color: #f1f1f1;
+}
+
+.review-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+</style>

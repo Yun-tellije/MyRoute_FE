@@ -59,7 +59,11 @@
     <div class="popup-inner">
       <h6>리뷰</h6>
       <ul class="popup-list">
-        <li v-for="post in relatedHotplaces" :key="post.hotplaceId">
+        <li
+          v-for="post in relatedHotplaces"
+          :key="post.hotplaceId"
+          @click="goDetail(post.hotplaceId)"
+        >
           <strong>{{ post.title }}</strong> ({{ post.starPoint.toFixed(1) }}점)<br />
           <small class="text-muted">{{ post.content }}</small>
         </li>
@@ -201,6 +205,9 @@ export default {
     },
     applySearch(event) {
       this.searchKeyword = event.target.value.trim()
+    },
+    goDetail(id) {
+      window.open(`/hotplaceDetail/${id}`, '_blank')
     },
   },
 }
@@ -359,14 +366,15 @@ li {
   overflow-y: auto;
 }
 
-.popup-list {
-  list-style: none;
-  padding-left: 0;
-}
-
 .popup-list li {
   margin-bottom: 10px;
   font-size: 14px;
+  cursor: pointer;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .popup-close {
