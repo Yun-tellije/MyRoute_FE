@@ -1,40 +1,69 @@
 <template>
-  <div class="container mt-5">
-    <div v-if="filteredPosts.length === 0" class="alert alert-info">
-      해당 조건에 맞는 게시글이 없습니다.
-    </div>
-
+  <div class="myhotplace-list">
+    <div v-if="filteredPosts.length === 0" class="no-data-msg">저장된 핫플 게시물이 없습니다.</div>
     <div v-else>
-      <div
-        v-for="post in paginatedPosts"
-        :key="post.id"
-        class="card mb-3 shadow-sm card-hover"
-        @click="goDetail(post.hotplaceId)"
-      >
-        <div class="card-body">
-          <h5 class="card-title">{{ post.title }}</h5>
-          <h5 class="card-title">{{ post.attractionName }}</h5>
-          <p class="card-text text-muted">
-            - ★{{ post.starPoint }} , 작성자: {{ post.memberId }} , 추천 수: {{ post.likeCount }}
-          </p>
+      <div class="hotplace-card-grid">
+        <div
+          v-for="post in paginatedPosts"
+          :key="post.hotplaceId"
+          class="hotplace-card"
+          @click="goDetail(post.hotplaceId)"
+        >
+          <div class="hotplace-card-thumb">
+            <img
+              v-if="post.image"
+              :src="getImageSrc(post.image)"
+              alt="썸네일"
+              class="hotplace-thumb-img"
+            />
+            <div v-else class="hotplace-thumb-placeholder">No Image</div>
+          </div>
+          <div class="hotplace-card-body">
+            <div class="hotplace-card-title">{{ post.title }}</div>
+            <div class="hotplace-card-attraction">{{ post.attractionName }}</div>
+            <div class="hotplace-card-info">
+              <span>
+                <i class="fa-solid fa-star" style="color: #ffc107"></i>
+                <b>&nbsp;{{ post.starPoint }}</b>
+              </span>
+
+              <span
+                ><i class="fa-solid fa-heart" style="color: #f44336"></i>&nbsp;{{
+                  post.likeCount
+                }}</span
+              >
+            </div>
+          </div>
         </div>
       </div>
-
-      <nav class="mt-4">
-        <ul class="pagination justify-content-center">
-          <li class="page-item" :class="{ disabled: currentPage === 1 }">
-            <button class="page-link" @click="changePage(currentPage - 1)">이전</button>
+      <nav class="pagination-wrap">
+        <ul class="pagination-list">
+          <li>
+            <button
+              class="page-btn"
+              :disabled="currentPage === 1"
+              @click="changePage(currentPage - 1)"
+            >
+              이전
+            </button>
           </li>
-          <li
-            class="page-item"
-            v-for="page in totalPages"
-            :key="page"
-            :class="{ active: currentPage === page }"
-          >
-            <button class="page-link" @click="changePage(page)">{{ page }}</button>
+          <li v-for="page in totalPages" :key="page">
+            <button
+              class="page-btn"
+              :class="{ active: currentPage === page }"
+              @click="changePage(page)"
+            >
+              {{ page }}
+            </button>
           </li>
-          <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-            <button class="page-link" @click="changePage(currentPage + 1)">다음</button>
+          <li>
+            <button
+              class="page-btn"
+              :disabled="currentPage === totalPages"
+              @click="changePage(currentPage + 1)"
+            >
+              다음
+            </button>
           </li>
         </ul>
       </nav>
@@ -51,7 +80,7 @@ export default {
     return {
       posts: [],
       currentPage: 1,
-      perPage: 10,
+      perPage: 6,
       sortOption: 'latest',
       userId: '',
       isLoggedIn: false,
@@ -120,6 +149,9 @@ export default {
     goDetail(id) {
       this.$router.push(`/hotplaceDetail/${id}`)
     },
+    getImageSrc(image) {
+      return `data:image/jpeg;base64,${image}`
+    },
   },
   async mounted() {
     await this.fetchUserInfo()
@@ -129,8 +161,144 @@ export default {
 </script>
 
 <style scoped>
-.card-hover:hover {
-  background: #f9f9f9;
+.myhotplace-list {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.no-data-msg {
+  color: #b0b0b0;
+  text-align: center;
+  padding: 48px 0;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  margin-bottom: 24px;
+}
+
+.hotplace-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 28px 22px;
+  margin-bottom: 32px;
+}
+
+.hotplace-card {
+  background: #fff;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(157, 187, 170, 0.06);
   cursor: pointer;
+  transition:
+    box-shadow 0.18s,
+    border 0.18s,
+    background 0.18s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  min-height: 300px;
+}
+.hotplace-card:hover {
+  background: #f9fafb;
+  border-color: #aaaaaa;
+  box-shadow: 0 4px 18px rgba(157, 187, 170, 0.13);
+}
+
+.hotplace-card-thumb {
+  width: 100%;
+  height: 160px;
+  background: #f2f2f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.hotplace-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hotplace-thumb-placeholder {
+  width: 100%;
+  height: 100%;
+  color: #bbb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  background: #f2f2f2;
+}
+
+.hotplace-card-body {
+  width: 100%;
+  padding: 18px 18px 0 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.hotplace-card-title {
+  font-size: 1.2rem;
+  color: #222;
+  font-weight: 500;
+  letter-spacing: -0.5px;
+  word-break: break-all;
+}
+
+.hotplace-card-attraction {
+  font-size: 0.98rem;
+  color: #4a98e4;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.hotplace-card-info {
+  display: flex;
+  gap: 12px;
+  color: #666;
+  font-size: 1.02rem;
+  align-items: center;
+}
+.hotplace-card-info b {
+  color: #333;
+  font-weight: 600;
+}
+
+.pagination-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+.pagination-list {
+  display: flex;
+  gap: 4px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.page-btn {
+  background: #ededed;
+  color: #666;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.18s,
+    color 0.18s;
+}
+.page-btn.active,
+.page-btn:hover:not(:disabled) {
+  background: #4a98e4;
+  color: #fff;
+}
+.page-btn:disabled {
+  background: #f5f5f5;
+  color: #bbb;
+  cursor: not-allowed;
 }
 </style>
