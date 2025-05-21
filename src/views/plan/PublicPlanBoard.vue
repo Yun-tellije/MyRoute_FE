@@ -273,6 +273,7 @@ export default {
 }
 .plan-row:hover td {
   background: #f9f9f9;
+  cursor: pointer;
 }
 .no-data {
   text-align: center;

@@ -1,43 +1,43 @@
 <template>
-  <div class="container mt-5" v-if="plan && plan.budget != null">
-    <div class="card shadow-sm p-4 mb-4">
-      <h4>{{ plan.planName }}</h4>
-      <div class="d-flex align-items-center">
-        <p class="mb-0">작성일: {{ formatDate(plan.createdAt) }}</p>
-        <small v-if="plan.updatedAt !== plan.createdAt" class="text-muted ms-2">(수정됨)</small>
+  <div class="plan-detail-container" v-if="plan && plan.budget != null">
+    <div class="plan-header-box">
+      <div class="plan-meta-row">
+        <span class="plan-title">{{ plan.planName }}</span>
+        <span v-if="plan.updatedAt !== plan.createdAt" class="plan-updated">(수정됨)</span>
+        <span class="plan-date right-align">{{ formatDate(plan.createdAt) }}</span>
       </div>
-      <br />
-      <p class="card-text">작성자: {{ plan.memberId }}</p>
-      <p>지역: {{ plan.areaName }}</p>
-      <p>예산: {{ plan.budget.toLocaleString() }}원</p>
-      <p>여행일수: {{ plan.days }}일</p>
+      <div class="plan-info-row">
+        <span class="plan-writer">{{ plan.memberId }}</span>
+        <span class="plan-area">지역: {{ plan.areaName }}</span>
+        <span class="plan-days">여행일수: {{ plan.days }}일</span>
+        <span class="plan-budget">예산: {{ plan.budget.toLocaleString() }}원</span>
+      </div>
     </div>
+    <hr class="plan-divider" />
 
-    <div id="map" style="width: 100%; height: 400px"></div>
-
-    <div class="mt-4">
-      <h5>여행 장소 목록</h5>
-      <div
-        v-for="place in places"
-        :key="place.placeId"
-        class="card mb-3 p-3 d-flex flex-row align-items-center gap-3"
-      >
+    <div id="map" class="plan-map"></div>
+    <h5 class="plan-places-title">여행 장소 목록</h5>
+    <div class="plan-places-section scrollable-places">
+      <div v-for="place in places" :key="place.placeId" class="plan-place-card">
         <img
           :src="place.first_image1 || '/resource/tripimage.png'"
           alt="이미지"
-          style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px"
+          class="plan-place-img"
         />
-        <div>
-          <h6 class="mb-1">{{ place.visitOrder }}. {{ place.placeName }}</h6>
-          <p class="text-muted mb-0">{{ place.addr1 || '주소 정보 없음' }}</p>
-          ⭐ {{ typeof place.avgRating === 'number' ? place.avgRating.toFixed(1) : '0.0' }}
-          <div class="d-flex gap-2 mt-2">
-            <button class="btn btn-sm btn-outline-secondary" @click="toggleDetail(place)">
-              상세보기
-            </button>
-            <button class="btn btn-sm btn-outline-warning" @click="onStarClick(place, $event)">
-              ⭐ 리뷰 보기
-            </button>
+        <div class="plan-place-info">
+          <p class="plan-place-name">
+            {{ place.visitOrder }}. {{ place.placeName }}
+            <span class="plan-place-addr">({{ place.addr1 || '주소 정보 없음' }})</span>
+          </p>
+
+          <div class="plan-place-btns">
+            <button class="btn-detail" @click="toggleDetail(place)">상세보기</button>
+            <div class="plan-place-meta">
+              <button class="plan-place-star" @click="onStarClick(place, $event)">
+                <i class="fa-solid fa-star" style="color: #ffc107"></i>
+                {{ typeof place.avgRating === 'number' ? place.avgRating.toFixed(1) : '0.0' }}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -70,22 +70,21 @@
         <div class="overview-box">
           {{ selectedPlaceDetail.overview || '설명이 없습니다.' }}
         </div>
-        <br />
-        <div>
+        <div class="modal-section">
           <p>
-            <strong
-              ><img src="/resource/pin.svg" alt="주소" style="width: 16px; height: 16px" />
-              주소</strong
-            >
+            <strong>
+              <img src="/resource/pin.svg" alt="주소" style="width: 16px; height: 16px" />
+              주소
+            </strong>
           </p>
           <p style="margin-left: 16px">{{ selectedPlaceDetail.addr1 }}</p>
         </div>
-        <div>
-          <p class="mt-3">
-            <strong
-              ><img src="/resource/parking.svg" alt="주차장" style="width: 16px; height: 16px" />
-              주변 주차장 정보</strong
-            >
+        <div class="modal-section">
+          <p>
+            <strong>
+              <img src="/resource/parking.svg" alt="주차장" style="width: 16px; height: 16px" />
+              주변 주차장 정보
+            </strong>
           </p>
           <ul v-if="Array.isArray(selectedPlaceDetail.parking)">
             <li
@@ -98,27 +97,20 @@
           </ul>
           <p v-else>{{ selectedPlaceDetail.parking || '주차장 정보 없음' }}</p>
         </div>
-
         <button class="btn-close-modal" @click="selectedPlaceDetail = null">닫기</button>
       </div>
     </div>
 
-    <div class="text-center mt-4">
-      <button
-        @click="toggleLike"
-        class="btn"
-        :class="{ 'btn-danger': likedByUser, 'btn-outline-danger': !likedByUser }"
-      >
-        ❤️ 추천 ({{ plan.likeCount }})
+    <div class="plan-buttons">
+      <button @click="toggleLike" class="btn-like" :class="{ liked: likedByUser }">
+        <i class="fa-solid fa-heart" style="color: #f44336"></i>&nbsp;추천 ({{ plan.likeCount }})
       </button>
-
-      <button @click="$router.back()" class="btn btn-outline-secondary">돌아가기</button>
+      <button @click="$router.back()" class="btn-back">목록으로 돌아가기</button>
+      <div v-if="myPost" class="plan-owner-btns">
+        <button @click="onEdit" class="btn-edit">수정</button>
+        <button @click="onDelete" class="btn-delete">삭제</button>
+      </div>
     </div>
-  </div>
-
-  <div class="text-center mt-4" v-if="myPost">
-    <button @click="onEdit" class="btn btn-outline-primary">수정</button>
-    <button @click="onDelete" class="btn btn-outline-danger">삭제</button>
   </div>
 </template>
 
@@ -158,12 +150,10 @@ export default {
         return res.json()
       })
       .then((data) => {
-        console.log('API 응답:', data)
         this.plan = data.plan
         this.places = data.places
         this.likedByUser = data.likedByUser || false
         this.myPost = data.myPost
-        console.log(this.myPost)
         this.$nextTick(() => this.initMap())
       })
       .catch(() => {
@@ -309,13 +299,7 @@ export default {
     formatDate(dateStr) {
       if (!dateStr) return ''
       const date = new Date(dateStr)
-      return date.toLocaleDateString('ko-KR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-      })
+      return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`
     },
     onEdit() {
       const editPlan = {
@@ -423,10 +407,160 @@ export default {
 </script>
 
 <style scoped>
-.card {
-  font-size: 18px;
+.plan-detail-container {
+  max-width: 1200px;
+  margin: 40px auto 0 auto;
+  padding: 40px 32px 32px 32px;
 }
-
+.plan-header-box {
+  border-top: 2px solid #696969;
+  padding-top: 14px;
+}
+.plan-meta-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin-bottom: 8px;
+  position: relative;
+}
+.plan-title {
+  font-size: 1.6rem;
+  color: #222;
+  letter-spacing: -1px;
+}
+.plan-info-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  color: #888;
+  font-size: 1rem;
+  margin-bottom: 2px;
+}
+.plan-date {
+  font-size: 1rem;
+  margin-left: auto;
+  color: #999;
+}
+.right-align {
+  margin-left: auto;
+}
+.plan-area,
+.plan-days,
+.plan-budget,
+.plan-updated {
+  font-size: 1rem;
+}
+.plan-updated {
+  color: #999999;
+  font-weight: 500;
+}
+.plan-divider {
+  border: none;
+  border-top: 1px solid #d0d0d0;
+  margin: 18px 0 28px 0;
+}
+.plan-map {
+  width: 100%;
+  height: 400px;
+  border-radius: 8px;
+  margin-bottom: 36px;
+  background: #f7f7f7;
+}
+.plan-places-section {
+  margin-bottom: 36px;
+}
+.plan-places-section.scrollable-places {
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+.plan-places-title {
+  font-size: 1.08rem;
+  font-weight: 600;
+  margin-bottom: 18px;
+  color: #333;
+}
+.plan-place-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 10px 18px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 4px rgba(180, 180, 180, 0.06);
+}
+.plan-place-img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #e0e0e0;
+}
+.plan-place-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.plan-place-name {
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+.plan-place-addr {
+  color: #888;
+  font-size: 0.98rem;
+  margin: 0;
+}
+.plan-place-star {
+  font-size: 1.01rem;
+  color: #ffb300;
+  border-radius: 6px;
+  padding: 2px 6px;
+  background-color: white;
+  border: 1px solid #ffb300;
+}
+.plan-place-btns {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+  align-items: center;
+}
+.btn-detail {
+  background: white;
+  color: #666;
+  border: 1px solid #666;
+  border-radius: 6px;
+  padding: 3px 6px;
+  font-size: 0.98rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.18s,
+    color 0.18s;
+}
+.btn-detail:hover {
+  background: #bbbbbb;
+  border: 1px solid #777;
+  color: #fff;
+}
+.btn-review {
+  background: white;
+  color: #e9a600;
+  border: 1.2px solid #ffe082;
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-size: 0.98rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.18s,
+    color 0.18s;
+}
+.btn-review:hover {
+  background: #ffe082;
+  color: #fff;
+}
 .rating-popup {
   position: absolute;
   z-index: 3000;
@@ -437,13 +571,11 @@ export default {
   max-width: 400px;
   padding: 16px;
 }
-
 .popup-inner {
   max-height: 300px;
   overflow-y: auto;
   padding-right: 6px;
 }
-
 .popup-close {
   margin-top: 10px;
   background: #adb5bd;
@@ -453,7 +585,6 @@ export default {
   border-radius: 4px;
   cursor: pointer;
 }
-
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -466,7 +597,6 @@ export default {
   align-items: center;
   z-index: 2000;
 }
-
 .modal-content-box {
   background: #fff;
   padding: 24px;
@@ -474,7 +604,6 @@ export default {
   max-width: 500px;
   width: 100%;
 }
-
 .overview-box {
   max-height: 150px;
   overflow-y: auto;
@@ -483,6 +612,100 @@ export default {
   background: #f9f9f9;
   font-size: 14px;
   border-radius: 6px;
+}
+.modal-section {
+  margin-bottom: 12px;
+}
+p,
+ul {
+  margin: 0;
+  padding: 3px;
+}
+li {
+  list-style: none;
+}
+.btn-close-modal {
+  margin-top: 10px;
+  background: #adb5bd;
+  color: white;
+  border: none;
+  padding: 7px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+.plan-buttons {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 14px;
+  margin-top: 32px;
+}
+.btn-like {
+  background: #fff;
+  color: #e94e77;
+  border: 1.5px solid #e94e77;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-size: 1.08rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.18s,
+    color 0.18s;
+}
+.btn-like.liked,
+.btn-like:hover {
+  background: #e94e77;
+  color: #fff;
+}
+.btn-back {
+  background: #ededed;
+  color: #666;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-size: 1.08rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.18s,
+    color 0.18s;
+}
+.btn-back:hover {
+  background: #4a98e4;
+  color: #fff;
+}
+.plan-owner-btns {
+  display: flex;
+  gap: 10px;
+}
+.btn-edit {
+  background-color: #4a98e4;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+.btn-edit:hover {
+  background: #3576b9;
+}
+.btn-delete {
+  background-color: #fff;
+  padding: 8px 14px;
+  color: #e94e77;
+  border: 1.5px solid #e94e77;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+.btn-delete:hover {
+  background: #e94e77;
+  color: #fff;
 }
 
 .popup-list {
@@ -511,5 +734,26 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.4;
+}
+@media (max-width: 700px) {
+  .plan-detail-container {
+    padding: 18px 4px;
+  }
+  .plan-title {
+    font-size: 1.05rem;
+  }
+  .plan-map {
+    height: 220px;
+  }
+  .plan-place-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 8px;
+  }
+  .plan-place-img {
+    width: 100%;
+    height: 120px;
+  }
 }
 </style>
