@@ -243,6 +243,47 @@ export default {
         minute: '2-digit',
       })
     },
+    onEdit() {
+      const editPlan = {
+        ...this.plan,
+        places: this.places.map((p) => ({
+          no: p.attractionNo,
+          title: p.placeName,
+          latitude: p.latitude,
+          longitude: p.longitude,
+          first_image1: p.first_image1,
+          content_type_name: p.content_type_name,
+          addr1: p.addr1,
+        })),
+      }
+      localStorage.setItem('editPlan', JSON.stringify(editPlan))
+      this.$router.push({
+        path: '/attplan',
+        query: {
+          sido: this.plan.areaName.split(' ')[0],
+          gugun: this.plan.areaName.split(' ')[1] || '',
+        },
+      })
+    },
+    onDelete() {
+      if (!confirm('삭제하시겠습니까?')) return
+      const authStore = useAuthStore()
+
+      fetch(`/api/att/deletePlan/${this.plan.planId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+        },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error('삭제 실패')
+          alert('계획이 삭제되었습니다.')
+          this.$router.push('/my-travel-plans')
+        })
+        .catch(() => {
+          alert('계획 삭제 중 오류가 발생했습니다.')
+        })
+    },
   },
 }
 </script>

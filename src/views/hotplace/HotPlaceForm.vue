@@ -3,7 +3,6 @@
     <div class="card shadow-sm p-4 mb-5">
       <h2 class="mb-4">{{ isEdit ? '✏️ 글 수정' : '📝 새 글쓰기' }}</h2>
 
-      <!-- 장소 검색 -->
       <div class="mb-4">
         <label class="form-label fw-bold">📍 장소 검색</label>
         <div class="d-flex align-items-center gap-2">
@@ -20,7 +19,6 @@
         />
       </div>
 
-      <!-- 제목 입력 -->
       <div class="mb-3">
         <label class="form-label fw-bold">제목</label>
         <input
@@ -32,7 +30,6 @@
         />
       </div>
 
-      <!-- 별점 -->
       <div
         class="star-wrapper d-flex align-items-center gap-2"
         @mousemove="$_onStarHover"
@@ -51,7 +48,6 @@
       </div>
       <br />
 
-      <!-- 이미지 첨부 -->
       <div class="mb-4">
         <label class="form-label fw-bold">📷 이미지 첨부 (선택)</label>
         <input type="file" class="form-control" multiple @change="onFileChange" ref="fileInput" />
@@ -63,7 +59,6 @@
         </div>
       </div>
 
-      <!-- 내용 입력 -->
       <div class="mb-4">
         <label class="form-label fw-bold">📝 리뷰 내용</label>
         <textarea
@@ -73,7 +68,6 @@
         ></textarea>
       </div>
 
-      <!-- 버튼 -->
       <div class="d-flex justify-content-end gap-2">
         <button class="btn btn-success" @click="submit">
           {{ isEdit ? '수정 저장' : '등록' }}
@@ -134,11 +128,25 @@ export default {
       fetch(`/api/hotplace/edit/${id}`)
         .then((r) => r.json())
         .then((data) => {
-          this.form = { title: data.title, rating: data.rating, content: data.content }
-          this.selectedAttraction = { no: data.no, title: data.title }
+          this.form = {
+            title: data.title,
+            content: data.content,
+            rating: data.rating,
+          }
           this.selectedStarNum = data.rating
+
+          this.selectedPlace = {
+            no: data.no,
+            title: data.attractionName,
+          }
+          this.selectedAttraction = this.selectedPlace
+
+          if (data.imageBase64) {
+            this.previews = [data.imageBase64]
+          }
         })
     }
+
     this.$nextTick(() => {
       this.$_initStarOffsets()
     })

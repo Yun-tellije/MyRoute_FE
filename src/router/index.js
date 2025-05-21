@@ -74,11 +74,6 @@ const router = createRouter({
       component: () => import('@/views/hotplace/HotPlaceForm.vue'),
     },
     {
-      path: '/hotplaceupdate/:id',
-      name: 'HotPlaceEdit',
-      component: () => import('@/views/hotplace/HotPlaceForm.vue'),
-    },
-    {
       path: '/hotplaceDetail/:id',
       name: 'HotPlaceDetail',
       component: () => import('@/views/hotplace/HotPlaceDetail.vue'),
@@ -97,6 +92,11 @@ const router = createRouter({
       path: '/member/posts',
       name: 'MyPosts',
       component: () => import('@/views/member/MyPostsView.vue'),
+    },
+    {
+      path: '/hotplace/edit/:id',
+      name: 'HotPlaceEdit',
+      component: () => import('@/views/hotplace/HotPlaceForm.vue'),
     },
   ],
 })

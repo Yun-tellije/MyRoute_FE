@@ -203,6 +203,28 @@ export default {
         minute: '2-digit',
       })
     },
+    onEdit() {
+      this.$router.push(`/hotplace/edit/${this.post.hotplaceId}`)
+    },
+    onDelete() {
+      if (!confirm('삭제하시겠습니까?')) return
+      const authStore = useAuthStore()
+
+      fetch(`/api/hotplace/delete/${this.post.hotplaceId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+        },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error('삭제 실패')
+          alert('계획이 삭제되었습니다.')
+          this.$router.push('/hotplacelist')
+        })
+        .catch(() => {
+          alert('계획 삭제 중 오류가 발생했습니다.')
+        })
+    },
   },
 }
 </script>
