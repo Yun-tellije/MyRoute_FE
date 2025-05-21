@@ -1,9 +1,5 @@
 <template>
   <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2>핫플 게시판</h2>
-    </div>
-
     <div v-if="filteredPosts.length === 0" class="alert alert-info">
       해당 조건에 맞는 게시글이 없습니다.
     </div>

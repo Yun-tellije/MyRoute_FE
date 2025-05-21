@@ -1,7 +1,5 @@
 <template>
   <div class="container mt-5">
-    <h2 class="mb-4">나의 여행 계획 리스트</h2>
-
     <div v-if="plans.length === 0" class="alert alert-warning">저장된 여행 계획이 없습니다.</div>
 
     <div v-else>
