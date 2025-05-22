@@ -28,7 +28,7 @@
               </span>
 
               <span
-                ><i class="fa-solid fa-heart" style="color: #f44336"></i>&nbsp;{{
+                ><i class="fa-solid fa-heart" style="color: #ed4856"></i>&nbsp;{{
                   post.likeCount
                 }}</span
               >

@@ -42,7 +42,7 @@
                   {{ post.starPoint }}
                 </span>
                 <span>
-                  <i class="fa-solid fa-heart" style="color: #f44336"></i>
+                  <i class="fa-solid fa-heart" style="color: #ed4856"></i>
                   {{ post.likeCount }}
                 </span>
                 <span>

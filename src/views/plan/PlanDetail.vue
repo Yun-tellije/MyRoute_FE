@@ -1,5 +1,14 @@
 <template>
   <div class="plan-detail-container" v-if="plan && plan.budget != null">
+    <div class="plan-buttons">
+      <button @click="$router.back()" class="btn-back">
+        <i class="fa-solid fa-caret-left"></i>&nbsp;목록으로 돌아가기
+      </button>
+      <div v-if="myPost" class="plan-owner-btns">
+        <button @click="onEdit" class="btn-edit">수정</button>
+        <button @click="onDelete" class="btn-delete">삭제</button>
+      </div>
+    </div>
     <div class="plan-header-box">
       <div class="plan-meta-row">
         <span class="plan-title">{{ plan.planName }}</span>
@@ -100,16 +109,10 @@
         <button class="btn-close-modal" @click="selectedPlaceDetail = null">닫기</button>
       </div>
     </div>
-
-    <div class="plan-buttons">
+    <div style="position: relative">
       <button @click="toggleLike" class="btn-like" :class="{ liked: likedByUser }">
-        <i class="fa-solid fa-heart" style="color: #f44336"></i>&nbsp;추천 ({{ plan.likeCount }})
+        <i :class="['fa-heart', likeByUser ? 'fa-solid' : 'fa-regular']"></i> {{ plan.likeCount }}
       </button>
-      <button @click="$router.back()" class="btn-back">목록으로 돌아가기</button>
-      <div v-if="myPost" class="plan-owner-btns">
-        <button @click="onEdit" class="btn-edit">수정</button>
-        <button @click="onDelete" class="btn-delete">삭제</button>
-      </div>
     </div>
   </div>
 </template>
@@ -336,7 +339,7 @@ export default {
         .then((res) => {
           if (!res.ok) throw new Error('삭제 실패')
           alert('계획이 삭제되었습니다.')
-          this.$router.push('/my-travel-plans')
+          this.$router.push('/planboard')
         })
         .catch(() => {
           alert('계획 삭제 중 오류가 발생했습니다.')
@@ -636,15 +639,19 @@ li {
 }
 .plan-buttons {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
-  gap: 14px;
-  margin-top: 32px;
+  margin-bottom: 30px;
+  gap: 0;
+  position: relative;
 }
 .btn-like {
+  margin-top: 30px;
+  position: absolute;
   background: #fff;
-  color: #e94e77;
-  border: 1.5px solid #e94e77;
+  right: 50%;
+  color: #ed4856;
+  border: 1.5px solid #ed4856;
   border-radius: 6px;
   padding: 8px 18px;
   font-size: 1.08rem;
@@ -656,56 +663,52 @@ li {
 }
 .btn-like.liked,
 .btn-like:hover {
-  background: #e94e77;
+  background: #ed4856;
   color: #fff;
 }
 .btn-back {
-  background: #ededed;
+  display: flex;
+  align-items: center;
+  background: none;
   color: #666;
   border: none;
-  border-radius: 6px;
-  padding: 8px 18px;
-  font-size: 1.08rem;
+  border-radius: 4px;
+  padding: 7px 0;
+  font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
   transition:
     background 0.18s,
     color 0.18s;
+  margin-right: auto;
 }
 .btn-back:hover {
-  background: #4a98e4;
-  color: #fff;
+  color: #3576b9;
 }
 .plan-owner-btns {
   display: flex;
-  gap: 10px;
+  gap: 8px;
+  margin-left: auto;
 }
-.btn-edit {
-  background-color: #4a98e4;
-  color: white;
-  padding: 8px 14px;
+.btn-edit,
+.btn-delete {
+  background: none;
   border: none;
+  color: #888;
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: 7px 14px;
   border-radius: 4px;
-  font-size: 1rem;
-  font-weight: 500;
   cursor: pointer;
+  transition:
+    background 0.18s,
+    color 0.18s;
 }
 .btn-edit:hover {
-  background: #3576b9;
-}
-.btn-delete {
-  background-color: #fff;
-  padding: 8px 14px;
-  color: #e94e77;
-  border: 1.5px solid #e94e77;
-  border-radius: 4px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
+  color: #3576b9;
 }
 .btn-delete:hover {
-  background: #e94e77;
-  color: #fff;
+  color: #ed4856;
 }
 
 .popup-list {

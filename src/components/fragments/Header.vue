@@ -30,7 +30,9 @@
               @blur="closeDropdown"
               tabindex="0"
             >
-              <span class="nav-link user-name">{{ userName }} 님 ▾</span>
+              <span class="nav-link user-name"
+                >{{ userName }} 님&nbsp;<i class="fa-solid fa-caret-down"></i
+              ></span>
               <ul v-show="showDropdown" class="dropdown-menu-list">
                 <li>
                   <router-link to="/member/me" class="dropdown-item">
