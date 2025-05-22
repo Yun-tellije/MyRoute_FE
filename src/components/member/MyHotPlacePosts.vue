@@ -82,15 +82,11 @@ export default {
       currentPage: 1,
       perPage: 6,
       sortOption: 'latest',
-      userId: '',
       isLoggedIn: false,
     }
   },
   computed: {
     filteredPosts() {
-      if (this.sortOption === 'mine') {
-        return this.posts.filter((p) => p.author === this.userId)
-      }
       return [...this.posts]
     },
     sortedPosts() {
@@ -109,22 +105,6 @@ export default {
     },
   },
   methods: {
-    async fetchUserInfo() {
-      const authStore = useAuthStore()
-      if (authStore.token) {
-        try {
-          const res = await axios.get('/api/members/me', {
-            headers: {
-              Authorization: `Bearer ${authStore.token}`,
-            },
-          })
-          this.userId = res.data.memberId
-          this.isLoggedIn = true
-        } catch (err) {
-          console.warn('사용자 정보 조회 실패', err)
-        }
-      }
-    },
     async fetchMyHotplacePosts() {
       const authStore = useAuthStore()
       try {
@@ -154,7 +134,6 @@ export default {
     },
   },
   async mounted() {
-    await this.fetchUserInfo()
     await this.fetchMyHotplacePosts()
   },
 }
@@ -168,12 +147,9 @@ export default {
 }
 
 .no-data-msg {
-  color: #b0b0b0;
   text-align: center;
-  padding: 48px 0;
-  border-radius: 6px;
-  font-size: 1.2rem;
-  margin-bottom: 24px;
+  color: #aaa;
+  padding: 32px 0;
 }
 
 .hotplace-card-grid {

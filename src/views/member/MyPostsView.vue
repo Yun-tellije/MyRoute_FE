@@ -24,10 +24,8 @@
 </template>
 
 <script>
-import axios from 'axios'
-import { useAuthStore } from '@/stores/auth'
 import MyTravelPlans from '@/components/member/MyTravelPlans.vue'
-import MyHotplacePosts from '@/components/member/MyHotplacePosts.vue'
+import MyHotplacePosts from '@/components/member/MyHotPlacePosts.vue'
 
 export default {
   name: 'MyPostsView',
@@ -38,29 +36,12 @@ export default {
   data() {
     return {
       activeTab: 'plan',
-      myPlans: [],
-      myHotplaces: [],
     }
   },
   computed: {
     activeTabComponent() {
       return this.activeTab === 'plan' ? 'MyTravelPlans' : 'MyHotplacePosts'
     },
-  },
-  async created() {
-    const store = useAuthStore()
-    const userId = store.userId
-
-    try {
-      const [plansRes, hotRes] = await Promise.all([
-        axios.get(`/api/plans/mine?userId=${userId}`),
-        axios.get(`/api/hotplaces/mine?userId=${userId}`),
-      ])
-      this.myPlans = plansRes.data
-      this.myHotplaces = hotRes.data
-    } catch (err) {
-      console.error('내 작성글 조회 실패:', err)
-    }
   },
 }
 </script>

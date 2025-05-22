@@ -98,7 +98,6 @@
 
 <script>
 import axios from 'axios'
-import { useAuthStore } from '@/stores/auth'
 
 export default {
   data() {
@@ -109,7 +108,6 @@ export default {
       perPage: 6,
       sortOption: 'latest',
       searchKeyword: '',
-      userId: '',
       isLoggedIn: false,
     }
   },
@@ -143,22 +141,6 @@ export default {
     },
   },
   methods: {
-    async fetchUserInfo() {
-      const authStore = useAuthStore()
-      if (authStore.token) {
-        try {
-          const res = await axios.get('/api/members/me', {
-            headers: {
-              Authorization: `Bearer ${authStore.token}`,
-            },
-          })
-          this.userId = res.data.memberId
-          this.isLoggedIn = true
-        } catch (err) {
-          console.warn('사용자 정보 조회 실패', err)
-        }
-      }
-    },
     async fetchPosts() {
       try {
         const res = await axios.get('/api/hotplace/posts')
@@ -209,7 +191,6 @@ export default {
     },
   },
   async mounted() {
-    await this.fetchUserInfo()
     await this.fetchPosts()
   },
 }
