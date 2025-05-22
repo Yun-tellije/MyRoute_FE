@@ -39,10 +39,19 @@
             <img :src="place.first_image1 || '/resource/tripimage.png'" :alt="place.title" />
             <div class="place-info">
               <h5>{{ place.title }}</h5>
-              <p>{{ place.content_type_name }}</p>
-              <p @click="onStarClick(place, $event)" style="cursor: pointer; color: #f5c518">
-                ⭐ {{ typeof place.avgRating === 'number' ? place.avgRating.toFixed(1) : '0.0' }}
-              </p>
+              <div class="type-group">
+                <p>
+                  {{ place.content_type_name }}
+                </p>
+                <p
+                  @click="onStarClick(place, $event)"
+                  style="cursor: pointer; color: #f5c518"
+                  class="star-group"
+                >
+                  <i class="fa-solid fa-star" style="color: #ffc107"></i>
+                  {{ typeof place.avgRating === 'number' ? place.avgRating.toFixed(1) : '0.0' }}
+                </p>
+              </div>
 
               <div class="d-flex gap-2">
                 <button @click="add(place)" class="btn btn-sm">추가</button>
@@ -222,6 +231,19 @@ ul {
 
 li {
   list-style: none;
+}
+
+.type-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.type-group > p {
+  padding: 0;
+}
+.star-group {
+  border-bottom: 2px solid #ffc107;
 }
 
 .place-list-scroll {

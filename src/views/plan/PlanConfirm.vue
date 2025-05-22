@@ -20,9 +20,11 @@
         </div>
         <ul class="list-group mb-4">
           <li class="list-group-item" v-for="(item, index) in planItems" :key="item.no">
-            {{ index + 1 }}. {{ item.title }} <br />
+            {{ index + 1 }}. {{ item.title }}&nbsp;&nbsp;<span style="color: #666"
+              >({{ item.content_type_name }})</span
+            >
+            <br />
             ({{ item.addr1 }}) <br />
-            {{ item.content_type_name }}
           </li>
         </ul>
 
@@ -69,7 +71,7 @@
         </div>
 
         <div class="d-grid gap-2">
-          <button class="btn btn-primary" @click="submitPlan">최종 저장</button>
+          <button class="btn-submit" @click="submitPlan">최종 저장</button>
         </div>
       </div>
     </div>
@@ -178,7 +180,15 @@ export default {
 
 <style scoped>
 .container {
-  max-width: 1000px;
-  margin: auto;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+}
+.btn-submit {
+  background-color: #9dbbaa;
+  color: white;
+  border: none;
+  padding: 6px 0;
+  border-radius: 6px;
 }
 </style>
