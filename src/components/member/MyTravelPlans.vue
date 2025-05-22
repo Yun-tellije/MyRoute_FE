@@ -1,30 +1,66 @@
 <template>
-  <div class="myplans-list">
+  <div class="myplanlist-page">
     <div v-if="plans.length === 0" class="no-data-msg">저장된 여행 계획이 없습니다.</div>
     <div v-else>
-      <div
-        v-for="plan in plans"
-        :key="plan.planId"
-        class="plan-card"
-        @click="goDetail(plan.planId)"
-      >
-        <div class="plan-card-title-row">
-          <span class="plan-card-title">{{ plan.planName }}</span>
-          <span class="plan-card-public" :class="plan.isPublic === 1 ? 'public' : 'private'">
-            {{ plan.isPublic === 1 ? '공개' : '비공개' }}
-          </span>
-        </div>
-        <div class="plan-card-info">
-          <span
-            >지역: <b>{{ plan.areaName }}</b></span
-          >
-          <span
-            >여행일수: <b>{{ plan.days }}일</b></span
-          >
-          <span
-            >예산: <b>{{ plan.budget.toLocaleString() }}원</b></span
-          >
-        </div>
+      <div class="myplanlist-table-wrap">
+        <table class="myplanlist-table">
+          <thead>
+            <tr>
+              <th class="col-title">[지역] 제목</th>
+              <th class="col-likes">추천수</th>
+              <th class="col-public">공개상태</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="plan in pagedPlans"
+              :key="plan.planId"
+              @click="goDetail(plan.planId)"
+              class="plan-row"
+            >
+              <td class="col-title">
+                <span class="area-badge">[{{ getShortAreaName(plan.areaName) }}]</span
+                >{{ plan.planName }}
+              </td>
+              <td class="col-likes">{{ plan.likeCount }}</td>
+              <td class="col-public">{{ plan.isPublic === 1 ? '공개' : '비공개' }}</td>
+            </tr>
+            <tr v-if="pagedPlans.length === 0">
+              <td colspan="3" class="no-data">저장된 여행 계획이 없습니다.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination" v-if="totalPages > 1">
+        <button class="page-btn" :disabled="currentPage === 1" @click="changePage(1)">
+          <i class="fa-solid fa-angles-left"></i>
+        </button>
+        <button class="page-btn" :disabled="currentPage === 1" @click="changePage(currentPage - 1)">
+          <i class="fa-solid fa-angle-left"></i>
+        </button>
+        <button
+          v-for="page in pageNumbers"
+          :key="page"
+          class="page-btn page-btn-num"
+          :class="{ active: currentPage === page }"
+          @click="changePage(page)"
+        >
+          {{ page }}
+        </button>
+        <button
+          class="page-btn"
+          :disabled="currentPage === totalPages"
+          @click="changePage(currentPage + 1)"
+        >
+          <i class="fa-solid fa-angle-right"></i>
+        </button>
+        <button
+          class="page-btn"
+          :disabled="currentPage === totalPages"
+          @click="changePage(totalPages)"
+        >
+          <i class="fa-solid fa-angles-right"></i>
+        </button>
       </div>
     </div>
   </div>
@@ -39,7 +75,27 @@ export default {
   data() {
     return {
       plans: [],
+      currentPage: 1,
+      pageSize: 5,
     }
+  },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.plans.length / this.pageSize)
+    },
+    pagedPlans() {
+      const start = (this.currentPage - 1) * this.pageSize
+      return this.plans.slice(start, start + this.pageSize)
+    },
+    pageNumbers() {
+      const total = this.totalPages
+      const group = Math.floor((this.currentPage - 1) / 5)
+      const start = group * 5 + 1
+      const end = Math.min(start + 4, total)
+      const arr = []
+      for (let i = start; i <= end; i++) arr.push(i)
+      return arr
+    },
   },
   async mounted() {
     const authStore = useAuthStore()
@@ -61,94 +117,131 @@ export default {
     }
   },
   methods: {
-    goHome() {
-      this.$router.push('/')
-    },
     goDetail(planId) {
       this.$router.push(`/plan-detail/${planId}`)
+    },
+    changePage(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.currentPage = page
+      }
+    },
+    getShortAreaName(areaName) {
+      const map = {
+        세종특별자치시: '세종',
+        강원특별자치도: '강원',
+        경기도: '경기',
+        충청북도: '충북',
+        충청남도: '충남',
+        경상북도: '경북',
+        경상남도: '경남',
+        전북특별자치도: '전북',
+        전라남도: '전남',
+        제주도: '제주',
+      }
+      return map[areaName] || areaName
     },
   },
 }
 </script>
 
 <style scoped>
-.myplans-list {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0;
+.myplanlist-title {
+  font-size: 2rem;
+  color: #111;
+  margin-bottom: 32px;
+  letter-spacing: -1px;
+  font-weight: 700;
 }
-
-.no-data-msg {
-  color: #b0b0b0;
-  text-align: center;
-  padding: 48px 0;
-  border-radius: 6px;
-  font-size: 1.2rem;
-  margin-bottom: 24px;
+.myplanlist-table-wrap {
+  width: 100%;
+  overflow-x: auto;
 }
-
-.plan-card {
+.myplanlist-table {
+  border-top: #ddd 1px solid;
+  width: 100%;
+  border-collapse: collapse;
   background: #fff;
-  border: 1.5px solid #e0e0e0;
-  border-radius: 6px;
-  margin-bottom: 12px;
-  padding: 16px 26px 14px 26px;
+  table-layout: fixed;
+}
+.myplanlist-table th,
+.myplanlist-table td {
+  border-bottom: 1px solid #e0e0e0;
+  padding: 14px 10px;
+  text-align: center;
+  font-size: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.myplanlist-table td.col-title {
+  text-align: left;
+}
+.myplanlist-table th.col-title,
+.myplanlist-table td.col-title {
+  width: 65%;
+  padding-left: 20px;
+  color: #222;
+  font-weight: 500;
+}
+.myplanlist-table th.col-likes,
+.myplanlist-table td.col-likes {
+  width: 15%;
+}
+.myplanlist-table th.col-public,
+.myplanlist-table td.col-public {
+  width: 15%;
+}
+.plan-row:hover td {
+  background: #f9f9f9;
   cursor: pointer;
-  transition:
-    box-shadow 0.18s,
-    border 0.18s,
-    background 0.18s;
-  position: relative;
 }
-.plan-card:hover {
-  background: #f5f5f5;
-  border-color: #d3d3d3;
-  box-shadow: 0 2px 18px rgba(157, 187, 170, 0.13);
+.no-data,
+.no-data-msg {
+  text-align: center;
+  color: #aaa;
+  padding: 32px 0;
 }
-
-.plan-card-title-row {
+.area-badge {
+  color: #777777;
+  margin-right: 6px;
+}
+.pagination {
   display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
+  gap: 4px;
+  margin: 32px 0 0 0;
 }
-
-.plan-card-title {
-  font-size: 1.2rem;
-  color: #333;
-  letter-spacing: -0.5px;
+.page-btn {
+  background: #fff;
+  border: none;
+  color: #444444;
+  padding: 6px 14px;
+  border-radius: 50%;
+  margin: 0 1px;
+  cursor: pointer;
+  font-size: 1rem;
 }
-
-.plan-card-public {
-  font-size: 0.98rem;
-  font-weight: 500;
-  padding: 3px 13px;
-  border-radius: 12px;
-  margin-left: 10px;
-  background: #e0e0e0;
-  color: #888;
+.page-btn.active {
+  background: #222;
+  color: #fff;
+  border-color: #222;
 }
-.plan-card-public.public {
-  background: #eaf6f0;
-  color: #3b7a5a;
+.page-btn:disabled {
+  color: #aaa;
+  cursor: not-allowed;
 }
-.plan-card-public.private {
-  background: #f9eaea;
-  color: #d9534f;
+.page-btn-num:not(.active):hover {
+  background: #f0f0f0;
 }
-
-.plan-card-info {
-  display: flex;
-  gap: 24px;
-  color: #666;
-  font-size: 1.04rem;
-  flex-wrap: wrap;
-}
-.plan-card-info b {
-  color: #333;
-  font-weight: 500;
-}
-.plan-card-info span {
-  min-width: 120px;
+@media (max-width: 700px) {
+  .myplanlist-page {
+    padding: 18px 2px;
+  }
+  .myplanlist-table th,
+  .myplanlist-table td {
+    font-size: 0.95rem;
+    padding: 8px 4px;
+  }
 }
 </style>

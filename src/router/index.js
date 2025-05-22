@@ -34,11 +34,6 @@ const router = createRouter({
       component: () => import('@/views/plan/PlanConfirm.vue'),
     },
     {
-      path: '/my-travel-plans',
-      name: 'MyPlanList',
-      component: () => import('@/views/plan/MyPlanList.vue'),
-    },
-    {
       path: '/member/me',
       name: 'MyInfo',
       component: () => import('@/views/member/MyInfoView.vue'),

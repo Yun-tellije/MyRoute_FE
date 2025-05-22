@@ -36,36 +36,36 @@
           </div>
         </div>
       </div>
-      <nav class="pagination-wrap">
-        <ul class="pagination-list">
-          <li>
-            <button
-              class="page-btn"
-              :disabled="currentPage === 1"
-              @click="changePage(currentPage - 1)"
-            >
-              이전
-            </button>
-          </li>
-          <li v-for="page in totalPages" :key="page">
-            <button
-              class="page-btn"
-              :class="{ active: currentPage === page }"
-              @click="changePage(page)"
-            >
-              {{ page }}
-            </button>
-          </li>
-          <li>
-            <button
-              class="page-btn"
-              :disabled="currentPage === totalPages"
-              @click="changePage(currentPage + 1)"
-            >
-              다음
-            </button>
-          </li>
-        </ul>
+      <nav class="pagination">
+        <button class="page-btn" :disabled="currentPage === 1" @click="changePage(1)">
+          <i class="fa-solid fa-angles-left"></i>
+        </button>
+        <button class="page-btn" :disabled="currentPage === 1" @click="changePage(currentPage - 1)">
+          <i class="fa-solid fa-angle-left"></i>
+        </button>
+        <button
+          v-for="page in totalPages"
+          :key="page"
+          class="page-btn page-btn-num"
+          :class="{ active: currentPage === page }"
+          @click="changePage(page)"
+        >
+          {{ page }}
+        </button>
+        <button
+          class="page-btn"
+          :disabled="currentPage === totalPages"
+          @click="changePage(currentPage + 1)"
+        >
+          <i class="fa-solid fa-angle-right"></i>
+        </button>
+        <button
+          class="page-btn"
+          :disabled="currentPage === totalPages"
+          @click="changePage(totalPages)"
+        >
+          <i class="fa-solid fa-angles-right"></i>
+        </button>
       </nav>
     </div>
   </div>
@@ -266,39 +266,33 @@ export default {
   font-weight: 600;
 }
 
-.pagination-wrap {
+.pagination {
   display: flex;
   justify-content: center;
-  margin-top: 24px;
-}
-.pagination-list {
-  display: flex;
+  align-items: center;
   gap: 4px;
-  list-style: none;
-  padding: 0;
-  margin: 0;
+  margin: 32px 0 0 0;
 }
 .page-btn {
-  background: #ededed;
-  color: #666;
+  background: #fff;
   border: none;
-  border-radius: 6px;
-  padding: 7px 16px;
-  font-size: 1rem;
-  font-weight: 600;
+  color: #444444;
+  padding: 6px 14px;
+  border-radius: 50%;
+  margin: 0 1px;
   cursor: pointer;
-  transition:
-    background 0.18s,
-    color 0.18s;
+  font-size: 1rem;
 }
-.page-btn.active,
-.page-btn:hover:not(:disabled) {
-  background: #4a98e4;
+.page-btn.active {
+  background: #222;
   color: #fff;
+  border-color: #222;
 }
 .page-btn:disabled {
-  background: #f5f5f5;
-  color: #bbb;
+  color: #aaa;
   cursor: not-allowed;
+}
+.page-btn-num:not(.active):hover {
+  background: #f0f0f0;
 }
 </style>
