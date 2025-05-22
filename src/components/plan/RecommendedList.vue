@@ -76,7 +76,7 @@
     <div class="modal-content-box">
       <h5>{{ selectedDetail.title }}</h5>
       <div class="overview-box">
-        {{ selectedDetail.overview || '설명이 없습니다.' }}
+        {{ selectedDetail.overview || '설명이 없습니다. 루티에게 물어보세요!' }}
       </div>
       <br />
       <div>

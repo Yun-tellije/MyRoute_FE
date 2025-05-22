@@ -5,6 +5,7 @@
       <RouterView />
     </main>
     <AppFooter />
+    <ChatBotWidget />
   </div>
 </template>
 

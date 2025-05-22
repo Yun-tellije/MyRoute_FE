@@ -50,7 +50,15 @@
 
       <div class="mb-4">
         <label class="form-label fw-bold">📷 이미지 첨부 (선택)</label>
-        <input type="file" class="form-control" multiple @change="onFileChange" ref="fileInput" />
+        <input
+          type="file"
+          class="form-control"
+          multiple
+          accept="image/png, image/jpeg"
+          @change="onFileChange"
+          ref="fileInput"
+        />
+
         <div class="mt-3 d-flex flex-wrap gap-3">
           <div v-for="(url, i) in previews" :key="i" class="position-relative preview-box">
             <img :src="url" class="preview-img" />
@@ -190,6 +198,16 @@ export default {
         return
       }
 
+      const validTypes = ['image/jpeg', 'image/png']
+      if (!validTypes.includes(file.type)) {
+        alert('이미지는 JPG 또는 PNG 형식만 등록 가능합니다.')
+        this.files = []
+        this.previews = []
+        const input = this.$refs.fileInput
+        if (input) input.value = ''
+        return
+      }
+
       const reader = new FileReader()
       reader.onload = () => {
         this.previews = [reader.result]
@@ -198,6 +216,7 @@ export default {
 
       this.files = [file]
     },
+
     removeFile(index) {
       this.files.splice(index, 1)
       this.previews.splice(index, 1)

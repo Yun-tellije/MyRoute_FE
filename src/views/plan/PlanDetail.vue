@@ -77,7 +77,7 @@
           class="w-100 mb-3"
         />
         <div class="overview-box">
-          {{ selectedPlaceDetail.overview || '설명이 없습니다.' }}
+          {{ selectedPlaceDetail.overview || '설명이 없습니다. 루티에게 물어보세요!' }}
         </div>
         <div class="modal-section">
           <p>
