@@ -1,7 +1,7 @@
 <template>
   <div class="plan-detail-container" v-if="plan && plan.budget != null">
     <div class="plan-buttons">
-      <button @click="$router.back()" class="btn-back">
+      <button @click="$router.push('/planboard')" class="btn-back">
         <i class="fa-solid fa-caret-left"></i>&nbsp;목록으로 돌아가기
       </button>
       <div v-if="myPost" class="plan-owner-btns">
@@ -109,11 +109,11 @@
         <button class="btn-close-modal" @click="selectedPlaceDetail = null">닫기</button>
       </div>
     </div>
-    <div style="position: relative">
-      <button @click="toggleLike" class="btn-like" :class="{ liked: likedByUser }">
-        <i :class="['fa-heart', likeByUser ? 'fa-solid' : 'fa-regular']"></i> {{ plan.likeCount }}
-      </button>
-    </div>
+    <button @click="toggleLike" class="btn-like" :class="{ liked: likedByUser }">
+      <i :class="['fa-heart', likeByUser ? 'fa-solid' : 'fa-regular']"></i>&nbsp;{{
+        plan.likeCount
+      }}
+    </button>
   </div>
 </template>
 
@@ -646,20 +646,20 @@ li {
   position: relative;
 }
 .btn-like {
-  margin-top: 30px;
-  position: absolute;
+  margin-left: 50%;
+  align-self: flex-end;
   background: #fff;
-  right: 50%;
   color: #ed4856;
   border: 1.5px solid #ed4856;
-  border-radius: 6px;
-  padding: 8px 18px;
-  font-size: 1.08rem;
-  font-weight: 600;
+  border-radius: 50%;
+  padding: 14px 12px;
+  font-weight: 700;
   cursor: pointer;
   transition:
     background 0.18s,
     color 0.18s;
+  display: flex;
+  align-items: center;
 }
 .btn-like.liked,
 .btn-like:hover {

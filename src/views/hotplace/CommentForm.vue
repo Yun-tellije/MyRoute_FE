@@ -1,13 +1,13 @@
 <template>
-  <form @submit.prevent="submitComment" class="d-flex gap-2 mb-3">
+  <form @submit.prevent="submitComment" class="comment-form-wrap">
     <input
       v-model="content"
       type="text"
-      class="form-control"
+      class="comment-input"
       placeholder="댓글을 입력하세요"
       required
     />
-    <button class="btn btn-primary">작성</button>
+    <button class="btn-write">작성</button>
   </form>
 </template>
 
@@ -55,3 +55,34 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.comment-form-wrap {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+  align-items: center;
+}
+.comment-input {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border: 1.5px solid #d0d0d0;
+  border-radius: 6px;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.18s;
+}
+.comment-input:focus {
+  border-color: #4a98e4;
+}
+.btn-write {
+  border: none;
+  padding: 8px 14px;
+  border-radius: 4px;
+  background-color: #9dbbaa;
+  color: white;
+}
+.btn-write:hover {
+  background-color: #aacab8;
+}
+</style>

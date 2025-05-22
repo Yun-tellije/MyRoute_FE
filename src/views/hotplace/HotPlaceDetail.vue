@@ -1,74 +1,58 @@
 <template>
-  <div class="container mt-5">
-    <button class="btn btn-link mb-3" @click="$router.back()">◀ 뒤로가기</button>
-
-    <div class="card shadow-sm border-0 mb-5">
-      <div class="card-body">
-        <h2 class="mb-3">{{ post.title }}</h2>
-        <div class="d-flex align-items-center">
-          <p class="mb-0">작성일: {{ formatDate(post.createdAt) }}</p>
-          <small v-if="post.updatedAt !== post.createdAt" class="text-muted ms-2">(수정됨)</small>
-        </div>
-        <br />
-        <p class="text-muted mb-1"><strong>작성자:</strong> {{ post.memberId }}</p>
-        <p class="text-muted mb-1"><strong>관광지:</strong> {{ post.attractionName }}</p>
-        <p class="text-warning mb-3">⭐ {{ post.starPoint }}</p>
-
-        <div v-if="post.imageBase64" class="mb-4 text-center">
-          <img
-            :src="post.imageBase64"
-            alt="핫플레이스 이미지"
-            class="rounded"
-            style="max-width: 100%; height: 320px; object-fit: cover"
-          />
-        </div>
-
-        <p class="fs-5">{{ post.content }}</p>
-
-        <div class="text-center mt-4">
-          <button
-            @click="toggleLike"
-            class="btn px-4 py-2"
-            :class="{ 'btn-danger': likedByUser, 'btn-outline-danger': !likedByUser }"
-          >
-            ❤️ 추천 ({{ post.likeCount }})
-          </button>
-          <button @click="$router.back()" class="btn btn-outline-secondary">돌아가기</button>
-        </div>
-        <div class="text-center mt-4" v-if="myPost">
-          <button @click="onEdit" class="btn btn-outline-primary">수정</button>
-          <button @click="onDelete" class="btn btn-outline-danger">삭제</button>
-        </div>
+  <div class="hotplace-detail-container">
+    <div class="hotplace-buttons">
+      <button class="btn-back" @click="$router.push('/hotplacelist')">
+        <i class="fa-solid fa-caret-left"></i>&nbsp;목록으로 돌아가기
+      </button>
+      <div v-if="myPost" class="hotplace-owner-btns">
+        <button @click="onEdit" class="btn-edit">수정</button>
+        <button @click="onDelete" class="btn-delete">삭제</button>
       </div>
     </div>
-
-    <div class="card shadow-sm border-0 mb-4">
-      <div class="card-body">
-        <h5 class="mb-3">💬 댓글</h5>
-        <comment-form :postId="post.hotplaceId" @new-comment="loadComments" />
-
-        <div v-if="comments.length === 0" class="text-muted text-center py-3">
-          아직 댓글이 없습니다.
-        </div>
-        <ul class="list-group list-group-flush">
-          <li
-            v-for="c in comments"
-            :key="c.commentId"
-            class="list-group-item d-flex justify-content-between align-items-center"
-          >
-            <span
-              ><strong>{{ c.memberId }}</strong> : {{ c.content }}</span
-            >
-            <button
-              v-if="c.editable"
-              @click="deleteComment(c.commentId)"
-              class="btn btn-sm btn-outline-danger"
-            >
-              삭제
-            </button>
-          </li>
-        </ul>
+    <div class="hotplace-header-box">
+      <div class="hotplace-meta-row">
+        <span class="hotplace-title">{{ post.title }}</span>
+        <span v-if="post.updatedAt !== post.createdAt" class="hotplace-updated">(수정됨)</span>
+        <span class="hotplace-date right-align">{{ formatDate(post.createdAt) }}</span>
       </div>
+      <div class="hotplace-info-row">
+        <span class="hotplace-writer">{{ post.memberId }}</span>
+        <span class="hotplace-attraction">관광지: {{ post.attractionName }}</span>
+        <span class="hotplace-star"
+          ><i class="fa-solid fa-star" style="color: #ffc107"></i> {{ post.starPoint }}</span
+        >
+      </div>
+    </div>
+    <hr class="hotplace-divider" />
+
+    <div v-if="post.imageBase64" class="hotplace-img-wrap">
+      <img :src="post.imageBase64" alt="핫플레이스 이미지" class="hotplace-img" />
+    </div>
+    <div class="hotplace-content">{{ post.content }}</div>
+
+    <button @click="toggleLike" class="btn-like" :class="{ liked: likedByUser }">
+      <i :class="['fa-heart', likeByUser ? 'fa-solid' : 'fa-regular']"></i>
+      &nbsp;{{ post.likeCount }}
+    </button>
+    <hr class="hotplace-divider" />
+
+    <div class="hotplace-comment-section">
+      <h5 class="comment-title"><i class="fa-regular fa-comment"></i> 댓글</h5>
+      <comment-form :postId="post.hotplaceId" @new-comment="loadComments" />
+      <div v-if="comments.length === 0" class="no-comment-msg">아직 댓글이 없습니다.</div>
+      <ul class="comment-list">
+        <li v-for="c in comments" :key="c.commentId" class="comment-item">
+          <div class="comment-main">
+            <div class="comment-member">
+              <strong>{{ c.memberId }}</strong>
+            </div>
+            <div class="comment-content">{{ c.content }}</div>
+          </div>
+          <button v-if="c.editable" @click="deleteComment(c.commentId)" class="btn-delete-comment">
+            삭제
+          </button>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -151,7 +135,6 @@ export default {
       fetch(url, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
       })
@@ -195,13 +178,7 @@ export default {
     formatDate(dateStr) {
       if (!dateStr) return ''
       const date = new Date(dateStr)
-      return date.toLocaleDateString('ko-KR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-      })
+      return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`
     },
     onEdit() {
       this.$router.push(`/hotplace/edit/${this.post.hotplaceId}`)
@@ -218,13 +195,236 @@ export default {
       })
         .then((res) => {
           if (!res.ok) throw new Error('삭제 실패')
-          alert('계획이 삭제되었습니다.')
+          alert('게시글이 삭제되었습니다.')
           this.$router.push('/hotplacelist')
         })
         .catch(() => {
-          alert('계획 삭제 중 오류가 발생했습니다.')
+          alert('게시글 삭제 중 오류가 발생했습니다.')
         })
     },
   },
 }
 </script>
+
+<style scoped>
+.hotplace-detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+}
+.hotplace-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  gap: 0;
+  position: relative;
+}
+.btn-back {
+  display: flex;
+  align-items: center;
+  background: none;
+  color: #666;
+  border: none;
+  border-radius: 4px;
+  padding: 7px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.18s,
+    color 0.18s;
+  margin-right: auto;
+}
+.btn-back:hover {
+  color: #3576b9;
+}
+.hotplace-owner-btns {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+.btn-edit,
+.btn-delete {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition:
+    background 0.18s,
+    color 0.18s;
+}
+.btn-edit:hover {
+  color: #3576b9;
+}
+.btn-delete:hover {
+  background-color: white;
+  color: #ed4856;
+}
+.hotplace-header-box {
+  border-top: 2px solid #696969;
+  padding-top: 14px;
+}
+.hotplace-meta-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin-bottom: 8px;
+  position: relative;
+}
+.hotplace-title {
+  font-size: 1.6rem;
+  color: #222;
+  letter-spacing: -1px;
+}
+.hotplace-date {
+  font-size: 1rem;
+  margin-left: auto;
+  color: #999;
+}
+.right-align {
+  margin-left: auto;
+}
+.hotplace-info-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  color: #888;
+  font-size: 1rem;
+  margin-bottom: 2px;
+}
+.hotplace-writer {
+  font-size: 1rem;
+  padding-right: 18px;
+  border-right: 1.5px solid #d0d0d0;
+}
+.hotplace-attraction,
+.hotplace-star,
+.hotplace-updated {
+  font-size: 1rem;
+}
+.hotplace-updated {
+  color: #999999;
+  font-weight: 500;
+}
+.hotplace-divider {
+  border: none;
+  border-top: 1px solid #d0d0d0;
+  margin: 18px 0 28px 0;
+}
+.hotplace-img-wrap {
+  margin-bottom: 24px;
+}
+.hotplace-content {
+  font-size: 1.13rem;
+  color: #333;
+  margin-bottom: 36px;
+  line-height: 1.7;
+  word-break: break-all;
+}
+.btn-like {
+  margin-left: 50%;
+  align-self: flex-end;
+  background: #fff;
+  color: #ed4856;
+  border: 1.5px solid #ed4856;
+  border-radius: 50%;
+  padding: 14px 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.18s,
+    color 0.18s;
+  display: flex;
+  align-items: center;
+}
+.btn-like.liked,
+.btn-like:hover {
+  background: #ed4856;
+  color: #fff;
+}
+.hotplace-comment-section {
+  margin-top: 48px;
+}
+.comment-title {
+  margin-left: 4px;
+  font-size: 1.08rem;
+  font-weight: 600;
+  margin-bottom: 18px;
+  color: #333;
+}
+.no-comment-msg {
+  color: #b0b0b0;
+  text-align: center;
+  padding: 24px 0;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  margin-bottom: 18px;
+}
+.comment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.comment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 1.02rem;
+}
+.comment-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.comment-member {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.comment-content {
+  color: #333;
+  word-break: break-all;
+  font-size: 1rem;
+}
+.btn-delete-comment {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 0.98rem;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 4px 10px;
+  transition:
+    background 0.18s,
+    color 0.18s;
+  margin-left: 16px;
+  margin-top: 2px;
+  height: 32px;
+}
+.btn-delete-comment:hover {
+  color: #ed4856;
+}
+@media (max-width: 700px) {
+  .hotplace-detail-container {
+    padding: 18px 4px;
+  }
+  .hotplace-title {
+    font-size: 1.05rem;
+  }
+  .hotplace-img {
+    height: 180px;
+  }
+  .btn-like {
+    padding: 10px 18px;
+    font-size: 1rem;
+  }
+}
+</style>
