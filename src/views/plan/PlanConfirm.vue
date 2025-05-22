@@ -125,8 +125,8 @@ export default {
       if (!this.title.trim()) {
         return alert('여행 제목을 입력해주세요.')
       }
-      if (!this.days || !this.budget) {
-        return alert('일정과 경비를 입력해주세요.')
+      if (!this.days) {
+        return alert('일정을 입력해주세요.')
       }
 
       const payload = {

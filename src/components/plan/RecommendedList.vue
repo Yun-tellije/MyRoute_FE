@@ -85,24 +85,32 @@
     <div class="modal-content-box">
       <h5>{{ selectedDetail.title }}</h5>
       <div class="overview-box">
-        {{ selectedDetail.overview || '설명이 없습니다. 루티에게 물어보세요!' }}
+        <span v-if="selectedDetail.overview">
+          {{ selectedDetail.overview }}
+        </span>
+        <span v-else>
+          설명이 없습니다.
+          <strong style="cursor: pointer; color: #0d6efd" @click="askLuti(selectedDetail.title)">
+            루티에게 물어보세요!</strong
+          >
+        </span>
       </div>
       <br />
       <div>
         <p>
-          <strong
-            ><img src="/resource/pin.svg" alt="주소" style="width: 16px; height: 16px" />
-            주소</strong
-          >
+          <strong>
+            <img src="/resource/pin.svg" alt="주소" style="width: 16px; height: 16px" />
+            주소
+          </strong>
         </p>
         <p style="margin-left: 16px">{{ selectedDetail.addr1 }}</p>
       </div>
       <div>
         <p class="mt-3">
-          <strong
-            ><img src="/resource/parking.svg" alt="주차장" style="width: 16px; height: 16px" /> 주변
-            주차장 정보</strong
-          >
+          <strong>
+            <img src="/resource/parking.svg" alt="주차장" style="width: 16px; height: 16px" /> 주변
+            주차장 정보
+          </strong>
         </p>
         <ul v-if="Array.isArray(selectedDetail.parking)">
           <li
@@ -197,6 +205,10 @@ export default {
       }
 
       this.selectedDetail = place
+
+      if (!place.overview && window.suggestPlaceToChatbot) {
+        window.suggestPlaceToChatbot(place.title)
+      }
     },
     async onStarClick(place, event) {
       const rect = event.target.getBoundingClientRect()
@@ -217,6 +229,11 @@ export default {
     },
     goDetail(id) {
       window.open(`/hotplaceDetail/${id}`, '_blank')
+    },
+    askLuti(title) {
+      if (window.suggestPlaceToChatbot) {
+        window.suggestPlaceToChatbot(title)
+      }
     },
   },
 }
