@@ -1,87 +1,95 @@
 <template>
-  <div class="container mt-5">
-    <div class="card shadow-sm p-4 mb-5">
-      <h2 class="mb-4">{{ isEdit ? '✏️ 글 수정' : '📝 새 글쓰기' }}</h2>
+  <div class="hotplace-form-container">
+    <div class="hotplace-form-card">
+      <h2 class="hotplace-form-title">
+        {{ isEdit ? '글 수정' : '새 글쓰기' }}
+      </h2>
 
-      <div class="mb-4">
-        <label class="form-label fw-bold">📍 장소 검색</label>
-        <div class="d-flex align-items-center gap-2">
-          <button class="btn btn-outline-primary" @click="showSearch = true">장소 선택</button>
-          <span class="text-muted"
-            >선택된 장소: <strong>{{ selectedPlace?.title || '없음' }}</strong></span
-          >
+      <form @submit.prevent="submit" class="hotplace-form">
+        <div class="form-group">
+          <label class="form-label">장소 검색</label>
+          <div class="search-row">
+            <button type="button" class="btn-search-place" @click="showSearch = true">
+              장소 선택
+            </button>
+            <span class="selected-place"
+              >선택된 장소: <strong>{{ selectedPlace?.title || '없음' }}</strong></span
+            >
+          </div>
+          <SearchPopup
+            :visible="showSearch"
+            :all-attractions="attractions"
+            @close="showSearch = false"
+            @select="onSelectPlace"
+          />
         </div>
-        <SearchPopup
-          :visible="showSearch"
-          :all-attractions="attractions"
-          @close="showSearch = false"
-          @select="onSelectPlace"
-        />
-      </div>
 
-      <div class="mb-3">
-        <label class="form-label fw-bold">제목</label>
-        <input
-          type="text"
-          class="form-control"
-          v-model="form.title"
-          required
-          placeholder="제목을 입력하세요"
-        />
-      </div>
+        <div class="form-group">
+          <label class="form-label">제목</label>
+          <input
+            type="text"
+            class="form-control"
+            v-model="form.title"
+            required
+            placeholder="제목을 입력하세요"
+          />
+        </div>
 
-      <div
-        class="star-wrapper d-flex align-items-center gap-2"
-        @mousemove="$_onStarHover"
-        @mouseleave="hoverScore = 0"
-      >
-        <img
-          v-for="idx in 5"
-          :key="idx"
-          :src="getStarImage(idx)"
-          @click="onStarClick($event, idx)"
-          class="star-icon"
-          :ref="setStars"
-          alt="별점"
-        />
-        <span class="text-muted ms-2">({{ selectedStarNum }}점)</span>
-      </div>
-      <br />
-
-      <div class="mb-4">
-        <label class="form-label fw-bold">📷 이미지 첨부 (선택)</label>
-        <input
-          type="file"
-          class="form-control"
-          multiple
-          accept="image/png, image/jpeg"
-          @change="onFileChange"
-          ref="fileInput"
-        />
-
-        <div class="mt-3 d-flex flex-wrap gap-3">
-          <div v-for="(url, i) in previews" :key="i" class="position-relative preview-box">
-            <img :src="url" class="preview-img" />
-            <button class="btn-close preview-remove" @click="removeFile(i)" type="button"></button>
+        <div class="form-group">
+          <label class="form-label">별점</label>
+          <div class="star-wrapper" @mousemove="$_onStarHover" @mouseleave="hoverScore = 0">
+            <img
+              v-for="idx in 5"
+              :key="idx"
+              :src="getStarImage(idx)"
+              @click="onStarClick($event, idx)"
+              class="star-icon"
+              :ref="setStars"
+              alt="별점"
+            />
+            <span class="star-score">({{ selectedStarNum }}점)</span>
           </div>
         </div>
-      </div>
 
-      <div class="mb-4">
-        <label class="form-label fw-bold">📝 리뷰 내용</label>
-        <textarea
-          class="form-control fixed-textarea"
-          v-model="form.content"
-          placeholder="내용을 입력하세요"
-        ></textarea>
-      </div>
+        <div class="form-group">
+          <label class="form-label"
+            ><i class="fa-regular fa-image"></i>&nbsp;이미지 첨부 (선택)</label
+          >
+          <input
+            type="file"
+            class="form-control"
+            multiple
+            accept="image/png, image/jpeg"
+            @change="onFileChange"
+            ref="fileInput"
+          />
+          <div class="preview-list">
+            <div v-for="(url, i) in previews" :key="i" class="preview-box">
+              <img :src="url" class="preview-img" />
+              <button class="btn-preview-remove" @click="removeFile(i)" type="button">
+                <i class="fa-solid fa-xmark" style="color: #666"></i>
+              </button>
+            </div>
+          </div>
+        </div>
 
-      <div class="d-flex justify-content-end gap-2">
-        <button class="btn btn-success" @click="submit">
-          {{ isEdit ? '수정 저장' : '등록' }}
-        </button>
-        <button class="btn btn-secondary" @click="$router.back()">취소</button>
-      </div>
+        <div class="form-group">
+          <label class="form-label">리뷰 내용</label>
+          <textarea
+            class="form-control textarea"
+            v-model="form.content"
+            placeholder="내용을 입력하세요"
+            required
+          ></textarea>
+        </div>
+
+        <div class="btn-wrap">
+          <button type="submit" class="btn-submit">
+            {{ isEdit ? '수정 완료' : '등록' }}
+          </button>
+          <button type="button" class="btn-cancel" @click="$router.back()">취소</button>
+        </div>
+      </form>
     </div>
   </div>
 </template>
@@ -344,16 +352,115 @@ export default {
 </script>
 
 <style scoped>
-.card {
-  border-radius: 12px;
+.hotplace-form-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
 }
-
+.hotplace-form-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 40px 32px 32px 32px;
+}
+.hotplace-form-title {
+  font-size: 2.2rem;
+  color: #333;
+  margin-bottom: 32px;
+  letter-spacing: -1px;
+}
+.hotplace-form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  border-top: 2px solid #696969;
+  padding-top: 20px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.form-star-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.form-label {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 2px;
+}
+.form-control {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border 0.18s;
+  resize: none;
+  background: #fff;
+}
+.form-control:focus {
+  border-color: #8cae99;
+  outline: none;
+  background: #fff;
+}
+.textarea {
+  min-height: 180px;
+  font-family: inherit;
+}
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.btn-search-place {
+  background: #fff;
+  color: #222;
+  border: 1.5px solid #222;
+  border-radius: 6px;
+  padding: 7px 18px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.18s,
+    color 0.18s;
+}
+.btn-search-place:hover {
+  background: #4a98e4;
+  color: #fff;
+}
+.selected-place {
+  color: #888;
+  font-size: 1rem;
+}
+.star-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 .star-icon {
   width: 2rem;
   height: 2rem;
   cursor: pointer;
   user-select: none;
   transition: transform 0.1s;
+}
+.star-score {
+  color: #888;
+  font-size: 1rem;
+  margin-left: 8px;
+}
+.preview-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+}
+.preview-box {
+  position: relative;
 }
 .preview-img {
   width: 100px;
@@ -362,22 +469,66 @@ export default {
   border-radius: 6px;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
 }
-
-.preview-box {
-  position: relative;
-}
-
-.preview-remove {
+.btn-preview-remove {
   position: absolute;
-  top: -6px;
+  top: -10px;
   right: -6px;
   background-color: white;
   border-radius: 50%;
-  padding: 2px;
+  padding: 0;
   border: 1px solid #ccc;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.fixed-textarea {
-  height: 200px;
-  resize: none;
+.btn-preview-remove i {
+  font-size: 1.1rem;
+  display: block;
+  margin: 0 auto;
+  line-height: 1;
+}
+.btn-wrap {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+}
+.btn-submit {
+  background-color: #9dbbaa;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-submit:hover {
+  background-color: #aacab8;
+}
+.btn-cancel {
+  background: #ededed;
+  color: #666;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition:
+    background 0.18s,
+    color 0.18s;
+}
+.btn-cancel:hover {
+  background: #b0b0b0;
+  color: #fff;
+}
+@media (max-width: 700px) {
+  .hotplace-form-container,
+  .hotplace-form-card {
+    padding: 12px 4px;
+  }
+  .hotplace-form-title {
+    font-size: 1.2rem;
+  }
 }
 </style>
