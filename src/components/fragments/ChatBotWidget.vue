@@ -3,7 +3,9 @@
     <button class="toggle-btn" @click="toggleChat">
       <img v-if="!isOpen" src="/resource/chatbot-icon.png" alt="챗봇 아이콘" class="chatbot-icon" />
       <img v-else src="/resource/chatbot-icon-close.png" class="chatbot-icon-close" />
-      <span v-if="!isOpen && showHint" class="chat-hint-bubble">💬 저에게 물어보세요!</span>
+      <span v-if="!isOpen && showHint" class="chat-hint-bubble"
+        ><i class="fa-regular fa-comment fa-flip-horizontal"></i> 저에게 물어보세요!</span
+      >
     </button>
 
     <div v-if="isOpen" class="chat-window shadow d-flex flex-column">
@@ -18,18 +20,19 @@
         </div>
 
         <div class="mb-2">
-          <label class="form-label fw-bold small">👤 여행 유형 선택</label>
+          <label class="form-label fw-bold small">여행 유형 선택</label>
           <select v-model="userType" class="form-select form-select-sm">
-            <option value="가족">👨‍👩‍👧‍👦가족</option>
+            <option value="가족">👨‍👩‍👧‍👦 가족</option>
             <option value="커플">💑 커플</option>
             <option value="혼자">🧍 혼자</option>
-            <option value="우정">👭 우정</option>
+            <option value="친구">👭 친구</option>
           </select>
         </div>
+        <!-- <hr style="margin: 5px 0" /> -->
 
         <div ref="chatContainer" class="chat-messages flex-grow-1 overflow-auto">
           <div v-for="(msg, index) in messages" :key="index" :class="['chat-bubble', msg.sender]">
-            <div v-html="formatText(msg.text)" class="chat-content" />
+            <div v-html="formatText(msg.text)" class="chat-content"></div>
             <div class="timestamp">{{ msg.time }}</div>
           </div>
         </div>
@@ -202,14 +205,13 @@ window.suggestPlaceToChatbot = (title) => {
   position: absolute;
   bottom: 70px;
   right: 0;
-  width: 320px;
-  height: 540px;
+  width: 390px;
+  height: 600px;
   background: #ffffff;
   border-radius: 16px;
   display: flex;
   flex-direction: column;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  border: 1px solid #e0e0e0;
 }
 
 .chat-header {
