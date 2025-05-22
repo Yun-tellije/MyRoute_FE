@@ -23,7 +23,7 @@
             class="notice-row"
           >
             <td class="col-title">{{ notice.title }}</td>
-            <td class="col-writer">{{ notice.writer || '운영자' }}</td>
+            <td class="col-writer">{{ notice.memberName || '관리자' }}</td>
             <td class="col-date">{{ formatDate(notice.createAt) }}</td>
           </tr>
           <tr v-if="pagedNotices.length === 0">
