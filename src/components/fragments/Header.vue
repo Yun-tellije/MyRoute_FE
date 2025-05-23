@@ -2,14 +2,12 @@
   <header class="site-header">
     <div class="full-width-container">
       <div class="header-content">
-        <!-- 로고 영역 -->
         <div class="logo-area">
           <router-link to="/" class="logo-link">
             <img src="@/assets/img/logo_icon.png" alt="사이트 로고" class="logo-img" />
           </router-link>
         </div>
 
-        <!-- 네비게이션 영역 -->
         <nav class="main-nav">
           <ul class="nav-list">
             <li class="nav-item">
@@ -22,7 +20,6 @@
               <router-link to="/hotplacelist" class="nav-link">핫플 자랑하기</router-link>
             </li>
 
-            <!-- 드롭다운 사용자 메뉴 -->
             <li
               v-if="isLoggedIn"
               class="nav-item dropdown-container"
@@ -30,9 +27,12 @@
               @blur="closeDropdown"
               tabindex="0"
             >
-              <span class="nav-link user-name"
-                >{{ userName }} 님&nbsp;<i class="fa-solid fa-caret-down"></i
-              ></span>
+              <div class="user-profile">
+                <img :src="profileImage" alt="프로필 이미지" class="profile-image" />
+                <span class="nav-link user-name"
+                  >{{ userName }} 님&nbsp;<i class="fa-solid fa-caret-down"></i
+                ></span>
+              </div>
               <ul v-show="showDropdown" class="dropdown-menu-list">
                 <li>
                   <router-link to="/member/me" class="dropdown-item">
@@ -55,7 +55,6 @@
               </ul>
             </li>
 
-            <!-- 비로그인 메뉴 -->
             <li v-if="!isLoggedIn" class="nav-item">
               <router-link to="/login" class="nav-link">로그인</router-link>
             </li>
@@ -91,6 +90,10 @@ export default {
     userName() {
       const authStore = useAuthStore()
       return authStore.userName
+    },
+    profileImage() {
+      const authStore = useAuthStore()
+      return authStore.profileImage
     },
   },
   methods: {
@@ -189,11 +192,22 @@ a.router-link:hover,
   cursor: pointer;
 }
 
+.user-profile {
+  display: flex;
+  align-items: center;
+}
+
 .user-name {
   padding: 8px 12px;
   border-radius: 6px;
   color: #333;
   font-weight: 500;
+}
+
+.profile-image {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
 }
 
 .dropdown-menu-list {

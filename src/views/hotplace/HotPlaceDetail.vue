@@ -426,9 +426,5 @@ export default {
   .hotplace-img {
     height: 180px;
   }
-  .btn-like {
-    padding: 10px 18px;
-    font-size: 1rem;
-  }
 }
 </style>
