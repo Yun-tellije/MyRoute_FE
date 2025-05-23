@@ -2,6 +2,7 @@
   <div class="result-container">
     <h1>나만의 계획 세우기</h1>
     <RegionSelector :selectedSido="sido" :selectedGugun="gugun" @update-region="onSearch" />
+    <WeatherWidget :sido="sido" :gugun="gugun" />
     <PlanMap :markers="places" :planMarkers="planItems" :areaName="`${sido} ${gugun}`" />
     <div class="row">
       <div class="col-md-8">
@@ -24,10 +25,11 @@ import RegionSelector from '@/components/plan/RegionSelector.vue'
 import RecommendedList from '@/components/plan/RecommendedList.vue'
 import PlanMap from '@/components/plan/PlanMap.vue'
 import MyPlan from '@/components/plan/MyPlan.vue'
+import WeatherWidget from '@/components/plan/WeatherWidget.vue'
 import { useAuthStore } from '@/stores/auth'
 
 export default {
-  components: { RegionSelector, RecommendedList, PlanMap, MyPlan },
+  components: { RegionSelector, RecommendedList, PlanMap, MyPlan, WeatherWidget },
   data() {
     return {
       sido: this.$route.query.sido || '',
@@ -127,6 +129,7 @@ export default {
   margin: 50px auto;
   margin-top: 10px;
   padding: 20px;
+  position: relative;
 }
 
 h1 {
