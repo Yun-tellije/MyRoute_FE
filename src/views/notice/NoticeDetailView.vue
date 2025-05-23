@@ -5,7 +5,8 @@
         <span class="notice-title">{{ notice.title }}</span>
       </div>
       <div class="notice-info-row">
-        <span class="notice-writer">{{ notice.writer || '운영자' }}</span>
+        <img :src="profileImage" alt="프로필 이미지" class="profile-image" />
+        <span class="notice-writer">{{ memberName }}</span>
         <span class="notice-date">{{ formatDate(notice.createAt) }}</span>
       </div>
     </div>
@@ -31,6 +32,8 @@ export default {
   data() {
     return {
       notice: null,
+      memberName: null,
+      profileImage: null,
     }
   },
   computed: {
@@ -47,7 +50,11 @@ export default {
           Authorization: `Bearer ${useAuthStore().token}`,
         },
       })
-      this.notice = res.data
+      const { notice, memberName, profileImage } = res.data
+      this.notice = notice
+      this.memberName = memberName
+      this.profileImage = profileImage
+      console.log(profileImage)
     } catch (err) {
       console.error('공지사항 상세 불러오기 실패:', err)
     }
@@ -98,8 +105,8 @@ export default {
 }
 
 .notice-title {
-  font-size: 1.35rem;
-  font-weight: 600;
+  font-size: 26px;
+  font-weight: 400;
   color: #222;
   letter-spacing: -1px;
 }
@@ -107,15 +114,22 @@ export default {
 .notice-info-row {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 14px;
   color: #888;
   font-size: 1rem;
-  margin-bottom: 2px;
+}
+
+.profile-image {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #ccc;
 }
 
 .notice-writer {
   font-size: 1rem;
-  padding-right: 18px;
+  padding-right: 12px;
   border-right: 1.5px solid #d0d0d0;
 }
 

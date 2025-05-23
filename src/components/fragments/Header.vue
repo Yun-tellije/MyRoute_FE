@@ -184,7 +184,6 @@ a.router-link:hover,
 
 .nav-link.router-link-active {
   color: #aacab8;
-  font-weight: 600;
 }
 
 .dropdown-container {
@@ -205,9 +204,10 @@ a.router-link:hover,
 }
 
 .profile-image {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
+  border: 1px solid #ccc;
 }
 
 .dropdown-menu-list {
