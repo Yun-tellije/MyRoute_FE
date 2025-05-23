@@ -16,6 +16,7 @@
         <span class="plan-date right-align">{{ formatDate(plan.createdAt) }}</span>
       </div>
       <div class="plan-info-row">
+        <img v-if="profileImage" :src="profileImage" alt="프로필 이미지" class="profile-image" />
         <span class="plan-writer">{{ plan.memberId }}</span>
         <span class="plan-area">지역: {{ plan.areaName }}</span>
         <span class="plan-days">여행일수: {{ plan.days }}일</span>
@@ -134,6 +135,7 @@ export default {
       showPopup: false,
       popupX: 0,
       popupY: 0,
+      profileImage: null,
     }
   },
   mounted() {
@@ -144,8 +146,7 @@ export default {
     fetch(`/api/att/plan/${planId}`, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
-        ...(token && { Authorization: `Bearer ${token}` }),
+        Authorization: `Bearer ${token}`,
       },
     })
       .then((res) => {
@@ -153,10 +154,12 @@ export default {
         return res.json()
       })
       .then((data) => {
-        this.plan = data.plan
-        this.places = data.places
-        this.likedByUser = data.likedByUser || false
-        this.myPost = data.myPost
+        const planData = data.plan
+        this.plan = planData.plan
+        this.places = planData.places
+        this.likedByUser = planData.likedByUser || false
+        this.myPost = planData.myPost
+        this.profileImage = data.profileImage
         this.$nextTick(() => this.initMap())
       })
       .catch(() => {
@@ -440,6 +443,19 @@ export default {
   color: #888;
   font-size: 1rem;
   margin-bottom: 2px;
+}
+.profile-image {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #ccc;
+}
+.plan-writer {
+  font-size: 1rem;
+  padding-right: 12px;
+  border-right: 1.5px solid #d0d0d0;
+  margin-left: 4px;
 }
 .plan-date {
   font-size: 1rem;
