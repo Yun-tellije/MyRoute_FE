@@ -7,8 +7,15 @@
       @update-sido="handleSidoChange"
       @update-gugun="gugun = $event"
       @submit-form="submitForm"
+      @reset-map="resetMap"
     />
-    <KoreaMap :selectedSido="sido" @region-click="handleSidoChange" />
+    <KoreaMap
+      :selectedSido="sido"
+      :selectedGugun="gugun"
+      @update-sido="handleSidoChange"
+      @update-gugun="handleGugunChange"
+      @reset-map="resetMap"
+    />
   </div>
 </template>
 
@@ -153,7 +160,6 @@ export default {
           '음성군',
           '증평군',
           '진천군',
-          '청원군',
         ],
         충청남도: [
           '계룡시',
@@ -167,7 +173,6 @@ export default {
           '당진시',
           '부여군',
           '서천군',
-          '연기군',
           '예산군',
           '청양군',
           '태안군',
@@ -185,7 +190,6 @@ export default {
           '영천시',
           '포항시',
           '고령군',
-          '군위군',
           '봉화군',
           '성주군',
           '영덕군',
@@ -201,12 +205,10 @@ export default {
         경상남도: [
           '거제시',
           '김해시',
-          '마산시',
           '밀양시',
           '사천시',
           '양산시',
           '진주시',
-          '진해시',
           '창원시',
           '통영시',
           '거창군',
@@ -260,13 +262,20 @@ export default {
           '해남군',
           '화순군',
         ],
-        제주도: ['서귀포시', '제주시', '남제주군', '북제주군'],
+        제주도: ['서귀포시', '제주시'],
       },
     }
   },
   methods: {
     handleSidoChange(newSido) {
       this.sido = newSido
+      this.gugun = ''
+    },
+    handleGugunChange(newGugun) {
+      this.gugun = newGugun
+    },
+    resetMap() {
+      this.sido = ''
       this.gugun = ''
     },
     submitForm() {
@@ -324,7 +333,7 @@ export default {
 .main-container {
   max-width: 100%;
   margin: 60px auto;
-  background-color: #fff;
+  background-color: #ececec;
   border-radius: 6px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   display: flex;

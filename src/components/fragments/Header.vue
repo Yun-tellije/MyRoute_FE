@@ -153,7 +153,7 @@ a.router-link:hover,
 }
 
 .logo-img {
-  height: 60px;
+  height: 40px;
   object-fit: contain;
 }
 

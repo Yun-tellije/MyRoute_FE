@@ -1,15 +1,26 @@
 <template>
   <div class="map-section">
-    <object id="koreaMap" type="image/svg+xml" data="/resource/kr.svg" @load="onSvgLoad"></object>
+    <transition name="fade" mode="out-in">
+      <object
+        :key="svgPath"
+        id="koreaMap"
+        type="image/svg+xml"
+        :data="svgPath"
+        @load="onSvgLoad"
+        class="svg-object"
+      ></object>
+    </transition>
   </div>
 </template>
 
 <script>
 export default {
-  props: ['selectedSido'],
+  props: ['selectedSido', 'selectedGugun'],
+  emits: ['region-click', 'update-sido', 'update-gugun'],
   data() {
     return {
       svgDoc: null,
+      svgPath: '/resource/kr.svg',
       sidoMap: {
         KR11: '서울',
         KR28: '인천',
@@ -34,51 +45,98 @@ export default {
   methods: {
     onSvgLoad(event) {
       this.svgDoc = event.target.contentDocument
-      Object.keys(this.sidoMap).forEach((id) => {
-        const region = this.svgDoc.getElementById(id)
-        if (region) {
-          region.style.cursor = 'pointer'
 
-          region.addEventListener('mouseenter', () => {
-            if (this.selectedSido !== this.sidoMap[id]) {
-              region.setAttribute('transform', 'scale(1.005 )')
-              region.style.strokeWidth = '3px'
-              region.style.filter = 'brightness(1.3)'
-              region.style.transition = 'transform 1s ease'
+      if (this.svgPath.includes('kr.svg')) {
+        Object.keys(this.sidoMap).forEach((id) => {
+          const region = this.svgDoc.getElementById(id)
+          if (region) {
+            region.style.cursor = 'pointer'
+
+            region.addEventListener('mouseenter', () => {
+              if (this.selectedSido !== this.sidoMap[id]) {
+                region.setAttribute('transform', 'scale(1.005)')
+                region.style.strokeWidth = '3px'
+                region.style.filter = 'brightness(1.3)'
+                region.style.transition = 'transform 0.5s ease'
+              }
+            })
+
+            region.addEventListener('mouseleave', () => {
+              if (this.selectedSido !== this.sidoMap[id]) {
+                region.removeAttribute('transform')
+                region.style.strokeWidth = ''
+                region.style.filter = ''
+              }
+            })
+
+            region.addEventListener('click', () => {
+              const name = this.sidoMap[id]
+              this.svgPath = `/resource/${name}.svg`
+              this.$emit('update-sido', name)
+            })
+          }
+        })
+      } else {
+        const paths = this.svgDoc.querySelectorAll('path[id]')
+        paths.forEach((path) => {
+          const name = path.getAttribute('id')
+          if (!name) return
+
+          path.style.cursor = 'pointer'
+
+          path.addEventListener('mouseenter', () => {
+            if (this.selectedGugun !== name) {
+              path.setAttribute('transform', 'scale(1.005)')
+              path.style.strokeWidth = '3px'
+              path.style.filter = 'brightness(1.3)'
+              path.style.transition = 'transform 0.5s ease'
             }
           })
 
-          region.addEventListener('mouseleave', () => {
-            if (this.selectedSido !== this.sidoMap[id]) {
-              region.removeAttribute('transform')
-              region.style.strokeWidth = ''
-              region.style.filter = ''
+          path.addEventListener('mouseleave', () => {
+            if (this.selectedGugun !== name) {
+              path.removeAttribute('transform')
+              path.style.strokeWidth = ''
+              path.style.filter = ''
             }
           })
 
-          region.addEventListener('click', () => {
-            const name = this.sidoMap[id]
-            this.$emit('region-click', name)
+          path.addEventListener('click', () => {
+            this.$emit('update-gugun', name)
           })
-        }
-      })
+        })
+      }
     },
   },
   watch: {
     selectedSido(newVal) {
-      if (!this.svgDoc) return
-      Object.keys(this.sidoMap).forEach((id) => {
-        const region = this.svgDoc.getElementById(id)
-        if (region) {
-          if (this.sidoMap[id] === newVal) {
-            region.style.filter = 'brightness(1.3)'
-            region.setAttribute('transform', 'scale(1.005)')
-            region.style.strokeWidth = '3px'
-          } else {
-            region.style.filter = ''
-            region.removeAttribute('transform')
-            region.style.strokeWidth = ''
-          }
+      if (newVal === '') {
+        this.svgPath = '/resource/kr.svg'
+        return
+      }
+
+      const foundId = Object.keys(this.sidoMap).find((id) => this.sidoMap[id] === newVal)
+      if (foundId) {
+        this.svgPath = `/resource/${newVal}.svg`
+      }
+    },
+    selectedGugun(newVal) {
+      if (!this.svgDoc || this.svgPath === '/resource/kr.svg') return
+
+      const paths = this.svgDoc.querySelectorAll('path[id]')
+      paths.forEach((path) => {
+        const name = path.getAttribute('id')
+        if (!name) return
+
+        if (name === newVal) {
+          path.setAttribute('transform', 'scale(1.005)')
+          path.style.strokeWidth = '3px'
+          path.style.filter = 'brightness(1.3)'
+        } else {
+          path.removeAttribute('transform')
+          path.style.filter = ''
+          path.style.stroke = ''
+          path.style.strokeWidth = ''
         }
       })
     },
@@ -93,9 +151,25 @@ export default {
   align-items: center;
   justify-content: center;
   padding: 20px;
+
+  width: 800px;
+  height: 655px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-.map-section svg path {
-  transition: fill 0.3s ease;
+.svg-object {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

@@ -1,10 +1,13 @@
 <template>
   <div class="form-section">
+    <button class="reset-btn" @click="$emit('reset-map')">
+      <img src="/resource/refresh.png" />
+    </button>
+
     <h2>나만의 여행 계획 세우기</h2>
     <br />
     <p>지역을 선택해주세요</p>
-    <br>
-
+    <br />
     <select class="form-select" v-model="localSido" @change="emitSido">
       <option disabled value="">시도 선택</option>
       <option v-for="(guguns, sido) in areaData" :key="sido" :value="sido">{{ sido }}</option>
@@ -53,10 +56,30 @@ export default {
 .form-section {
   flex: 1;
   padding: 40px;
-
   display: flex;
   flex-direction: column;
-  justify-content: center; /* 수직 가운데 정렬 */
+  justify-content: center;
+  position: relative;
+}
+
+.reset-btn {
+  position: absolute;
+  top: 250px;
+  right: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.reset-btn img {
+  width: 15px;
+  height: 15px;
+}
+
+.reset-btn:hover {
+  transform: rotate(90deg);
+  transition: transform 0.3s ease;
 }
 
 .form-select,
@@ -74,11 +97,11 @@ export default {
 .form-select:focus,
 .btn:focus {
   outline: none;
-  border-color: #9DBBAA;
+  border-color: #9dbbaa;
 }
 
 .btn {
-  background-color: #9DBBAA;
+  background-color: #9dbbaa;
   color: white;
   cursor: pointer;
 }
