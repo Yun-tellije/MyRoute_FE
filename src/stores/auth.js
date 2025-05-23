@@ -15,14 +15,7 @@ export const useAuthStore = defineStore('auth', {
       this.userRole = userRole
     },
     logout() {
-      this.isLoggedIn = false
-      this.token = null
-      this.userName = null
-      this.userRole = null
-      localStorage.removeItem('pinia')
-    },
-    restoreSession() {
-      this.isLoggedIn = !!this.token
+      this.$reset()
     },
   },
   persist: true,

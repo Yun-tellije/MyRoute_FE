@@ -108,6 +108,7 @@ export default {
       this.plans = res.data
     } catch {
       alert('로그인이 필요합니다.')
+      authStore.logout()
       this.$router.push('/login')
     }
 

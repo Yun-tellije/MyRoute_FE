@@ -100,6 +100,7 @@ export default {
 
     if (!token) {
       alert('로그인이 필요한 서비스입니다.')
+      useAuthStore().logout()
       this.$router.push('/login')
       return
     }

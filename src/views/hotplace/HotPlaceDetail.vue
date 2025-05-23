@@ -124,6 +124,7 @@ export default {
 
       if (!token) {
         alert('로그인이 필요한 서비스입니다.')
+        authStore.logout()
         this.$router.push('/login')
         return
       }
@@ -145,6 +146,8 @@ export default {
         })
         .catch(() => {
           alert('처리 중 오류가 발생했습니다.')
+          authStore.logout()
+          this.$router.push('/login')
         })
     },
     async deleteComment(commentId) {
@@ -153,6 +156,7 @@ export default {
 
       if (!token) {
         alert('로그인이 필요한 서비스입니다.')
+        authStore.logout()
         this.$router.push('/login')
         return
       }

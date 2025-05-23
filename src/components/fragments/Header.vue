@@ -106,10 +106,6 @@ export default {
       this.$router.push('/login')
     },
   },
-  created() {
-    const authStore = useAuthStore()
-    authStore.restoreSession()
-  },
 }
 </script>
 
