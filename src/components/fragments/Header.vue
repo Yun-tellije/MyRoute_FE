@@ -21,39 +21,40 @@
             </li>
 
             <li
-              v-if="isLoggedIn"
-              class="nav-item dropdown-container"
-              @click="toggleDropdown"
-              @blur="closeDropdown"
-              tabindex="0"
-            >
-              <div class="user-profile">
-                <img :src="profileImage" alt="프로필 이미지" class="profile-image" />
-                <span class="nav-link user-name"
-                  >{{ userName }} 님&nbsp;<i class="fa-solid fa-caret-down"></i
-                ></span>
-              </div>
-              <ul v-show="showDropdown" class="dropdown-menu-list">
-                <li>
-                  <router-link to="/member/me" class="dropdown-item">
-                    <div class="icon-box"><i class="fa fa-user"></i></div>
-                    내 정보
-                  </router-link>
-                </li>
-                <li>
-                  <router-link to="/member/posts" class="dropdown-item">
-                    <div class="icon-box"><i class="fa fa-list-ul"></i></div>
-                    내 작성글
-                  </router-link>
-                </li>
-                <li>
-                  <button @click.stop="logout" class="dropdown-item logout">
-                    <div class="icon-box"><i class="fa fa-sign-out-alt"></i></div>
-                    로그아웃
-                  </button>
-                </li>
-              </ul>
-            </li>
+  v-if="isLoggedIn"
+  class="nav-item dropdown-container"
+  @click="toggleDropdown"
+  ref="dropdown"
+>
+  <div class="user-profile">
+    <img :src="profileImage" alt="프로필 이미지" class="profile-image" />
+    <span class="nav-link user-name">
+      {{ userName }} 님&nbsp;<i class="fa-solid fa-caret-down"></i>
+    </span>
+  </div>
+
+  <ul v-show="showDropdown" class="dropdown-menu-list">
+    <li>
+      <router-link to="/member/me" class="dropdown-item" @click="closeDropdown"> <!-- 👈 추가 -->
+        <div class="icon-box"><i class="fa fa-user"></i></div>
+        내 정보
+      </router-link>
+    </li>
+    <li>
+      <router-link to="/member/posts" class="dropdown-item" @click="closeDropdown"> <!-- 👈 추가 -->
+        <div class="icon-box"><i class="fa fa-list-ul"></i></div>
+        내 작성글
+      </router-link>
+    </li>
+    <li>
+      <button @click.stop="logout" class="dropdown-item logout">
+        <div class="icon-box"><i class="fa fa-sign-out-alt"></i></div>
+        로그아웃
+      </button>
+    </li>
+  </ul>
+</li>
+
 
             <li v-if="!isLoggedIn" class="nav-item">
               <router-link to="/login" class="nav-link">로그인</router-link>
@@ -96,6 +97,12 @@ export default {
       return authStore.profileImage
     },
   },
+  mounted() {
+  document.addEventListener('click', this.handleClickOutside)
+},
+beforeUnmount() {
+  document.removeEventListener('click', this.handleClickOutside)
+},
   methods: {
     toggleDropdown() {
       this.showDropdown = !this.showDropdown
@@ -103,6 +110,12 @@ export default {
     closeDropdown() {
       setTimeout(() => (this.showDropdown = false), 100)
     },
+     handleClickOutside(event) {
+    const dropdown = this.$refs.dropdown
+    if (dropdown && !dropdown.contains(event.target)) {
+      this.showDropdown = false
+    }
+  },
     logout() {
       const authStore = useAuthStore()
       authStore.logout()
