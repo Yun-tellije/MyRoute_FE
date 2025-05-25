@@ -16,7 +16,12 @@
         <span class="hotplace-date right-align">{{ formatDate(post.createdAt) }}</span>
       </div>
       <div class="hotplace-info-row">
-        <span class="hotplace-writer">{{ post.memberId }}</span>
+        <img
+          :src="post.profileImage"
+          alt="프로필"
+          class="hotplace-profile-image"
+        />
+        <span class="hotplace-writer">{{ post.memberName }}</span>
         <span class="hotplace-attraction">관광지: {{ post.attractionName }}</span>
         <span class="hotplace-star"
           ><i class="fa-solid fa-star" style="color: #ffc107"></i> {{ post.starPoint }}</span
@@ -43,8 +48,14 @@
       <ul class="comment-list">
         <li v-for="c in comments" :key="c.commentId" class="comment-item">
           <div class="comment-main">
-            <div class="comment-member">
-              <strong>{{ c.memberId }}</strong>
+            <div class="comment-member" style="display: flex; align-items: center;">
+              <img
+                :src="c.profileImage"
+                alt="프로필"
+                class="comment-profile-img"
+              />
+              <strong>{{ c.memberName }}</strong>
+              <span class="comment-date">{{ formatDate(c.createdAt) }}</span>
             </div>
             <div class="comment-content">{{ c.content }}</div>
           </div>
@@ -81,8 +92,17 @@ export default {
       .then((r) => r.json())
       .then((data) => {
         this.post = {
-          ...data.hotplace,
+          hotplaceId: data.hotplaceId,
+          memberName: data.memberName,
+          attractionName: data.attractionName,
+          title: data.title,
+          content: data.content,
+          createdAt: data.createdAt,
+          updatedAt: data.updatedAt,
+          starPoint: data.starPoint,
+          likeCount: data.likeCount,
           imageBase64: data.imageBase64,
+          profileImage: data.profileImage,
         }
         this.likedByUser = data.likedByUser || false
         this.myPost = data.myPost || false
@@ -295,16 +315,22 @@ export default {
 }
 .hotplace-info-row {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 18px;
+  gap: 14px;
   color: #888;
   font-size: 1rem;
   margin-bottom: 2px;
 }
+.hotplace-profile-image {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #ccc;
+}
 .hotplace-writer {
   font-size: 1rem;
-  padding-right: 18px;
+  padding-right: 12px;
   border-right: 1.5px solid #d0d0d0;
 }
 .hotplace-attraction,
@@ -415,6 +441,20 @@ export default {
 }
 .btn-delete-comment:hover {
   color: #ed4856;
+}
+.comment-profile-img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 8px;
+  border: 1px solid #ccc;
+}
+.comment-date {
+  color: #aaa;
+  font-size: 0.95rem;
+  margin-left: 10px;
+  font-weight: 400;
 }
 @media (max-width: 700px) {
   .hotplace-detail-container {
