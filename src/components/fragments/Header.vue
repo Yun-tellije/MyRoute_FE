@@ -20,71 +20,53 @@
               <router-link to="/hotplacelist" class="nav-link">핫플 자랑하기</router-link>
             </li>
 
-           <li v-if="isLoggedIn" class="nav-item">
-  <div class="user-area">
-    <!-- 알림 아이콘 -->
-    <div class="notification-wrapper" ref="notification">
-      <div class="notification-icon" @click.stop="toggleNotificationDropdown">
-        <i class="fa fa-bell"></i>
-        <span v-if="unreadCount > 0" class="notification-badge">{{ unreadCount }}</span>
-      </div>
+            <li v-if="isLoggedIn" class="nav-item">
+              <div class="user-area">
+                <div class="notification-wrapper" ref="notification">
+                  <div class="notification-icon" @click.stop="toggleNotificationDropdown">
+                    <i class="fa fa-bell"></i>
+                    <span v-if="unreadCount > 0" class="notification-badge">{{ unreadCount }}</span>
+                  </div>
 
-      <ul v-show="showNotifications" class="notification-menu-list">
-        <li
-  v-for="n in notifications"
-  :key="n.notificationId"
-  class="notification-item"
-  :class="{ unread: !n.read }"
->
-  <div class="d-flex justify-content-between align-items-start gap-2">
-    <router-link :to="n.url" @click="markAsRead(n.notificationId)" class="flex-grow-1">
-      <div class="noti-text">{{ n.content }}</div>
-      <div class="noti-time">{{ formatRelativeTime(n.createdAt) }}</div>
-    </router-link>
-    <button class="delete-btn" @click.stop="deleteNotification(n.notificationId)">
-      <i class="fa fa-trash-alt"></i>
-    </button>
-  </div>
-</li>
+                  <ul v-show="showNotifications" class="notification-menu-list">
+                    <li
+                      v-for="n in notifications"
+                      :key="n.notificationId"
+                      class="notification-item"
+                      :class="{ unread: !n.read }"
+                    >
+                      <div class="d-flex justify-content-between align-items-start gap-2">
+                        <router-link
+                          :to="n.url"
+                          @click="markAsRead(n.notificationId)"
+                          class="flex-grow-1"
+                        >
+                          <div class="noti-text">{{ n.content }}</div>
+                          <div class="noti-time">{{ formatRelativeTime(n.createdAt) }}</div>
+                        </router-link>
+                        <button
+                          class="delete-btn"
+                          @click.stop="deleteNotification(n.notificationId)"
+                        >
+                          <i class="fa fa-trash-alt"></i>
+                        </button>
+                      </div>
+                    </li>
 
-        <li v-if="notifications.length === 0" class="notification-item text-muted">
-          알림이 없습니다
-        </li>
-      </ul>
-    </div>
+                    <li v-if="notifications.length === 0" class="notification-item text-muted">
+                      알림이 없습니다
+                    </li>
+                  </ul>
+                </div>
 
-    <!-- 프로필 드롭다운 -->
-    <div class="dropdown-container" ref="dropdown" @click.stop="toggleDropdown">
-      <div class="user-profile">
-        <img :src="profileImage" alt="프로필 이미지" class="profile-image" />
-        <span class="nav-link user-name">
-          {{ userName }} 님&nbsp;<i class="fa-solid fa-caret-down"></i>
-        </span>
-      </div>
-
-      <ul v-show="showDropdown" class="dropdown-menu-list">
-        <li>
-          <router-link to="/member/me" class="dropdown-item" @click="closeDropdown">
-            <div class="icon-box"><i class="fa fa-user"></i></div>
-            내 정보
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/member/posts" class="dropdown-item" @click="closeDropdown">
-            <div class="icon-box"><i class="fa fa-list-ul"></i></div>
-            내 작성글
-          </router-link>
-        </li>
-        <li>
-          <button @click.stop="logout" class="dropdown-item logout">
-            <div class="icon-box"><i class="fa fa-sign-out-alt"></i></div>
-            로그아웃
-          </button>
-        </li>
-      </ul>
-    </div>
-  </div>
-</li>
+                <div class="profile-tabbar-btn" @click.stop="openProfileTabbar">
+                  <img :src="profileImage" alt="프로필 이미지" class="profile-image" />
+                  <span class="nav-link user-name">
+                    {{ userName }} 님&nbsp;<i class="fa-solid fa-caret-down"></i>
+                  </span>
+                </div>
+              </div>
+            </li>
 
             <li v-if="!isLoggedIn" class="nav-item">
               <router-link to="/login" class="nav-link">로그인</router-link>
@@ -96,6 +78,66 @@
         </nav>
       </div>
     </div>
+
+    <transition name="slide">
+      <div v-if="showProfileTabbar" class="profile-tabbar-overlay" @click.self="closeProfileTabbar">
+        <aside class="profile-tabbar">
+          <div class="profile-tabbar-header">
+            <img :src="profileImage" alt="프로필 이미지" class="profile-image-large" />
+            <span class="nickname">{{ userName }} 님</span>
+            <button class="close-btn" @click="closeProfileTabbar">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          <ul class="profile-tabbar-menu">
+            <li>
+              <router-link to="/member/me" class="profile-tabbar-item" @click="closeProfileTabbar">
+                <i class="fa fa-user"></i>
+                내 정보
+              </router-link>
+            </li>
+            <li>
+              <router-link
+                to="/member/posts"
+                class="profile-tabbar-item"
+                @click="closeProfileTabbar"
+                style="gap: 17px"
+              >
+                <i class="fa fa-list-ul"></i>
+                내 작성글
+              </router-link>
+            </li>
+            <li>
+              <router-link
+                to="/member/likes"
+                class="profile-tabbar-item"
+                @click="closeProfileTabbar"
+              >
+                <i class="fa fa-heart"></i>
+                좋아요
+              </router-link>
+            </li>
+            <li>
+              <router-link
+                to="/member/bookmarks"
+                class="profile-tabbar-item"
+                @click="closeProfileTabbar"
+                style="margin-left: 2px; gap: 20px"
+              >
+                <i class="fa fa-bookmark"></i>
+                북마크
+              </router-link>
+            </li>
+          </ul>
+          <div class="profile-tabbar-logout">
+            <button @click="logout" class="profile-tabbar-item logout">
+              <i class="fa fa-sign-out-alt"></i>
+              로그아웃
+            </button>
+          </div>
+        </aside>
+      </div>
+    </transition>
   </header>
 </template>
 
@@ -110,6 +152,7 @@ export default {
       showNotifications: false,
       notifications: [],
       unreadCount: 0,
+      showProfileTabbar: false,
     }
   },
   computed: {
@@ -131,52 +174,57 @@ export default {
     },
   },
   mounted() {
-  document.addEventListener('click', this.handleClickOutside)
-  this.showDropdown = false
-  this.showNotifications = false
-  if (this.isLoggedIn) this.fetchNotifications()
-},
-watch: {
-  isLoggedIn(newVal) {
-    if (newVal) {
-      this.showDropdown = false
-      this.showNotifications = false
-      this.fetchNotifications()
-    }
-  }
-},
+    document.addEventListener('click', this.handleClickOutside)
+    this.showDropdown = false
+    this.showNotifications = false
+    if (this.isLoggedIn) this.fetchNotifications()
+  },
+  watch: {
+    isLoggedIn(newVal) {
+      if (newVal) {
+        this.showDropdown = false
+        this.showNotifications = false
+        this.fetchNotifications()
+      }
+    },
+  },
 
-beforeUnmount() {
-  document.removeEventListener('click', this.handleClickOutside)
-},
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleClickOutside)
+  },
   methods: {
     toggleDropdown() {
       this.showDropdown = !this.showDropdown
       this.showNotifications = false
     },
     toggleNotificationDropdown() {
-    this.showNotifications = !this.showNotifications
-    this.showDropdown = false
-  },
+      this.showNotifications = !this.showNotifications
+      this.showDropdown = false
+    },
     closeDropdown() {
       setTimeout(() => {
         this.showDropdown = false
         this.showNotifications = false
-    }, 100)
+      }, 100)
     },
-     handleClickOutside(event) {
-    const profile = this.$refs.dropdown
-    const bell = this.$refs.notification
-    if (!profile.contains(event.target)) {
+    handleClickOutside(event) {
+      const bell = this.$refs.notification
+      if (bell && !bell.contains(event.target)) {
+        this.showNotifications = false
+      }
+    },
+    openProfileTabbar() {
+      this.showProfileTabbar = true
       this.showDropdown = false
-    }
-    if (!bell.contains(event.target)) {
       this.showNotifications = false
-    }
-  },
+    },
+    closeProfileTabbar() {
+      this.showProfileTabbar = false
+    },
     logout() {
       const authStore = useAuthStore()
       authStore.logout()
+      this.closeProfileTabbar()
       this.$router.push('/login')
     },
     async fetchNotifications() {
@@ -188,70 +236,68 @@ beforeUnmount() {
           },
         })
         this.notifications = await res.json()
-        this.unreadCount = this.notifications.filter(n => !n.read).length
+        this.unreadCount = this.notifications.filter((n) => !n.read).length
       } catch (err) {
         console.error('알림 가져오기 실패:', err)
       }
     },
     async markAsRead(notificationId) {
-  const authStore = useAuthStore()
-  try {
-    await fetch(`/api/members/notification/read/${notificationId}`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${authStore.token}`,
-      },
-    })
-    this.showNotifications = false
-    this.fetchNotifications()
-  } catch (err) {
-    console.error('알림 읽음 처리 실패:', err)
-  }
-}
-,
+      const authStore = useAuthStore()
+      try {
+        await fetch(`/api/members/notification/read/${notificationId}`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${authStore.token}`,
+          },
+        })
+        this.showNotifications = false
+        this.fetchNotifications()
+      } catch (err) {
+        console.error('알림 읽음 처리 실패:', err)
+      }
+    },
     formatRelativeTime(isoDateStr) {
-  const date = new Date(isoDateStr)
-  const now = new Date()
-  const diffMs = now - date
-  const diffSec = Math.floor(diffMs / 1000)
-  const diffMin = Math.floor(diffSec / 60)
-  const diffHr = Math.floor(diffMin / 60)
-  const diffDay = Math.floor(diffHr / 24)
+      const date = new Date(isoDateStr)
+      const now = new Date()
+      const diffMs = now - date
+      const diffSec = Math.floor(diffMs / 1000)
+      const diffMin = Math.floor(diffSec / 60)
+      const diffHr = Math.floor(diffMin / 60)
+      const diffDay = Math.floor(diffHr / 24)
 
-  if (diffSec < 60) return '방금 전'
-  if (diffMin < 60) return `${diffMin}분 전`
-  if (diffHr < 24) return `${diffHr}시간 전`
-  return `${diffDay}일 전`
-},
-async deleteNotification(notificationId) {
-  const authStore = useAuthStore()
+      if (diffSec < 60) return '방금 전'
+      if (diffMin < 60) return `${diffMin}분 전`
+      if (diffHr < 24) return `${diffHr}시간 전`
+      return `${diffDay}일 전`
+    },
+    async deleteNotification(notificationId) {
+      const authStore = useAuthStore()
 
-  const confirmDelete = window.confirm('정말로 이 알림을 삭제하시겠습니까?')
-  if (!confirmDelete) return
+      const confirmDelete = window.confirm('정말로 이 알림을 삭제하시겠습니까?')
+      if (!confirmDelete) return
 
-  try {
-    const response = await fetch(`/api/members/notification/delete/${notificationId}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${authStore.token}`,
-      },
-    })
+      try {
+        const response = await fetch(`/api/members/notification/delete/${notificationId}`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${authStore.token}`,
+          },
+        })
 
-    if (response.ok) {
-      this.notifications = this.notifications.filter(n => n.notificationId !== notificationId)
-      this.unreadCount = this.notifications.filter(n => !n.read).length
+        if (response.ok) {
+          this.notifications = this.notifications.filter((n) => n.notificationId !== notificationId)
+          this.unreadCount = this.notifications.filter((n) => !n.read).length
 
-      alert('알림이 삭제되었습니다.')
-    } else {
-      console.error('삭제 실패:', await response.text())
-      alert('삭제에 실패했습니다.')
-    }
-  } catch (err) {
-    console.error('알림 삭제 실패:', err)
-    alert('삭제 중 오류가 발생했습니다.')
-  }
-}
-
+          alert('알림이 삭제되었습니다.')
+        } else {
+          console.error('삭제 실패:', await response.text())
+          alert('삭제에 실패했습니다.')
+        }
+      } catch (err) {
+        console.error('알림 삭제 실패:', err)
+        alert('삭제 중 오류가 발생했습니다.')
+      }
+    },
   },
 }
 </script>
@@ -436,7 +482,7 @@ a.router-link:hover,
   font-size: 14px;
   padding: 10px 8px;
   border-radius: 6px;
-  cursor: pointer; 
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -502,4 +548,141 @@ a.router-link:hover,
   color: #e74c3c;
 }
 
+.profile-tabbar-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(30, 30, 30, 0.45);
+  z-index: 9999;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.profile-tabbar {
+  width: 340px;
+  height: 100vh;
+  background: #fff;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -2px 0 16px rgba(0, 0, 0, 0.18);
+  animation: slideIn 0.25s;
+  position: relative;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.profile-tabbar-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 32px 24px 18px 24px;
+  border-bottom: 1px solid #eee;
+  position: relative;
+  background: #fff;
+}
+
+.profile-image-large {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+  object-fit: cover;
+}
+
+.nickname {
+  font-size: 20px;
+  font-weight: 600;
+  color: #222;
+}
+
+.close-btn {
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 22px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.close-btn:hover {
+  color: #e74c3c;
+}
+
+.profile-tabbar-menu {
+  margin: 0;
+  padding: 32px 0 0 0;
+  list-style: none;
+  flex: 1 1 auto;
+  background: #fff;
+}
+
+.profile-tabbar-logout {
+  padding: 0 0 32px 0;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-tabbar-item {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 32px;
+  font-size: 16px;
+  color: #222;
+  text-decoration: none;
+  border-radius: 8px;
+  transition:
+    background 0.18s,
+    color 0.18s;
+  cursor: pointer;
+  background: #fff;
+  border: none;
+}
+.profile-tabbar-item i {
+  font-size: 20px;
+  width: 22px;
+  height: 22px;
+  text-align: center;
+}
+.profile-tabbar-item:hover {
+  background: #f5f5f5;
+  color: #e74c3c;
+  font-weight: 600;
+}
+.profile-tabbar-item.logout {
+  color: #e74c3c;
+}
+.profile-tabbar-item.logout:hover {
+  background: #f5f5f5;
+  color: #222;
+}
+
+.profile-tabbar-btn {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.25s;
+}
+.slide-enter-from,
+.slide-leave-to {
+  opacity: 0;
+  transform: translateX(100%);
+}
 </style>

@@ -154,7 +154,7 @@ window.suggestPlaceToChatbot = (title) => {
   position: fixed;
   bottom: 80px;
   right: 40px;
-  z-index: 9999;
+  z-index: 1;
 }
 
 .toggle-btn {

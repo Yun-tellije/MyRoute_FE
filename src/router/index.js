@@ -93,6 +93,16 @@ const router = createRouter({
       name: 'HotPlaceEdit',
       component: () => import('@/views/hotplace/HotPlaceForm.vue'),
     },
+    {
+      path: '/member/likes',
+      name: 'MyLikes',
+      component: () => import('@/views/member/MyLikesView.vue'),
+    },
+    {
+      path: '/member/bookmarks',
+      name: 'MyBookMarks',
+      component: () => import('@/views/member/MyBookMarksView.vue'),
+    },
   ],
 })
 
