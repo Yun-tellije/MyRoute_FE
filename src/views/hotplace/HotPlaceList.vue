@@ -98,6 +98,7 @@
 
 <script>
 import axios from 'axios'
+import { useAuthStore } from '@/stores/auth'
 
 export default {
   data() {
@@ -108,10 +109,13 @@ export default {
       perPage: 6,
       sortOption: 'latest',
       searchKeyword: '',
-      isLoggedIn: false,
     }
   },
   computed: {
+    isLoggedIn() {
+    const authStore = useAuthStore()
+    return authStore.isLoggedIn
+  },
     filteredPosts() {
       return [...this.posts]
     },
