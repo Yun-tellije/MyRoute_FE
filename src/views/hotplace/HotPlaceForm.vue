@@ -265,7 +265,6 @@ export default {
       body.append('title', this.form.title)
       body.append('rating', this.selectedStarNum)
       body.append('content', this.form.content)
-      body.append('writerId', this.userProfile.id)
       this.files.forEach((f) => body.append('images', f))
 
       try {

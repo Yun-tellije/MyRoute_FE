@@ -17,39 +17,41 @@
 
     <div v-else>
       <div class="hotplace-card-grid">
-        <div v-for="(row, rowIdx) in paginatedRows" :key="rowIdx" class="hotplace-card-row">
-          <div
-            v-for="post in row"
-            :key="post.hotplaceId"
-            class="hotplace-card"
-            @click="goDetail(post.hotplaceId)"
-          >
-            <div class="hotplace-card-thumb">
-              <img
-                v-if="post.image"
-                :src="getImageSrc(post.image)"
-                alt="썸네일"
-                class="hotplace-thumb-img"
-              />
-              <div v-else class="hotplace-thumb-placeholder">No Image</div>
-            </div>
-            <div class="hotplace-card-body">
-              <div class="hotplace-card-title">{{ post.title }}</div>
-              <div class="hotplace-card-attraction">{{ post.attractionName }}</div>
-              <div class="hotplace-card-info">
-                <span>
-                  <i class="fa-solid fa-star" style="color: #ffc107"></i>
-                  {{ post.starPoint }}
-                </span>
-                <span>
-                  <i class="fa-solid fa-heart" style="color: #ed4856"></i>
-                  {{ post.likeCount }}
-                </span>
-                <span>
-                  <i class="fa-solid fa-user" style="color: #888"></i>
-                  {{ post.memberId }}
-                </span>
-              </div>
+        <div
+          v-for="post in paginatedPosts"
+          :key="post.hotplaceId"
+          class="hotplace-card"
+          @click="goDetail(post.hotplaceId)"
+        >
+          <div class="hotplace-card-thumb">
+            <img
+              v-if="post.image"
+              :src="getImageSrc(post.image)"
+              alt="썸네일"
+              class="hotplace-thumb-img"
+            />
+            <div v-else class="hotplace-thumb-placeholder">No Image</div>
+          </div>
+          <div class="hotplace-card-body">
+            <div class="hotplace-card-title">{{ post.title }}</div>
+            <div class="hotplace-card-attraction">{{ post.attractionName }}</div>
+            <div class="hotplace-card-info">
+              <span>
+                <i class="fa-solid fa-star" style="color: #ffc107"></i>
+                {{ post.starPoint }}
+              </span>
+              <span>
+                <i class="fa-solid fa-heart" style="color: #ed4856"></i>
+                {{ post.likeCount }}
+              </span>
+              <span style="display: flex; align-items: center;">
+                <img
+                  :src="post.profileImage || '/default-profile.png'"
+                  alt="프로필"
+                  class="hotplace-profile-img"
+                />
+                <span>{{ post.memberName }}</span>
+              </span>
             </div>
           </div>
         </div>
@@ -122,14 +124,6 @@ export default {
     paginatedPosts() {
       const start = (this.currentPage - 1) * this.perPage
       return this.filteredPosts.slice(start, start + this.perPage)
-    },
-    paginatedRows() {
-      const rows = []
-      const posts = this.paginatedPosts
-      for (let i = 0; i < posts.length; i += 3) {
-        rows.push(posts.slice(i, i + 3))
-      }
-      return rows
     },
     totalPages() {
       return Math.ceil(this.filteredPosts.length / this.perPage)
@@ -241,17 +235,12 @@ export default {
   margin-bottom: 24px;
 }
 .hotplace-card-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 28px 22px;
   margin-bottom: 32px;
 }
-.hotplace-card-row {
-  display: flex;
-  gap: 22px;
-}
 .hotplace-card {
-  flex: 1 1 0;
   background: #fff;
   border: 1.5px solid #e0e0e0;
   border-radius: 10px;
@@ -266,7 +255,6 @@ export default {
   align-items: center;
   overflow: hidden;
   min-height: 300px;
-  min-width: 0;
 }
 .hotplace-card:hover {
   background: #f9fafb;
@@ -376,5 +364,13 @@ export default {
 }
 .btn-write:hover {
   background: #aacab8;
+}
+.hotplace-profile-img {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 6px;
+  vertical-align: middle;
 }
 </style>
