@@ -36,11 +36,17 @@
   class="notification-item"
   :class="{ unread: !n.read }"
 >
-  <router-link :to="n.url" @click="markAsRead(n.notificationId)">
-    <div class="noti-text">{{ n.content }}</div>
-    <div class="noti-time">{{ formatRelativeTime(n.createdAt) }}</div>
-  </router-link>
+  <div class="d-flex justify-content-between align-items-start gap-2">
+    <router-link :to="n.url" @click="markAsRead(n.notificationId)" class="flex-grow-1">
+      <div class="noti-text">{{ n.content }}</div>
+      <div class="noti-time">{{ formatRelativeTime(n.createdAt) }}</div>
+    </router-link>
+    <button class="delete-btn" @click.stop="deleteNotification(n.notificationId)">
+      <i class="fa fa-trash-alt"></i>
+    </button>
+  </div>
 </li>
+
         <li v-if="notifications.length === 0" class="notification-item text-muted">
           알림이 없습니다
         </li>
@@ -216,6 +222,34 @@ beforeUnmount() {
   if (diffMin < 60) return `${diffMin}분 전`
   if (diffHr < 24) return `${diffHr}시간 전`
   return `${diffDay}일 전`
+},
+async deleteNotification(notificationId) {
+  const authStore = useAuthStore()
+
+  const confirmDelete = window.confirm('정말로 이 알림을 삭제하시겠습니까?')
+  if (!confirmDelete) return
+
+  try {
+    const response = await fetch(`/api/members/notification/delete/${notificationId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${authStore.token}`,
+      },
+    })
+
+    if (response.ok) {
+      this.notifications = this.notifications.filter(n => n.notificationId !== notificationId)
+      this.unreadCount = this.notifications.filter(n => !n.read).length
+
+      alert('알림이 삭제되었습니다.')
+    } else {
+      console.error('삭제 실패:', await response.text())
+      alert('삭제에 실패했습니다.')
+    }
+  } catch (err) {
+    console.error('알림 삭제 실패:', err)
+    alert('삭제 중 오류가 발생했습니다.')
+  }
 }
 
   },
@@ -390,8 +424,8 @@ a.router-link:hover,
   border: 1px solid #ccc;
   border-radius: 8px;
   list-style: none;
-  width: 280px; /* 📏 더 넓게 */
-  max-height: 350px; /* 더 많은 알림 표시 */
+  width: 280px;
+  max-height: 350px;
   overflow-y: auto;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   z-index: 2000;
@@ -402,7 +436,7 @@ a.router-link:hover,
   font-size: 14px;
   padding: 10px 8px;
   border-radius: 6px;
-  cursor: pointer; /* ✅ 포인터 표시 */
+  cursor: pointer; 
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -410,7 +444,7 @@ a.router-link:hover,
 }
 
 .notification-item.unread {
-  background-color: #f5faff; /* ✅ 안읽은 알림 배경 */
+  background-color: #f5faff;
   font-weight: bold;
 }
 
@@ -453,6 +487,19 @@ a.router-link:hover,
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 14px;
+}
+
+.delete-btn:hover {
+  color: #e74c3c;
 }
 
 </style>
