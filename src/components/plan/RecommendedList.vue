@@ -117,13 +117,15 @@
           <p style="margin-left: 16px">{{ selectedDetail.addr1 }}</p>
         </div>
         <div>
-          <p class="mt-3">
-            <strong>
-              <img src="/resource/parking.svg" alt="주차장" style="width: 16px; height: 16px" />
-              주변 주차장 정보
-            </strong>
-          </p>
-          <ul v-if="Array.isArray(selectedDetail.parking)">
+        <p class="mt-3">
+          <strong>
+            <img src="/resource/parking.svg" alt="주차장" style="width: 16px; height: 16px" />
+            주변 주차장 정보
+          </strong>
+        </p>
+
+        <template v-if="Array.isArray(selectedDetail.parking)">
+          <ul v-if="selectedDetail.parking.length > 0">
             <li
               v-for="(name, idx) in selectedDetail.parking"
               :key="idx"
@@ -132,8 +134,10 @@
               {{ name }}
             </li>
           </ul>
-          <p v-else>{{ selectedDetail.parking || '주차장 정보 없음' }}</p>
-        </div>
+          <p v-else style="margin-left: 16px">주차장 정보 없음</p>
+        </template>
+        <p v-else style="margin-left: 16px">{{ selectedDetail.parking || '주차장 정보 없음' }}</p>
+      </div>
 
         <button class="btn-close-modal" @click="selectedDetail = null">닫기</button>
       </div>
