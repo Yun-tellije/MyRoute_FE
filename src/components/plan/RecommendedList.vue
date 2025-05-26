@@ -163,13 +163,14 @@ export default {
       const attId = Number(this.localAttId)
 
       return this.places.filter((place) => {
+        const matchesKeyword = !keyword || place.title.toLowerCase().includes(keyword)
+
         if (attId === -1) {
-          return place.isFavorite && (!keyword || place.title.toLowerCase().includes(keyword))
+          return place.isFavorite && matchesKeyword
         }
 
         const matchesAtt = attId === 0 || place.content_type_id === attId
-        const matchesTitle = !keyword || place.title.toLowerCase().includes(keyword)
-        return matchesAtt && matchesTitle
+        return matchesAtt && matchesKeyword
       })
     },
   },
@@ -254,6 +255,13 @@ export default {
       if (window.suggestPlaceToChatbot) {
         window.suggestPlaceToChatbot(title)
       }
+
+      const toggleBtn = document.querySelector('.chatbot-container .toggle-btn')
+      if (toggleBtn) {
+        toggleBtn.click()
+      }
+
+      this.selectedDetail = null
     },
     async toggleFavorite(place) {
       const authStore = useAuthStore()

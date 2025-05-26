@@ -89,7 +89,6 @@ export default {
     },
     changeAtt(attId) {
       this.attId = attId
-      if (attId === -1) return
       this.fetchPlaces()
     },
     onSearch({ sido, gugun }) {
