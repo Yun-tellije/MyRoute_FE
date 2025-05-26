@@ -1,5 +1,8 @@
 <template>
   <div class="container mt-4">
+    <button class="btn-back" @click="$router.back">
+      <i class="fa-solid fa-caret-left"></i>&nbsp;이전으로 돌아가기
+    </button>
     <h2>최종 {{ sido }} 여행 계획 확인</h2>
 
     <div class="row mt-4">
@@ -185,6 +188,24 @@ export default {
   margin: 0 auto;
   padding: 0;
 }
+.btn-back {
+  display: flex;
+  align-items: center;
+  background: none;
+  color: #666;
+  border: none;
+  border-radius: 4px;
+  padding: 7px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.18s,
+    color 0.18s;
+  margin-right: auto;
+  margin-bottom: 10px;
+}
+
 .btn-submit {
   background-color: #9dbbaa;
   color: white;
