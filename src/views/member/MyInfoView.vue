@@ -33,7 +33,7 @@ const handleWithdraw = async () => {
     alert('회원 탈퇴가 완료되었습니다.')
     authStore.logout()
     window.location.href = '/'
-  } catch (e) {
+  } catch {
     alert('회원 탈퇴에 실패했습니다.')
   } finally {
     loading.value = false
@@ -49,9 +49,10 @@ const handleWithdraw = async () => {
 }
 
 .page-title {
-  font-size: 24px;
-  font-weight: 600;
   margin-bottom: 30px;
+  font-size: 2rem;
+  font-weight: 500;
+  color: #333;
 }
 
 .loading {

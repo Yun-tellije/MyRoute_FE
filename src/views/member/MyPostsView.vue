@@ -49,8 +49,8 @@ export default {
 <style scoped>
 .my-posts-container {
   max-width: 1000px;
-  margin: 40px auto 0 auto;
-  padding: 40px 32px 32px 32px;
+  margin: 0 auto 0 auto;
+  padding: 40px 32px 26px 32px;
 }
 
 .page-title {
