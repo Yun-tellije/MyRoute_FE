@@ -6,16 +6,10 @@
         <button class="btn-close" @click="$emit('close')"></button>
       </div>
 
-      <input
-        v-model="search"
-        class="form-control mb-2"
-        placeholder="장소 이름 입력 (2자 이상)"
-        @keyup.enter="onSearch"
-      />
-
-      <button class="btn btn-primary w-100" @click="onSearch" :disabled="search.length < 2">
-        조회
-      </button>
+      <form @submit.prevent="onSearch">
+        <input v-model="search" class="form-control mb-2" placeholder="장소 이름 입력 (2자 이상)" />
+        <button class="btn btn-primary w-100" :disabled="search.length < 2">조회</button>
+      </form>
 
       <ul v-if="isSearched && results.length" class="list-group mt-3">
         <li

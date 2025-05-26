@@ -165,7 +165,7 @@ export default {
             if (this.editPlanId) {
               this.$router.push(`/plan-detail/${this.editPlanId}`)
             } else {
-              this.$router.push('/my-travel-plans')
+              this.$router.push('/member/posts')
             }
           } else {
             alert('저장 중 오류 발생')
