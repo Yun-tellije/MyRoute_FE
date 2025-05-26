@@ -78,8 +78,20 @@
           class="w-100 mb-3"
         />
         <div class="overview-box">
-          {{ selectedPlaceDetail.overview || '설명이 없습니다. 루티에게 물어보세요!' }}
+          <span v-if="selectedPlaceDetail.overview">
+            {{ selectedPlaceDetail.overview }}
+          </span>
+          <span v-else>
+            설명이 없습니다.
+            <strong
+              style="cursor: pointer; color: #0d6efd"
+              @click="askLuti(selectedPlaceDetail.title)"
+            >
+              루티에게 물어보세요!
+            </strong>
+          </span>
         </div>
+
         <div class="modal-section">
           <p>
             <strong>
@@ -381,11 +393,21 @@ export default {
           const overviewRes = await fetch(`/api/att/overview/${place.no}`)
           if (overviewRes.ok) {
             const overviewData = await overviewRes.json()
-            place.overview = overviewData.overview || '설명 없음'
+            if (overviewData.overview) {
+              place.overview = overviewData.overview
+            } else {
+              place.overview = null
+              if (window.suggestPlaceToChatbot) {
+                window.suggestPlaceToChatbot(place.placeName)
+              }
+            }
           }
         } catch (err) {
           console.error('설명 정보 요청 실패:', err)
-          place.overview = '설명 없음'
+          place.overview = null
+          if (window.suggestPlaceToChatbot) {
+            window.suggestPlaceToChatbot(place.placeName)
+          }
         }
       }
 
@@ -408,6 +430,14 @@ export default {
     },
     goDetail(id) {
       window.open(`/hotplaceDetail/${id}`, '_blank')
+    },
+    askLuti(title) {
+      if (window.suggestPlaceToChatbot) {
+        window.suggestPlaceToChatbot(title)
+      }
+
+      const toggleBtn = document.querySelector('.chatbot-container .toggle-btn')
+      if (toggleBtn) toggleBtn.click()
     },
   },
 }
@@ -590,12 +620,29 @@ export default {
   min-width: 300px;
   max-width: 400px;
   padding: 16px;
+  animation: fade-in 0.3s ease-out;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
 }
+
+@keyframes fade-in {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 .popup-inner {
   max-height: 300px;
   overflow-y: auto;
   padding-right: 6px;
 }
+
 .popup-close {
   margin-top: 10px;
   background: #adb5bd;
@@ -604,6 +651,28 @@ export default {
   padding: 6px 10px;
   border-radius: 4px;
   cursor: pointer;
+}
+
+.popup-list li {
+  margin-bottom: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.popup-list li:hover {
+  background-color: #f1f1f1;
+}
+
+.review-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
 }
 .modal-backdrop {
   position: fixed;

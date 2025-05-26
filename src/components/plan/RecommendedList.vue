@@ -1,138 +1,142 @@
 <template>
-  <div>
-    <div class="d-flex justify-content-between align-items-center mb-4" style="gap: 10px">
-      <h4 class="mb-0">
-        <i class="fa-solid fa-signs-post" style="color: #ffc107"></i> 추천 관광지 목록
-      </h4>
+  <div ref="wrapper" class="recommend-container">
+    <div>
+      <div class="d-flex justify-content-between align-items-center mb-4" style="gap: 10px">
+        <h4 class="mb-0">
+          <i class="fa-solid fa-signs-post" style="color: #ffc107"></i> 추천 관광지 목록
+        </h4>
 
-      <div class="d-flex gap-2">
-        <input
-          type="text"
-          class="form-control"
-          style="width: 200px"
-          v-model="searchInput"
-          placeholder="장소 이름 검색"
-          @keyup.enter="applySearch"
-        />
+        <div class="d-flex gap-2">
+          <input
+            type="text"
+            class="form-control"
+            style="width: 200px"
+            v-model="searchInput"
+            placeholder="장소 이름 검색"
+            @keyup.enter="applySearch"
+          />
 
-        <select
-          v-model="localAttId"
-          class="form-select"
-          style="max-width: 200px"
-          @change="onAttChange"
-        >
-          <option value="0">놀거리</option>
-          <option value="39">음식점</option>
-          <option value="32">숙박</option>
-          <option value="-1">나의 즐겨찾기</option>
-        </select>
+          <select
+            v-model="localAttId"
+            class="form-select"
+            style="max-width: 200px"
+            @change="onAttChange"
+          >
+            <option value="0">놀거리</option>
+            <option value="39">음식점</option>
+            <option value="32">숙박</option>
+            <option value="-1">나의 즐겨찾기</option>
+          </select>
+        </div>
       </div>
-    </div>
 
-    <div class="place-list-scroll">
-      <div v-if="places.length === 0" class="text-center text-muted py-4">
-        군/구를 선택해주세요.
-      </div>
-      <div class="row g-4">
-        <div v-for="place in filteredPlaces" :key="place.no" class="col-md-6">
-          <div class="place-card">
-            <img :src="place.first_image1 || '/resource/tripimage.png'" :alt="place.title" />
-            <div class="place-info">
-              <h5>{{ place.title }}</h5>
-              <div class="type-group">
-                <p>
-                  {{ place.content_type_name }}
-                </p>
-                <p
-                  @click="onStarClick(place, $event)"
-                  style="cursor: pointer; color: #f5c518"
-                  class="star-group"
-                >
-                  <i class="fa-solid fa-star" style="color: #ffc107"></i>
-                  {{ typeof place.avgRating === 'number' ? place.avgRating.toFixed(1) : '0.0' }}
-                </p>
-              </div>
+      <div class="place-list-scroll">
+        <div v-if="places.length === 0" class="text-center text-muted py-4">
+          군/구를 선택해주세요.
+        </div>
+        <div class="row g-4">
+          <div v-for="place in filteredPlaces" :key="place.no" class="col-md-6">
+            <div class="place-card">
+              <img :src="place.first_image1 || '/resource/tripimage.png'" :alt="place.title" />
+              <div class="place-info">
+                <h5>{{ place.title }}</h5>
+                <div class="type-group">
+                  <p>
+                    {{ place.content_type_name }}
+                  </p>
+                  <p
+                    @click="onStarClick(place, $event)"
+                    style="cursor: pointer; color: #f5c518"
+                    class="star-group"
+                  >
+                    <i class="fa-solid fa-star" style="color: #ffc107"></i>
+                    {{ typeof place.avgRating === 'number' ? place.avgRating.toFixed(1) : '0.0' }}
+                  </p>
+                </div>
 
-              <div class="gap-2" style="display: flex; align-items: center">
-                <button @click="add(place)" class="btn btn-sm">추가</button>
-                <button @click="toggleDetail(place.no)" class="btn2 btn2-sm">상세보기</button>
-                <img
-                  :src="
-                    place.isFavorite ? '/resource/bookmark.png' : '/resource/selected-bookmark.png'
-                  "
-                  alt="즐겨찾기"
-                  style="width: 20px; height: 20px; cursor: pointer"
-                  @click="toggleFavorite(place)"
-                />
+                <div class="gap-2" style="display: flex; align-items: center">
+                  <button @click="add(place)" class="btn btn-sm">추가</button>
+                  <button @click="toggleDetail(place.no)" class="btn2 btn2-sm">상세보기</button>
+                  <img
+                    :src="
+                      place.isFavorite
+                        ? '/resource/bookmark.png'
+                        : '/resource/selected-bookmark.png'
+                    "
+                    alt="즐겨찾기"
+                    style="width: 20px; height: 20px; cursor: pointer"
+                    @click="toggleFavorite(place)"
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div v-if="showPopup" class="rating-popup" :style="{ top: popupY + 'px', left: popupX + 'px' }">
-    <div class="popup-inner">
-      <h6>리뷰</h6>
-      <ul class="popup-list">
-        <li
-          v-for="post in relatedHotplaces"
-          :key="post.hotplaceId"
-          @click="goDetail(post.hotplaceId)"
-        >
-          <strong>{{ post.title }}</strong> ({{ post.starPoint.toFixed(1) }}점)<br />
-          <small class="text-muted">{{ post.content }}</small>
-        </li>
-      </ul>
-      <button @click="showPopup = false" class="popup-close">닫기</button>
-    </div>
-  </div>
-
-  <div v-if="selectedDetail" class="modal-backdrop" @click.self="selectedDetail = null">
-    <div class="modal-content-box">
-      <h5>{{ selectedDetail.title }}</h5>
-      <div class="overview-box">
-        <span v-if="selectedDetail.overview">
-          {{ selectedDetail.overview }}
-        </span>
-        <span v-else>
-          설명이 없습니다.
-          <strong style="cursor: pointer; color: #0d6efd" @click="askLuti(selectedDetail.title)">
-            루티에게 물어보세요!</strong
-          >
-        </span>
-      </div>
-      <br />
-      <div>
-        <p>
-          <strong>
-            <img src="/resource/pin.svg" alt="주소" style="width: 16px; height: 16px" />
-            주소
-          </strong>
-        </p>
-        <p style="margin-left: 16px">{{ selectedDetail.addr1 }}</p>
-      </div>
-      <div>
-        <p class="mt-3">
-          <strong>
-            <img src="/resource/parking.svg" alt="주차장" style="width: 16px; height: 16px" /> 주변
-            주차장 정보
-          </strong>
-        </p>
-        <ul v-if="Array.isArray(selectedDetail.parking)">
+    <div v-if="showPopup" class="rating-popup" :style="{ top: popupY + 'px', left: popupX + 'px' }">
+      <div class="popup-inner">
+        <h6>리뷰</h6>
+        <ul class="popup-list">
           <li
-            v-for="(name, idx) in selectedDetail.parking"
-            :key="idx"
-            style="margin-left: 16px; margin-bottom: 2px"
+            v-for="post in relatedHotplaces"
+            :key="post.hotplaceId"
+            @click="goDetail(post.hotplaceId)"
           >
-            {{ name }}
+            <strong>{{ post.title }}</strong> ({{ post.starPoint.toFixed(1) }}점)<br />
+            <small class="text-muted">{{ post.content }}</small>
           </li>
         </ul>
-        <p v-else>{{ selectedDetail.parking || '주차장 정보 없음' }}</p>
+        <button @click="showPopup = false" class="popup-close">닫기</button>
       </div>
+    </div>
 
-      <button class="btn-close-modal" @click="selectedDetail = null">닫기</button>
+    <div v-if="selectedDetail" class="modal-backdrop" @click.self="selectedDetail = null">
+      <div class="modal-content-box">
+        <h5>{{ selectedDetail.title }}</h5>
+        <div class="overview-box">
+          <span v-if="selectedDetail.overview">
+            {{ selectedDetail.overview }}
+          </span>
+          <span v-else>
+            설명이 없습니다.
+            <strong style="cursor: pointer; color: #0d6efd" @click="askLuti(selectedDetail.title)">
+              루티에게 물어보세요!</strong
+            >
+          </span>
+        </div>
+        <br />
+        <div>
+          <p>
+            <strong>
+              <img src="/resource/pin.svg" alt="주소" style="width: 16px; height: 16px" />
+              주소
+            </strong>
+          </p>
+          <p style="margin-left: 16px">{{ selectedDetail.addr1 }}</p>
+        </div>
+        <div>
+          <p class="mt-3">
+            <strong>
+              <img src="/resource/parking.svg" alt="주차장" style="width: 16px; height: 16px" />
+              주변 주차장 정보
+            </strong>
+          </p>
+          <ul v-if="Array.isArray(selectedDetail.parking)">
+            <li
+              v-for="(name, idx) in selectedDetail.parking"
+              :key="idx"
+              style="margin-left: 16px; margin-bottom: 2px"
+            >
+              {{ name }}
+            </li>
+          </ul>
+          <p v-else>{{ selectedDetail.parking || '주차장 정보 없음' }}</p>
+        </div>
+
+        <button class="btn-close-modal" @click="selectedDetail = null">닫기</button>
+      </div>
     </div>
   </div>
 </template>
@@ -233,8 +237,10 @@ export default {
     },
     async onStarClick(place, event) {
       const rect = event.target.getBoundingClientRect()
-      this.popupX = rect.left
-      this.popupY = rect.bottom + window.scrollY
+      const wrapperRect = this.$refs.wrapper.getBoundingClientRect()
+
+      this.popupX = rect.left - wrapperRect.left
+      this.popupY = rect.bottom - wrapperRect.top
 
       try {
         const res = await fetch('/api/hotplace/posts')
@@ -475,6 +481,7 @@ li {
 
 .rating-popup {
   position: absolute;
+  margin-top: 20px;
   z-index: 3000;
   background: white;
   border-radius: 8px;
@@ -520,5 +527,9 @@ li {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+.recommend-container {
+  position: relative;
 }
 </style>

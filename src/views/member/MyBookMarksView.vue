@@ -213,6 +213,9 @@ export default {
           console.error('주차장 정보 요청 중 오류 발생:', err)
           place.parking = ['오류 발생']
         }
+        if (!place.overview && window.suggestPlaceToChatbot) {
+          window.suggestPlaceToChatbot(place.title)
+        }
       }
       this.selectedDetail = place
     },
@@ -233,10 +236,14 @@ export default {
     goDetail(id) {
       window.open(`/hotplaceDetail/${id}`, '_blank')
     },
+
     askLuti(title) {
       if (window.suggestPlaceToChatbot) {
         window.suggestPlaceToChatbot(title)
       }
+
+      const toggleBtn = document.querySelector('.chatbot-container .toggle-btn')
+      if (toggleBtn) toggleBtn.click()
     },
     async toggleFavorite(place) {
       const authStore = useAuthStore()
