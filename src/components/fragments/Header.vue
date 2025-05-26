@@ -22,45 +22,11 @@
 
             <li v-if="isLoggedIn" class="nav-item">
               <div class="user-area">
-                <div class="notification-wrapper" ref="notification">
-                  <div class="notification-icon" @click.stop="toggleNotificationDropdown">
-                    <i class="fa fa-bell"></i>
-                    <span v-if="unreadCount > 0" class="notification-badge">{{ unreadCount }}</span>
-                  </div>
-
-                  <ul v-show="showNotifications" class="notification-menu-list">
-                    <li
-                      v-for="n in notifications"
-                      :key="n.notificationId"
-                      class="notification-item"
-                      :class="{ unread: !n.read }"
-                    >
-                      <div class="d-flex justify-content-between align-items-start gap-2">
-                        <router-link
-                          :to="n.url"
-                          @click="markAsRead(n.notificationId)"
-                          class="flex-grow-1"
-                        >
-                          <div class="noti-text">{{ n.content }}</div>
-                          <div class="noti-time">{{ formatRelativeTime(n.createdAt) }}</div>
-                        </router-link>
-                        <button
-                          class="delete-btn"
-                          @click.stop="deleteNotification(n.notificationId)"
-                        >
-                          <i class="fa fa-trash-alt"></i>
-                        </button>
-                      </div>
-                    </li>
-
-                    <li v-if="notifications.length === 0" class="notification-item text-muted">
-                      알림이 없습니다
-                    </li>
-                  </ul>
-                </div>
-
                 <div class="profile-tabbar-btn" @click.stop="openProfileTabbar">
-                  <img :src="profileImage" alt="프로필 이미지" class="profile-image" />
+                  <div class="profile-image-wrapper">
+                    <img :src="profileImage" alt="프로필 이미지" class="profile-image" />
+                    <span v-if="unreadCount > 0" class="dot-badge"></span>
+                  </div>
                   <span class="nav-link user-name">
                     {{ userName }} 님&nbsp;<i class="fa-solid fa-caret-down"></i>
                   </span>
@@ -85,6 +51,14 @@
           <div class="profile-tabbar-header">
             <img :src="profileImage" alt="프로필 이미지" class="profile-image-large" />
             <span class="nickname">{{ userName }} 님</span>
+            <div
+              class="notification-slide-wrapper"
+              ref="notification"
+              @click.stop="toggleNotificationDropdown"
+            >
+              <i class="fa fa-bell"></i>
+              <span v-if="unreadCount > 0" class="notification-badge">{{ unreadCount }}</span>
+            </div>
             <button class="close-btn" @click="closeProfileTabbar">
               <i class="fa fa-times"></i>
             </button>
@@ -136,6 +110,48 @@
             </button>
           </div>
         </aside>
+      </div>
+    </transition>
+    <transition name="slide">
+      <div
+        v-if="showNotifications"
+        class="notification-slide-panel"
+        @click.self="showNotifications = false"
+      >
+        <div class="profile-tabbar-header">
+          <img :src="profileImage" alt="프로필 이미지" class="profile-image-large" />
+          <span class="nickname">{{ userName }} 님</span>
+          <button class="close-btn" @click="showNotifications = false">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+
+        <div class="notification-header-tools">
+          <button class="clear-all-btn" @click="clearAllNotifications">전체 삭제</button>
+        </div>
+
+        <div class="notification-slide-content">
+          <div v-if="notifications.length === 0" class="notification-item text-muted">
+            알림이 없습니다
+          </div>
+
+          <div
+            v-for="n in notifications"
+            :key="n.notificationId"
+            class="notification-item"
+            :class="{ unread: !n.read }"
+          >
+            <div class="d-flex justify-content-between align-items-start gap-2">
+              <router-link :to="n.url" @click="markAsRead(n.notificationId)" class="flex-grow-1">
+                <div class="noti-text">{{ n.content }}</div>
+                <div class="noti-time">{{ formatRelativeTime(n.createdAt) }}</div>
+              </router-link>
+              <button class="delete-btn" @click.stop="deleteNotification(n.notificationId)">
+                <i class="fa fa-trash-alt"></i>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </transition>
   </header>
@@ -200,6 +216,9 @@ export default {
     toggleNotificationDropdown() {
       this.showNotifications = !this.showNotifications
       this.showDropdown = false
+      if (this.showNotifications) {
+        this.showProfileTabbar = false
+      }
     },
     closeDropdown() {
       setTimeout(() => {
@@ -295,6 +314,33 @@ export default {
         }
       } catch (err) {
         console.error('알림 삭제 실패:', err)
+        alert('삭제 중 오류가 발생했습니다.')
+      }
+    },
+    async clearAllNotifications() {
+      const authStore = useAuthStore()
+
+      const confirmDelete = window.confirm('모든 알림을 삭제하시겠습니까?')
+      if (!confirmDelete) return
+
+      try {
+        const response = await fetch(`/api/members/notification/clear`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${authStore.token}`,
+          },
+        })
+
+        if (response.ok) {
+          this.notifications = []
+          this.unreadCount = 0
+          alert('모든 알림이 삭제되었습니다.')
+        } else {
+          console.error('전체 삭제 실패:', await response.text())
+          alert('전체 삭제에 실패했습니다.')
+        }
+      } catch (err) {
+        console.error('전체 알림 삭제 실패:', err)
         alert('삭제 중 오류가 발생했습니다.')
       }
     },
@@ -400,6 +446,22 @@ a.router-link:hover,
   border: 1px solid #ccc;
 }
 
+.profile-image-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.dot-badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
 .dropdown-menu-list {
   position: absolute;
   top: 100%;
@@ -457,30 +519,56 @@ a.router-link:hover,
   }
 }
 
-.notification-wrapper {
-  position: relative;
-  margin-right: 12px;
+.notification-slide-wrapper {
+  position: absolute;
+  top: 24px;
+  right: 60px;
+  cursor: pointer;
 }
 
-.notification-menu-list {
+.notification-slide-wrapper i {
+  font-size: 20px;
+  color: #555;
+}
+
+.notification-badge {
   position: absolute;
-  top: 100%;
+  top: -6px;
+  right: -10px;
+  background-color: red;
+  color: white;
+  font-size: 10px;
+  padding: 2px 5px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+.notification-slide-panel {
+  position: fixed;
+  top: 0;
   right: 0;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  list-style: none;
-  width: 280px;
-  max-height: 350px;
+  width: 340px;
+  height: 100vh;
+  background: #fff;
+  z-index: 10000;
+  box-shadow: -2px 0 16px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.25s;
+}
+
+.notification-slide-content {
+  flex: 1 1 auto;
   overflow-y: auto;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-  z-index: 2000;
-  padding: 6px 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 15px;
 }
 
 .notification-item {
   font-size: 14px;
-  padding: 10px 8px;
+  padding: 4px 8px;
+  margin-bottom: 5px;
   border-radius: 6px;
   cursor: pointer;
   display: flex;
@@ -489,8 +577,14 @@ a.router-link:hover,
   transition: background-color 0.2s;
 }
 
+.notification-item a {
+  text-decoration: none;
+  font-weight: 600;
+  color: #222;
+}
+
 .notification-item.unread {
-  background-color: #f5faff;
+  background-color: #f0f1ff;
   font-weight: bold;
 }
 
@@ -500,7 +594,7 @@ a.router-link:hover,
 }
 
 .notification-item:hover {
-  background-color: #eef3f6;
+  background-color: #f5f5f5;
 }
 
 .noti-text {
@@ -516,17 +610,6 @@ a.router-link:hover,
   font-size: 12px;
   color: #888;
   margin-top: 2px;
-}
-
-.notification-item a {
-  color: #333;
-  text-decoration: none;
-  display: inline-block;
-  max-width: 100%;
-}
-
-.notification-item:hover {
-  background-color: #f1f1f1;
 }
 
 .user-area {
@@ -554,7 +637,6 @@ a.router-link:hover,
   right: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(30, 30, 30, 0.45);
   z-index: 9999;
   display: flex;
   justify-content: flex-end;
@@ -684,5 +766,32 @@ a.router-link:hover,
 .slide-leave-to {
   opacity: 0;
   transform: translateX(100%);
+}
+
+.notification-header-tools {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 20px;
+  padding-top: 10px;
+  background-color: #fff;
+}
+
+.clear-all-btn {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+}
+
+.clear-all-btn:hover {
+  text-decoration: underline;
+  color: #c0392b;
 }
 </style>

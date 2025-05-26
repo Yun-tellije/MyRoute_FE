@@ -118,26 +118,10 @@ export default {
       showSearch: false,
       selectedPlace: null,
       attractions: [],
-      userProfile: {
-        id: '',
-        name: '',
-        phone: '',
-        email: '',
-      },
     }
   },
   mounted() {
     const id = this.$route.params.id
-    const authStore = useAuthStore()
-
-    if (authStore.user) {
-      this.userProfile = {
-        id: authStore.user.id,
-        name: authStore.user.name,
-        phone: authStore.user.phone,
-        email: authStore.user.email,
-      }
-    }
 
     if (id) {
       this.isEdit = true
@@ -167,26 +151,7 @@ export default {
       this.$_initStarOffsets()
     })
   },
-  created() {
-    this.fetchUserInfo()
-  },
   methods: {
-    async fetchUserInfo() {
-      try {
-        const authStore = useAuthStore()
-        const res = await axios.get('/api/members/me', {
-          headers: { Authorization: `Bearer ${authStore.token}` },
-        })
-        this.userProfile = {
-          id: res.data.id,
-          name: res.data.name,
-          phone: res.data.pnumber,
-          email: res.data.email,
-        }
-      } catch (err) {
-        alert('유저 정보를 불러오지 못했습니다.', err)
-      }
-    },
     onSearch() {
       if (!this.query) return (this.suggestions = [])
       fetch(`/api/hotplace/searchAttractions?q=${encodeURIComponent(this.query)}`)
