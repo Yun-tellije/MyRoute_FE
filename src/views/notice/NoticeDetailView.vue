@@ -1,21 +1,21 @@
 <template>
-  <div class="notice-detail-container" v-if="notice">
+  <div class="notice-detail-container">
     <div class="notice-header-box">
       <div class="notice-meta-row">
-        <span class="notice-title">{{ notice.title }}</span>
+        <span class="notice-title">{{ title }}</span>
       </div>
       <div class="notice-info-row">
         <img :src="profileImage" alt="프로필 이미지" class="profile-image" />
         <span class="notice-writer">{{ memberName }}</span>
-        <span class="notice-date">{{ formatDate(notice.createAt) }}</span>
+        <span class="notice-date">{{ formatDate(createAt) }}</span>
       </div>
     </div>
     <hr class="notice-divider" />
-    <div class="notice-content" v-html="notice.content"></div>
+    <div class="notice-content" v-html="content"></div>
 
     <div class="notice-buttons">
       <div v-if="isAdmin" class="admin-buttons">
-        <router-link :to="`/notices/edit/${notice.noticeId}`" class="btn-edit">수정</router-link>
+        <router-link :to="`/notices/edit/${noticeId}`" class="btn-edit">수정</router-link>
         <button class="btn-delete" @click="deleteNotice">삭제</button>
       </div>
       <router-link to="/notices" class="btn-back"> 목록으로 돌아가기 </router-link>
@@ -31,8 +31,11 @@ export default {
   name: 'NoticeDetailView',
   data() {
     return {
-      notice: null,
+      noticeId: null,
+      title: null,
+      content: null,
       memberName: null,
+      createAt: null,
       profileImage: null,
     }
   },
@@ -42,19 +45,24 @@ export default {
     },
   },
   async created() {
-    const noticeId = this.$route.params.noticeId
+    const noticeRequestId = this.$route.params.noticeId
 
     try {
-      const res = await axios.get(`/api/notices/${noticeId}`, {
+      const res = await axios.get(`/api/notices/${noticeRequestId}`, {
         headers: {
           Authorization: `Bearer ${useAuthStore().token}`,
         },
       })
-      const { notice, memberName, profileImage } = res.data
-      this.notice = notice
+      const { noticeId, title, content, memberName, createAt, profileImage } = res.data
+
+      console.log('공지사항 상세 정보:', res.data)
+
+      this.noticeId = noticeId
+      this.title = title
+      this.content = content
       this.memberName = memberName
+      this.createAt = createAt
       this.profileImage = profileImage
-      console.log(profileImage)
     } catch (err) {
       console.error('공지사항 상세 불러오기 실패:', err)
     }
