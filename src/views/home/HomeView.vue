@@ -1,7 +1,7 @@
 <template>
 
     <div class="hotplace-top-writers">
-  <div class="title">🔥 이달의 핫플왕 🔥</div>
+  <div class="title">🔥 이달의 리뷰왕 🔥</div>
   <div class="scroll-wrapper">
     <ul
   class="scroll-list"
