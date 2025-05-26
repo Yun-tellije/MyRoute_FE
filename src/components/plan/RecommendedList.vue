@@ -53,16 +53,17 @@
                 </p>
               </div>
 
-              <div class="d-flex gap-2">
+              <div class="gap-2" style="display: flex; align-items: center">
                 <button @click="add(place)" class="btn btn-sm">추가</button>
                 <button @click="toggleDetail(place.no)" class="btn2 btn2-sm">상세보기</button>
                 <img
-  :src="place.isFavorite ? '/resource/bookmark.png' : '/resource/selected-bookmark.png'"
-  alt="즐겨찾기"
-  style="width: 24px; height: 24px; cursor: pointer"
-  @click="toggleFavorite(place)"
-/>
-
+                  :src="
+                    place.isFavorite ? '/resource/bookmark.png' : '/resource/selected-bookmark.png'
+                  "
+                  alt="즐겨찾기"
+                  style="width: 20px; height: 20px; cursor: pointer"
+                  @click="toggleFavorite(place)"
+                />
               </div>
             </div>
           </div>
@@ -158,32 +159,31 @@ export default {
   },
   computed: {
     filteredPlaces() {
-  const keyword = this.searchKeyword.trim().toLowerCase();
-  const attId = Number(this.localAttId);
+      const keyword = this.searchKeyword.trim().toLowerCase()
+      const attId = Number(this.localAttId)
 
-  return this.places.filter((place) => {
-    if (attId === -1) {
-      return place.isFavorite && (!keyword || place.title.toLowerCase().includes(keyword));
-    }
+      return this.places.filter((place) => {
+        if (attId === -1) {
+          return place.isFavorite && (!keyword || place.title.toLowerCase().includes(keyword))
+        }
 
-    const matchesAtt = attId === 0 || place.content_type_id === attId;
-    const matchesTitle = !keyword || place.title.toLowerCase().includes(keyword);
-    return matchesAtt && matchesTitle;
-  });
-},
-
+        const matchesAtt = attId === 0 || place.content_type_id === attId
+        const matchesTitle = !keyword || place.title.toLowerCase().includes(keyword)
+        return matchesAtt && matchesTitle
+      })
+    },
   },
 
   watch: {
     selectedAttId(newVal) {
       this.localAttId = newVal
     },
-     places: {
-    handler() {
-      this.loadFavorites()
+    places: {
+      handler() {
+        this.loadFavorites()
+      },
+      immediate: true,
     },
-    immediate: true,
-  },
   },
   methods: {
     add(place) {
@@ -256,62 +256,61 @@ export default {
       }
     },
     async toggleFavorite(place) {
-  const authStore = useAuthStore()
-  const token = authStore.token
-  if (!token) {
-    alert('로그인이 필요한 기능입니다.')
-    return
-  }
+      const authStore = useAuthStore()
+      const token = authStore.token
+      if (!token) {
+        alert('로그인이 필요한 기능입니다.')
+        return
+      }
 
-  const isAdding = !place.isFavorite
+      const isAdding = !place.isFavorite
 
-  try {
-    await fetch(`/api/att/favorite/${isAdding ? 'add' : 'remove'}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        attractionNo: place.no,
-      }),
-    })
-    place.isFavorite = isAdding
+      try {
+        await fetch(`/api/att/favorite/${isAdding ? 'add' : 'remove'}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            attractionNo: place.no,
+          }),
+        })
+        place.isFavorite = isAdding
 
-    if (isAdding) {
-      alert('즐겨찾기에 등록되었습니다!')
-    } else {
-      alert('즐겨찾기에서 해제되었습니다.')
-    }
-  } catch (err) {
-    console.error('즐겨찾기 처리 실패:', err)
-  }
-},
+        if (isAdding) {
+          alert('즐겨찾기에 등록되었습니다!')
+        } else {
+          alert('즐겨찾기에서 해제되었습니다.')
+        }
+      } catch (err) {
+        console.error('즐겨찾기 처리 실패:', err)
+      }
+    },
 
-  async loadFavorites() {
-  const authStore = useAuthStore();
-  const token = authStore.token;
-  if (!token || !Array.isArray(this.places)) return;
+    async loadFavorites() {
+      const authStore = useAuthStore()
+      const token = authStore.token
+      if (!token || !Array.isArray(this.places)) return
 
-  try {
-    const res = await fetch('/api/att/favorite/all', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const favorites = await res.json();
-    const favoriteSet = new Set(favorites.map(f => f.attractionNo));
+      try {
+        const res = await fetch('/api/att/favorite/all', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        const favorites = await res.json()
+        const favoriteSet = new Set(favorites.map((f) => f.attractionNo))
 
-    this.places.forEach(p => {
-      p.isFavorite = favoriteSet.has(p.no);
-    });
+        this.places.forEach((p) => {
+          p.isFavorite = favoriteSet.has(p.no)
+        })
 
-    this.$forceUpdate();
-  } catch (err) {
-    console.error('즐겨찾기 목록 로딩 실패:', err);
-  }
-}
-
+        this.$forceUpdate()
+      } catch (err) {
+        console.error('즐겨찾기 목록 로딩 실패:', err)
+      }
+    },
   },
 }
 </script>
