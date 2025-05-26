@@ -268,6 +268,7 @@ export default {
       const token = authStore.token
       if (!token) {
         alert('로그인이 필요한 기능입니다.')
+        authStore.logout()
         return
       }
 
