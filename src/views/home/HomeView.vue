@@ -1,5 +1,20 @@
 <template>
+
+    <div class="hotplace-top-writers">
+  <div class="title">🔥 이달의 핫플왕 🔥</div>
+  <div class="scroll-wrapper">
+    <ul
+  class="scroll-list"
+  :class="{ 'with-transition': transitionEnabled }"
+  :style="{ transform: `translateY(-${currentIndex * 30}px)` }"
+>
+  <li v-for="(user, idx) in animatedWriters" :key="idx">{{ user }}</li>
+</ul>
+  </div>
+</div>
+
   <div class="main-container">
+    
     <RegionForm
       :sido="sido"
       :gugun="gugun"
@@ -32,6 +47,11 @@ export default {
       sido: '',
       gugun: '',
       attId: 0,
+      topWriters: [],
+      animatedWriters: [],
+    currentIndex: 0,
+    intervalId: null,
+    transitionEnabled: true,
       areaData: {
         서울: [
           '강남구',
@@ -319,20 +339,58 @@ export default {
           console.error(err)
         })
     },
+    async fetchTopWriters() {
+  try {
+    const res = await fetch('/api/hotplace/top-writers')
+    const data = await res.json()
+    const names = data.map((item, idx) => ` ${idx + 1}위 ${item.memberId} (${item.postCount}개)`)
+
+    this.topWriters = names
+    this.animatedWriters = [...names, names[0]] // 마지막에 첫 번째 항목 복제
+
+    this.startAutoScroll()
+  } catch (err) {
+    console.error('TOP 작성자 불러오기 실패:', err)
+  }
+},
+
+startAutoScroll() {
+  this.intervalId = setInterval(() => {
+    if (this.currentIndex < this.animatedWriters.length - 1) {
+      this.transitionEnabled = true
+      this.currentIndex++
+    } else {
+      this.transitionEnabled = false
+      this.currentIndex = 0
+
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.transitionEnabled = true
+          this.currentIndex = 1
+        }, 20)
+      })
+    }
+  }, 2000)
+}
+
   },
   mounted() {
     if (!window.location.pathname.includes('/attplan')) {
       localStorage.removeItem('planItems')
       localStorage.removeItem('editPlan')
     }
+    this.fetchTopWriters()
   },
+  beforeUnmount() {
+  clearInterval(this.intervalId)
+},
 }
 </script>
 
 <style>
 .main-container {
   max-width: 100%;
-  margin: 60px auto;
+  margin: 30px auto;
   background-color: #ececec;
   border-radius: 6px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -340,4 +398,42 @@ export default {
   overflow: hidden;
   flex-wrap: wrap;
 }
+
+.hotplace-top-writers {
+  margin: 0 auto 30px;
+  text-align: center;
+  font-family: 'GowunDodum-Regular', sans-serif;
+}
+
+.hotplace-top-writers .title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #ff5722;
+  font-size: 18px;
+}
+
+.scroll-wrapper {
+  height: 30px;
+  overflow: hidden;
+  position: relative;
+}
+
+.scroll-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.scroll-list.with-transition {
+  transition: transform 0.3s ease-in-out;
+}
+
+.scroll-list li {
+  height: 30px;
+  line-height: 30px;
+  font-size: 16px;
+  color: #333;
+  white-space: nowrap;
+}
+
 </style>
