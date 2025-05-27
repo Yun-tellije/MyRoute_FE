@@ -117,27 +117,27 @@
           <p style="margin-left: 16px">{{ selectedDetail.addr1 }}</p>
         </div>
         <div>
-        <p class="mt-3">
-          <strong>
-            <img src="/resource/parking.svg" alt="주차장" style="width: 16px; height: 16px" />
-            주변 주차장 정보
-          </strong>
-        </p>
+          <p class="mt-3">
+            <strong>
+              <img src="/resource/parking.svg" alt="주차장" style="width: 16px; height: 16px" />
+              주변 주차장 정보
+            </strong>
+          </p>
 
-        <template v-if="Array.isArray(selectedDetail.parking)">
-          <ul v-if="selectedDetail.parking.length > 0">
-            <li
-              v-for="(name, idx) in selectedDetail.parking"
-              :key="idx"
-              style="margin-left: 16px; margin-bottom: 2px"
-            >
-              {{ name }}
-            </li>
-          </ul>
-          <p v-else style="margin-left: 16px">주차장 정보 없음</p>
-        </template>
-        <p v-else style="margin-left: 16px">{{ selectedDetail.parking || '주차장 정보 없음' }}</p>
-      </div>
+          <template v-if="Array.isArray(selectedDetail.parking)">
+            <ul v-if="selectedDetail.parking.length > 0">
+              <li
+                v-for="(name, idx) in selectedDetail.parking"
+                :key="idx"
+                style="margin-left: 16px; margin-bottom: 2px"
+              >
+                {{ name }}
+              </li>
+            </ul>
+            <p v-else style="margin-left: 16px">주차장 정보 없음</p>
+          </template>
+          <p v-else style="margin-left: 16px">{{ selectedDetail.parking || '주차장 정보 없음' }}</p>
+        </div>
 
         <button class="btn-close-modal" @click="selectedDetail = null">닫기</button>
       </div>
@@ -303,6 +303,7 @@ export default {
           alert('즐겨찾기에서 해제되었습니다.')
         }
       } catch (err) {
+        
         console.error('즐겨찾기 처리 실패:', err)
       }
     },
@@ -327,6 +328,7 @@ export default {
 
         this.$forceUpdate()
       } catch (err) {
+        authStore.logout()
         console.error('즐겨찾기 목록 로딩 실패:', err)
       }
     },

@@ -91,6 +91,7 @@ export default {
       this.userProfile.profileImage = profileImage
     } catch (err) {
       console.error(err)
+      useAuthStore().logout()
       alert('회원 정보를 불러오지 못했습니다.')
     }
   },
@@ -119,6 +120,7 @@ export default {
         window.location.reload()
       } catch (err) {
         console.error(err)
+        useAuthStore().logout()
         alert('프로필 정보 저장에 실패했습니다.')
       }
     },

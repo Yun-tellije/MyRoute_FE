@@ -111,6 +111,7 @@ export default {
         })
         this.posts = res.data
       } catch (err) {
+        authStore.logout()
         console.error('좋아요한 핫플레이스 조회 실패', err)
       }
     },

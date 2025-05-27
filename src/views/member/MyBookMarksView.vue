@@ -181,6 +181,7 @@ export default {
         this.places = Array.isArray(favorites) ? favorites : []
       } catch (err) {
         console.error('즐겨찾기 목록 로딩 실패:', err)
+        authStore.logout()
         this.places = []
       }
     },
@@ -269,6 +270,7 @@ export default {
         alert('즐겨찾기에서 해제되었습니다.')
       } catch (err) {
         console.error('즐겨찾기 해제 실패:', err)
+        authStore.logout()
         alert('즐겨찾기 해제에 실패했습니다.')
       }
     },

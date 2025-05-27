@@ -35,6 +35,7 @@ const handleWithdraw = async () => {
     window.location.href = '/'
   } catch {
     alert('회원 탈퇴에 실패했습니다.')
+    authStore.logout()
   } finally {
     loading.value = false
   }

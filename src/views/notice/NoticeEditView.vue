@@ -76,6 +76,7 @@ export default {
         this.$router.push(`/notices/${this.notice.noticeId}`)
       } catch (err) {
         console.error('공지사항 수정 실패:', err)
+        useAuthStore().logout()
         alert('수정에 실패했습니다.')
       }
     },

@@ -85,6 +85,7 @@ export default {
         this.$router.push('/notices')
       } catch (err) {
         console.error('공지사항 삭제 실패:', err)
+        useAuthStore().logout()
         alert('삭제에 실패했습니다.')
       }
     },

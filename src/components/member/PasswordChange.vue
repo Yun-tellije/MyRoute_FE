@@ -85,6 +85,7 @@ export default {
         this.passwordData.confirmPassword = ''
       } catch (error) {
         console.error('비밀번호 변경 실패:', error)
+        useAuthStore().logout()
         alert('비밀번호 변경 중 오류가 발생했습니다.')
       }
     },

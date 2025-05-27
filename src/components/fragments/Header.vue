@@ -257,6 +257,7 @@ export default {
         this.notifications = await res.json()
         this.unreadCount = this.notifications.filter((n) => !n.read).length
       } catch (err) {
+        authStore.logout()
         console.error('알림 가져오기 실패:', err)
       }
     },
@@ -272,6 +273,7 @@ export default {
         this.showNotifications = false
         this.fetchNotifications()
       } catch (err) {
+        authStore.logout()
         console.error('알림 읽음 처리 실패:', err)
       }
     },
@@ -310,10 +312,12 @@ export default {
           alert('알림이 삭제되었습니다.')
         } else {
           console.error('삭제 실패:', await response.text())
+          authStore.logout()
           alert('삭제에 실패했습니다.')
         }
       } catch (err) {
         console.error('알림 삭제 실패:', err)
+        authStore.logout()
         alert('삭제 중 오류가 발생했습니다.')
       }
     },
@@ -337,10 +341,12 @@ export default {
           alert('모든 알림이 삭제되었습니다.')
         } else {
           console.error('전체 삭제 실패:', await response.text())
+          authStore.logout()
           alert('전체 삭제에 실패했습니다.')
         }
       } catch (err) {
         console.error('전체 알림 삭제 실패:', err)
+        authStore.logout()
         alert('삭제 중 오류가 발생했습니다.')
       }
     },

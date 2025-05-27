@@ -50,6 +50,7 @@ export default {
         this.content = ''
         this.$emit('new-comment')
       } catch (err) {
+        authStore.logout()
         alert('댓글 작성 중 오류가 발생했습니다.', err)
       }
     },

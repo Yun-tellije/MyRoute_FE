@@ -1,20 +1,18 @@
 <template>
-
-    <div class="hotplace-top-writers">
-  <div class="title">🔥 이달의 리뷰왕 🔥</div>
-  <div class="scroll-wrapper">
-    <ul
-  class="scroll-list"
-  :class="{ 'with-transition': transitionEnabled }"
-  :style="{ transform: `translateY(-${currentIndex * 30}px)` }"
->
-  <li v-for="(user, idx) in animatedWriters" :key="idx">{{ user }}</li>
-</ul>
+  <div class="hotplace-top-writers">
+    <div class="title">🔥 이달의 리뷰왕 🔥</div>
+    <div class="scroll-wrapper">
+      <ul
+        class="scroll-list"
+        :class="{ 'with-transition': transitionEnabled }"
+        :style="{ transform: `translateY(-${currentIndex * 30}px)` }"
+      >
+        <li v-for="(user, idx) in animatedWriters" :key="idx">{{ user }}</li>
+      </ul>
+    </div>
   </div>
-</div>
 
   <div class="main-container">
-    
     <RegionForm
       :sido="sido"
       :gugun="gugun"
@@ -49,9 +47,9 @@ export default {
       attId: 0,
       topWriters: [],
       animatedWriters: [],
-    currentIndex: 0,
-    intervalId: null,
-    transitionEnabled: true,
+      currentIndex: 0,
+      intervalId: null,
+      transitionEnabled: true,
       areaData: {
         서울: [
           '강남구',
@@ -336,43 +334,45 @@ export default {
         })
         .catch((err) => {
           alert('관광지 조회 실패')
+          authStore.logout()
           console.error(err)
         })
     },
     async fetchTopWriters() {
-  try {
-    const res = await fetch('/api/hotplace/top-writers')
-    const data = await res.json()
-    const names = data.map((item, idx) => ` ${idx + 1}위 ${item.memberId} (${item.postCount}개)`)
+      try {
+        const res = await fetch('/api/hotplace/top-writers')
+        const data = await res.json()
+        const names = data.map(
+          (item, idx) => ` ${idx + 1}위 ${item.memberId} (${item.postCount}개)`,
+        )
 
-    this.topWriters = names
-    this.animatedWriters = [...names, names[0]] // 마지막에 첫 번째 항목 복제
+        this.topWriters = names
+        this.animatedWriters = [...names, names[0]] // 마지막에 첫 번째 항목 복제
 
-    this.startAutoScroll()
-  } catch (err) {
-    console.error('TOP 작성자 불러오기 실패:', err)
-  }
-},
+        this.startAutoScroll()
+      } catch (err) {
+        console.error('TOP 작성자 불러오기 실패:', err)
+      }
+    },
 
-startAutoScroll() {
-  this.intervalId = setInterval(() => {
-    if (this.currentIndex < this.animatedWriters.length - 1) {
-      this.transitionEnabled = true
-      this.currentIndex++
-    } else {
-      this.transitionEnabled = false
-      this.currentIndex = 0
-
-      this.$nextTick(() => {
-        setTimeout(() => {
+    startAutoScroll() {
+      this.intervalId = setInterval(() => {
+        if (this.currentIndex < this.animatedWriters.length - 1) {
           this.transitionEnabled = true
-          this.currentIndex = 1
-        }, 20)
-      })
-    }
-  }, 2000)
-}
+          this.currentIndex++
+        } else {
+          this.transitionEnabled = false
+          this.currentIndex = 0
 
+          this.$nextTick(() => {
+            setTimeout(() => {
+              this.transitionEnabled = true
+              this.currentIndex = 1
+            }, 20)
+          })
+        }
+      }, 2000)
+    },
   },
   mounted() {
     if (!window.location.pathname.includes('/attplan')) {
@@ -382,8 +382,8 @@ startAutoScroll() {
     this.fetchTopWriters()
   },
   beforeUnmount() {
-  clearInterval(this.intervalId)
-},
+    clearInterval(this.intervalId)
+  },
 }
 </script>
 
@@ -435,5 +435,4 @@ startAutoScroll() {
   color: #333;
   white-space: nowrap;
 }
-
 </style>

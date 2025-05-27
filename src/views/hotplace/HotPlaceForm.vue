@@ -254,6 +254,7 @@ export default {
         alert('저장이 완료되었습니다')
         this.$router.push('/hotplacelist')
       } catch (err) {
+        authStore.logout()
         alert('등록 실패: ' + err.message)
       }
     },

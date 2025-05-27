@@ -115,6 +115,7 @@ export default {
         })
         this.posts = res.data
       } catch (err) {
+        authStore.logout()
         console.error('내 핫플 게시글 조회 실패', err)
       }
     },

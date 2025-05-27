@@ -62,6 +62,7 @@ export default {
         this.$router.push('/notices')
       } catch (err) {
         console.error('공지사항 등록 실패:', err)
+        useAuthStore().logout()
         alert('등록 실패: ' + (err.response?.data?.message || err.message))
       }
     },

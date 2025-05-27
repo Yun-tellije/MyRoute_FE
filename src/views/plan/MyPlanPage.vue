@@ -116,6 +116,7 @@ export default {
           this.places = data
         })
         .catch((err) => {
+          authStore.logout()
           console.error('Failed to fetch places:', err)
         })
     },
