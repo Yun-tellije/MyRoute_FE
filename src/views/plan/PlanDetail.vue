@@ -687,6 +687,7 @@ export default {
   z-index: 2000;
 }
 .modal-content-box {
+  position: relative;
   background: #fff;
   padding: 24px;
   border-radius: 8px;
@@ -703,6 +704,7 @@ export default {
   border-radius: 6px;
 }
 .modal-section {
+  margin-top: 30px;
   margin-bottom: 12px;
 }
 p,
@@ -714,14 +716,15 @@ li {
   list-style: none;
 }
 .btn-close-modal {
-  margin-top: 10px;
-  background: #adb5bd;
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  padding: 6px 12px;
+  background-color: #adb5bd;
   color: white;
   border: none;
-  padding: 7px 16px;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 1rem;
 }
 .plan-buttons {
   display: flex;
