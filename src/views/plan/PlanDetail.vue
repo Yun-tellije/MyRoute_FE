@@ -72,7 +72,7 @@
 
     <div v-if="selectedPlaceDetail" class="modal-backdrop" @click.self="selectedPlaceDetail = null">
       <div class="modal-content-box">
-        <h5>{{ selectedPlaceDetail.title }}</h5>
+        <h5>{{ selectedPlaceDetail.placeName }}</h5>
         <img
           :src="selectedPlaceDetail.first_image1 || '/resource/tripimage.png'"
           class="w-100 mb-3"
@@ -85,7 +85,7 @@
             설명이 없습니다.
             <strong
               style="cursor: pointer; color: #0d6efd"
-              @click="askLuti(selectedPlaceDetail.title)"
+              @click="askLuti(selectedPlaceDetail.placeName)"
             >
               루티에게 물어보세요!
             </strong>
@@ -388,26 +388,9 @@ export default {
         place.parking = ['오류 발생']
       }
 
-      if (!place.overview && place.no) {
-        try {
-          const overviewRes = await fetch(`/api/att/overview/${place.no}`)
-          if (overviewRes.ok) {
-            const overviewData = await overviewRes.json()
-            if (overviewData.overview) {
-              place.overview = overviewData.overview
-            } else {
-              place.overview = null
-              if (window.suggestPlaceToChatbot) {
-                window.suggestPlaceToChatbot(place.placeName)
-              }
-            }
-          }
-        } catch (err) {
-          console.error('설명 정보 요청 실패:', err)
-          place.overview = null
-          if (window.suggestPlaceToChatbot) {
-            window.suggestPlaceToChatbot(place.placeName)
-          }
+      if (!place.overview && place.attractionNo) {
+        if (window.suggestPlaceToChatbot) {
+          window.suggestPlaceToChatbot(place.placeName)
         }
       }
 
@@ -435,6 +418,7 @@ export default {
       if (window.suggestPlaceToChatbot) {
         window.suggestPlaceToChatbot(title)
       }
+      this.selectedPlaceDetail = null
 
       const toggleBtn = document.querySelector('.chatbot-container .toggle-btn')
       if (toggleBtn) toggleBtn.click()
